@@ -1,0 +1,39 @@
+﻿@model IEnumerable<NetPress.Models.ProductRebate>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>列表</h2>
+
+<p>
+    @Html.ActionLink("新建", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductPrice.ProductPriceId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RebateValue)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductPrice.ProductPriceId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RebateValue)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ProductRebateId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ProductRebateId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ProductRebateId })
+        </td>
+    </tr>
+}
+
+</table>

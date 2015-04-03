@@ -1,0 +1,43 @@
+﻿@model NetPress.Models.ProductPropertyMapping
+
+@{
+    ViewBag.Title = "Details";
+    Guid productId = ViewBag.ProductId;
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProductPropertyMapping</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductProperty.ProductPropertyId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductProperty.ProductPropertyId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductProperty.Provalue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductProperty.Provalue)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ProductPropertyMappingId }) |
+    @Html.ActionLink("返回", "GetByProductId", new { id = productId })
+</p>

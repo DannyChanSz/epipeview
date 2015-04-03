@@ -1,0 +1,51 @@
+﻿@using NetPress.Models
+@using NetPress.ViewModels
+@{
+    Layout = null;
+    string path = "/Uploaded/Original/";
+    int SHOW_SIZE = 5;
+    List<IndexProductView> productViews = ViewBag.RelatedProducts;
+    
+
+
+}
+
+<div>
+    @if (productViews != null && productViews.Count > 0)
+    {
+        int count = productViews.Count > SHOW_SIZE ? SHOW_SIZE : productViews.Count;
+        List<IndexProductView> showViews = productViews.Take(count).ToList();
+
+        <ul>
+            @foreach (IndexProductView pv in showViews)
+            {
+                string minPrice = "";//显示最小价格
+                string price = pv.Product.Price;
+                string[] priceArr = price.Split('~');
+                if (priceArr.Count() > 0)
+                {
+                    minPrice = priceArr[0];
+                }
+
+
+                <li>
+                    <a href="/Home/Details/@pv.Product.Url">
+                        <img src="@(path + pv.ProductPic.First().Url)" alt="alternate text" class="img-responsive" />
+                        <div>
+                            <h1>@pv.Product.Name</h1>
+                            <h2>￥@(minPrice)</h2>
+                        </div>
+
+                    </a>
+
+                </li>
+
+
+            }
+
+        </ul>
+
+
+    }
+
+</div>

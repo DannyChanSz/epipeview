@@ -1,0 +1,92 @@
+﻿@using NetPress.Models;
+@model NetPress.Models.Order
+@{
+    List<SelectListItem> oStateList = ViewBag.OrderState;
+}
+
+<h2>完成订单</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>订单</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.OrderId)
+
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Customer.Name)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Customer.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Name)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.CreateTime)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.CreateTime)
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Price)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Price)
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.OrderState)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.OrderState)
+            </div>
+        </div>
+
+        @if (Model.OrderState == OrderState.已支付 || Model.OrderState == OrderState.已发货)
+        {
+            <div class="form-group">
+                修改订单状态：
+                <div class="col-md-10">
+                    @Html.DropDownList("OrderState", oStateList, htmlAttributes: new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" id="btnFinish" value="修改订单" class="btn btn-default" />
+                </div>
+            </div>
+        }
+            </div>
+}
+
+<div>
+    @Html.ActionLink("返回", "Index")
+</div>
+<script>
+    $(document).ready(function () {
+        $("#btnFinish").click(function () {
+            var statu = confirm("是否修改订单状态");
+            if (!statu) {
+                return false;
+            }
+            else
+            {
+                $("form").submit();
+            }
+
+        });
+    });
+
+</script>

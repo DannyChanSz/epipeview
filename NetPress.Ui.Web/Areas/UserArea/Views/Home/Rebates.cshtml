@@ -1,0 +1,55 @@
+﻿@using NetPress.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    CustomerRebate customerRebate =  ViewBag.CustomerRebate;
+    List<OrderRebate> orderRebates = ViewBag.OrderRebates;
+
+}
+<div class="container">
+    <div class="row">
+        @Html.Partial("_Aside")
+
+        <div class="col-lg-9 col-md-9">
+            <h2>返利信息</h2>
+            <div>
+                @{
+                    float totleRebate = 0;
+                    float totleWithDrew = 0;                  
+                }
+                @if (customerRebate != null)
+                {
+                    totleRebate = customerRebate.TotleRebate;
+                    totleWithDrew = customerRebate.TotleWithDrew;
+                }
+                <ul>
+                    <li>返利总额:@(totleRebate.ToString("f2"))</li>
+                    <li>已提现总额:@(totleWithDrew.ToString("f2"))</li>
+                    <li>剩余金额:@((totleRebate - totleWithDrew).ToString("f2"))</li>
+                </ul>
+            </div>
+
+            <h2>订单返利明细</h2>
+            <div>
+                @if (orderRebates != null && orderRebates.Count > 0)
+                {
+                    <ul>
+                        @foreach (OrderRebate orderRebate in orderRebates)
+                        {
+                            <li>
+                                <span>返利金额:@orderRebate.RebateValue</span>
+                                <span>处理状态:@(orderRebate.isAuthorized == true ? "已审核" : "待审核")</span>
+                                <span>下单时间:@orderRebate.Order.CreateTime.ToString("yyyy-MM-dd hh:mm:ss")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span>暂无返利订单</span>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "注册成功";
+   
+}
+@{Html.EnableUnobtrusiveJavaScript(true);}
+<div id="location">
+    @Html.RouteLink("首页", "goindex")  @Html.RouteLink("[免费注册]", "userregister");
+</div>
+<div id="main">
+    <span id="success_msg">
+        恭喜！您已成功注册为优管网会员，现在就去
+        @Html.RouteLink("登录", "userlogon");
+        吧！
+    </span>
+</div>

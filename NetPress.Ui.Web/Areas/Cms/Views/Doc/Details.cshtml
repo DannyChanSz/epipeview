@@ -1,0 +1,158 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+
+@{
+   IndexDocView thisDoc = ViewBag.Doc;
+   
+   Doc previousDoc= ViewBag.PreviousDoc  ;
+   Doc nextDoc= ViewBag.NextDoc  ;
+   List<IndexDocView> otherDocs = ViewBag.OtherDocsView;
+   string path = "/Uploaded/Original/";
+}
+
+<input type="hidden" id="hdDocId" value="@thisDoc.Doc.DocId" />
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-8">
+            <div class="doc-block">
+                <h1>@thisDoc.Doc.Title</h1>
+                <div class="doc-date">发布日期：@thisDoc.Doc.CreatedOn.ToShortDateString()  浏览次数：@thisDoc.Doc.Clicks</div>
+                <div class="doc-brief">摘要：@thisDoc.Doc.SubTitle</div>
+                <div class="doc-image">
+                    @if (thisDoc.Pic != null)
+                    {
+                        <img src="@(path + thisDoc.Pic.Url)" class="img-responsive" />
+                    }
+                </div>
+                <div class="doc-content">
+                    @Html.Raw(thisDoc.Doc.Contents)
+                </div>
+            </div>
+            <div class="pagination clearfix">
+                <div class="text-right">
+                    @if (previousDoc != null)
+                    {
+                        <a href="/Cms/Doc/Details/@previousDoc.Url">
+                            <img src="/Content/images/pre-1.jpg" />
+                        </a>
+                    }
+                    else
+                    {
+                        <img src="/Content/images/pre-2.jpg" />
+                    }
+
+                    @if (nextDoc != null)
+                    {
+                        <a href="/Cms/Doc/Details/@nextDoc.Url">
+                            <img src="/Content/images/next-1.jpg" />
+                        </a>
+                    }
+                    else
+                    {
+                        <img src="/Content/images/next-2.jpg" />
+                    }
+                </div>
+            </div>
+            <div id="dvCommentView">
+                @{Html.RenderAction("DocComment", "Comment", new { Area = "CommentArea", docId = thisDoc.Doc.DocId, page = 1 });}
+            </div>
+            @*<div class="comment-block">
+                <h1>网友评论 <small> 文明上网理性发言，请遵守新闻评论服务协议</small> <small class="pull-right">18条评论</small></h1>
+                <div class="comment-textarea">
+                    <textarea placeholder="不吐不快？说两句吧！"></textarea>
+                    <button class="btn btn-info pull-right">提交</button>
+                    <div class="clearfix"></div>
+                </div>
+
+                <h1>全部评论 <small class="pull-right"><a href="#">时间</a> | <a href="#">热度</a></small> </h1>
+                <div class="comment-item row">
+                    <div class="comment-avatar col-lg-2 col-md-2 col-sm-2 col-xs-3"><img src="content/images/avatar-1.jpg" class="img-responsive" /></div>
+                    <div class="comment-right col-lg-10 col-md-10 col-sm-10 col-xs-9">
+                        <div class="comment-name">灰太狼大哥</div>
+                        <div class="comment-time">7分钟前</div>
+                        <div class="comment-cotent">自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。</div>
+                        <div class="comment-footer"><i class="icon-thumbs-up"></i>(5)&nbsp;&nbsp;&nbsp;<i class="icon-reply"></i>回复(5)</div>
+                    </div>
+                </div>
+                <div class="comment-item row">
+                    <div class="comment-avatar col-lg-2 col-md-2 col-sm-2 col-xs-3"><img src="content/images/avatar-1.jpg" class="img-responsive" /></div>
+                    <div class="comment-right col-lg-10 col-md-10 col-sm-10 col-xs-9">
+                        <div class="comment-name">灰太狼大哥</div>
+                        <div class="comment-time">7分钟前</div>
+                        <div class="comment-cotent">自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。</div>
+                        <div class="comment-footer"><i class="icon-thumbs-up"></i>(5)&nbsp;&nbsp;&nbsp;<i class="icon-reply"></i>回复(5)</div>
+                    </div>
+                </div>
+                <div class="comment-item row">
+                    <div class="comment-avatar col-lg-2 col-md-2 col-sm-2 col-xs-3"><img src="content/images/avatar-1.jpg" class="img-responsive" /></div>
+                    <div class="comment-right col-lg-10 col-md-10 col-sm-10 col-xs-9">
+                        <div class="comment-name">灰太狼大哥</div>
+                        <div class="comment-time">7分钟前</div>
+                        <div class="comment-cotent">自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。</div>
+                        <div class="comment-footer"><i class="icon-thumbs-up"></i>(5)&nbsp;&nbsp;&nbsp;<i class="icon-reply"></i>回复(5)</div>
+                    </div>
+                </div>
+                <div class="comment-item row">
+                    <div class="comment-avatar col-lg-2 col-md-2 col-sm-2 col-xs-3"><img src="content/images/avatar-1.jpg" class="img-responsive" /></div>
+                    <div class="comment-right col-lg-10 col-md-10 col-sm-10 col-xs-9">
+                        <div class="comment-name">灰太狼大哥</div>
+                        <div class="comment-time">7分钟前</div>
+                        <div class="comment-cotent">自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。</div>
+                        <div class="comment-footer"><i class="icon-thumbs-up"></i>(5)&nbsp;&nbsp;&nbsp;<i class="icon-reply"></i>回复(5)</div>
+                    </div>
+                </div>
+                <div class="comment-item row">
+                    <div class="comment-avatar col-lg-2 col-md-2 col-sm-2 col-xs-3"><img src="content/images/avatar-1.jpg" class="img-responsive" /></div>
+                    <div class="comment-right col-lg-10 col-md-10 col-sm-10 col-xs-9">
+                        <div class="comment-name">灰太狼大哥</div>
+                        <div class="comment-time">7分钟前</div>
+                        <div class="comment-cotent">自行车，钢笔，铅笔，电视机，空调，冰箱。。。。。。。</div>
+                        <div class="comment-footer"><i class="icon-thumbs-up"></i>(5)&nbsp;&nbsp;&nbsp;<i class="icon-reply"></i>回复(5)</div>
+                    </div>
+                </div>
+            </div>*@
+
+        </div>
+
+
+        <div class="col-lg-4 col-md-4">
+            <div class="aside">
+
+                @if (otherDocs != null && otherDocs.Count > 0)
+                {
+
+                    <div class="aside-block aside-block-type-1">
+                        <div class="aside-block-title">热门新闻<small class="pull-right">@*<a href="#">更多</a>*@
+                            @Html.ActionLink("更多", "Index", new { id = @otherDocs.First().Doc.DocCategoryId })</small> </div>
+
+                        @{
+                            List<IndexDocView> showDocs = otherDocs.Take(4).ToList();//最多显示4个
+                        }
+                        @foreach (IndexDocView doc in showDocs)
+                        {
+                            string imgSrc = "";
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h1>@Html.ActionLink(doc.Doc.Title, "Details", new { id = @doc.Doc.Url })</h1>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    @if (doc.Pic != null)
+                                    {
+                                         imgSrc = path + doc.Pic.Url;
+                                    }                                 
+                                    <img src="@(imgSrc)" class="img-responsive" />
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    @doc.Doc.SubTitle
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

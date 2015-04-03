@@ -1,0 +1,225 @@
+﻿@model NetPress.Models.CustomerCompanyInfo
+
+@{
+    //Layout = null;
+    ViewBag.Title = "Create";
+}
+
+<h2>新增</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LinkmanName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LinkmanName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LinkmanName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CellPhone, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CellPhone, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CellPhone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TelePhone, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TelePhone, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TelePhone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CompanyProfile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CompanyProfile, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CompanyProfile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            公司图片：
+            <div class="col-md-10">
+                <img src="" id="companyPic" style="width:150px;height:150px;">
+                <input type="hidden" name="PicUrl" />
+            </div>
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.OtherDescription)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.OtherDescription)
+            @Html.ValidationMessageFor(model => model.OtherDescription)
+        </div>
+        <a id="pickfiles" href="javascript:;">[选择图片]</a>
+
+
+        <div class="form-group">
+            所属用户(用户名)：
+            <div class="col-md-10">
+                <input type="text" id="txtCustomerName" readonly="readonly" />
+                @Html.HiddenFor(model => model.CustomerId)
+                @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            用户名/邮箱搜索：
+            <div class="col-md-10">
+                <input type="text" id="txtSearch">
+            </div>
+
+            <div id="dvCustomerList">
+
+
+            </div>
+        </div>
+
+
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("返回", "Index")
+</div>
+<style>
+    #OtherDescription {
+        width: 650px;
+        height: 400px;
+    }
+</style>
+@section Scripts {
+
+<script src="/Plugins/tinymce/tinymce.min.js"></script>
+
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script src="~/Content/js/uploadArea/newUploadImage.js"></script>
+
+ <script>
+     var path = "/Uploaded/Original/";
+
+     $(document).ready(function () {
+         //富文本
+         tinymce.init({
+             selector: '#OtherDescription',
+             language: "zh_cn",
+             theme: 'modern',
+             convert_urls: false,
+             plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker", "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking", "save table contextmenu directionality emoticons template paste textcolor"]
+         });
+         //上传
+         var uploader = UpLoaderInit("pickfiles");
+         uploader.bind("FileUploaded", function (up, file, info) {
+             var url = $.parseJSON(info.response).url;
+
+             var imageUrl = path + url;
+             //富文本添加图片
+             tinymce.execCommand("mceInsertContent", true, "<img  src='" + imageUrl + "' alt='' />");
+         });
+
+         uploader.init();
+
+
+         //查询
+         $("#txtSearch").keyup(function () {
+
+             var searchValue = $(this).val();
+
+             GetCustomerList(searchValue);
+         });
+
+         //公司图片上传
+         var companyPicUploader = UpLoaderInit("companyPic");
+         companyPicUploader.bind("FileUploaded", function (up, file, info) {
+             var url = $.parseJSON(info.response).url;
+             var imageUrl = path + url;
+             $("#companyPic").attr("src", imageUrl);
+             $("[name='PicUrl']").val(url);
+         });
+         companyPicUploader.init();
+
+     });
+
+     //查询用户
+     function GetCustomerList(searchValue)
+     {
+         $.ajax({
+             type: 'post',
+             url: "/Admin/CustomerCompanyInfoes/GetCustomerList",
+             data: { "searchValue": searchValue },
+             success: function (result) {
+                 if (result.status == "success") {
+                     var customerList = result.customerList;
+                     SetCustomers(customerList);
+                 }
+                 else {
+                     SetCustomers(new Array());
+                 }
+             },
+             error: function () {
+
+             }
+         });
+     }
+
+     //写入可选产品
+     function SetCustomers(customerList) {
+         var html = "<ul>";
+         if (customerList.length > 0) {
+             for (var i = 0; i < customerList.length; i++) {
+
+                 var title = "用户名：" + customerList[i].Name + "    邮箱：" + customerList[i].Email + "    手机：" + customerList[i].CellPhone;
+
+                 html += "<li><a id='" + customerList[i].CustomerId + "' name='aCustomerChoose' data-customerName=" + customerList[i].Name + " >" + title + "</a></li>";
+             }
+         }
+         html += "</ul>";
+         $("#dvCustomerList").html(html);//更新产品列表
+         LoadCustomerChooseEven();//绑定产品事件
+     }
+
+     //添加商品选项事件
+     function LoadCustomerChooseEven() {
+         $("#dvCustomerList").on('click', "[name='aCustomerChoose']", function () {
+             var customerId = $(this).attr("id");
+             var customerName = $(this).attr("data-customerName");
+
+             $("[name='CustomerId']").val(customerId);
+
+             $("#txtCustomerName").val(customerName);
+         });
+     }
+
+
+
+</script>
+}

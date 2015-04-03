@@ -1,0 +1,73 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    ViewBag.Title = "Details";
+
+    CustomerCompanyInfo Model = ViewBag.customerCompanyInfo;
+
+    List<Pic> pics = ViewBag.pics;
+
+    List<IndexProductView> IndexProductViews = ViewBag.IndexProductViews;
+
+    var Uploaded = "/Uploaded/Original/";
+}
+
+<h2>Details</h2>
+
+<div>
+
+    <div style="float:left;width:700px;">
+
+        <h1>@Model.CompanyName</h1>
+
+        <p>公司概况</p>
+        <div>@Model.CompanyProfile</div>
+
+        <p>认证信息</p>
+        <div>@Html.Raw(Model.OtherDescription)</div>
+
+        <p>热销产品</p>
+        <div>
+            @foreach (var item in IndexProductViews)
+            {
+                Pic pic = (Pic)item.ProductPic.ToList()[0];
+                string ImgPath = Uploaded + pic.Url;
+
+                <div style="float:left">
+                    <img src="@ImgPath" style="width:150px;height:150px;">
+                    @item.Product.Name
+                </div>
+            }
+        </div>
+    </div>
+
+    <p>实拍图片</p>
+    <div style="float:right;width:300px;">
+
+        @if (pics != null && pics.Count > 0)
+        {
+            foreach (var item in pics)
+            {
+                string ImgPath = Uploaded + item.Url;
+
+                <p>@item.SubTypeTag</p>
+
+                <img src="@ImgPath" style="width:150px;height:150px;">
+            }
+        }
+
+        <p>联系人</p>
+        <div>@Model.LinkmanName</div>
+        <p>联系电话</p>
+        <div>@Model.CellPhone</div>
+        <p>固定电话</p>
+        <div>@Model.TelePhone</div>
+    </div>
+
+
+    <div style="clear:both"></div>
+
+
+
+
+</div>

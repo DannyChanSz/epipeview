@@ -1,0 +1,149 @@
+﻿@model NetPress.Models.Inquiry
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>新建</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Inquiry</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Adress, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Adress, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Adress, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Requirement, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Requirement, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Requirement, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ContactInfo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ContactInfo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ContactInfo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CustomerId, "CustomerId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CustomerId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">附件</div>
+            <div class="col-md-10">
+                <input type="text" id="fujian" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="control-label col-md-2">选择附件</span>
+            <div class="col-md-10">
+                <div>
+                    @*<img src="#" id="pic1" style="width:150px;height:150px;">*@
+                    <div id="container">
+                        <a id="pickfiles" href="javascript:;">[选择图片]</a>
+                        <a id="uploadfiles" href="javascript:;">[上传图片]</a>
+                    </div>
+                </div>
+                <div id="filelist" style="clear:both"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" id="sub" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script src="~/Scripts/ImageUoload.js"></script>
+<script>
+
+    //询价实体
+    function Inquery(InquiryId, Name, Adress, Requirement, ContactInfo, CustomerId)
+    {
+       this.InquiryId = InquiryId;
+
+        this.Name = Name;
+
+        this.Adress = Adress;
+
+        this.Requirement = Requirement;
+
+        this.ContactInfo = ContactInfo;
+
+        this.CustomerId = CustomerId;
+    }
+
+    $(document).ready(function () {
+
+        $("#sub").click(function () {
+
+            var file = new mfile($("#fujian").val(), "客户", "询价");
+
+            var InquiryId= "00000000-0000-0000-0000-000000000000";
+
+            var inquiry = new Inquery(InquiryId, $("#Name").val(), $("#Adress").val(), $("#Requirement").val(), $("#ContactInfo").val(), $("#CustomerId").val());
+
+            InqeuryAjax("/Admin/Inquiries/Create", inquiry, file);
+        });
+
+        //初始化上传控件
+        InitUpload();
+
+    });
+
+    function InitUpload()
+    {
+        var Uploaded = "/Uploaded/Original/";
+
+        var uploader = createUpload('container', 'pickfiles', 'uploadfiles', 'filelist');
+
+        uploader.bind("FileUploaded", function (up, file, info) {
+
+            var url = $.parseJSON(info.response).url;
+
+            document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+
+            $("#fujian").val(url);
+
+            var file = new mfile(url, "客户", "询价");
+
+            //var tempic = new mpic(url, "法人营业执照");
+            //ReturnFiles.push(tempic);
+        });
+        uploader.init();
+    }
+</script>

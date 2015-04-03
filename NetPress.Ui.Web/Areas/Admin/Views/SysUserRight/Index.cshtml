@@ -1,0 +1,75 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+
+@{
+    ViewBag.Title = "Index";
+
+    //所有用户实际权限
+    List<SysuserRightView> UserRightViews = ViewBag.UserRightViews;
+
+    //系统权限模块
+    List<RightModule> RightModules = ViewBag.RightModules; ;
+}
+<h2>列表</h2>
+
+<p>
+    @Html.ActionLink("新建", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            用户类别
+        </th>
+        <th>
+            菜单名
+        </th>
+        <th></th>
+    </tr>
+    <tr>
+        @if (UserRightViews != null && UserRightViews.Count > 0)
+        {
+            foreach (var item in UserRightViews)
+            {
+                List<SysUserRight> CustomerRight = item.SysUserRights;
+
+            <tr>
+
+                <td>@item.SysRole.RoleName</td>
+
+                <td>
+                    @foreach (var RightModul in RightModules)
+                    {
+                        bool isChecked = false;
+                        foreach (var Right in CustomerRight)
+                        {
+                            if (Right.RightModuleId == RightModul.RightModuleId)
+                            {
+                                isChecked = true;
+                            }
+                        }
+                        if (isChecked)
+                        {
+                            <input type="checkbox" value="@RightModul.RightModuleId" disabled="disabled" checked="checked"> @RightModul.Name
+                        }
+                        else
+                        {
+                            <input type="checkbox" value="@RightModul.RightModuleId" disabled="disabled"> @RightModul.Name
+                        }
+                    }
+
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = @item.SysRole.Id }) |
+                    @*  @Html.ActionLink("Details", "Details", new { id = @item.Customer.CustomerId }) |*@
+                    @Html.ActionLink("Delete", "Delete", new { id = @item.SysRole.Id })
+                </td>
+            </tr>
+            }
+        }
+        else
+        {
+            <span>没有数据</span>
+        }
+        </tr>
+
+    </table>

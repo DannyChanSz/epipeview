@@ -1,0 +1,598 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    //List<ProductCategory> categoryList = ViewBag.CategoryList;
+    string path = "/Uploaded/Original/";
+    List<IndexCategoryView> indexCategoryViewList = ViewBag.IndexCategoryList;
+
+    List<IndexProductView> RecommendProductList = ViewBag.RecommendProductList;//推荐产品
+
+    List<IndexProductView> LowPriceProductList = ViewBag.LowPriceProductList;//高性价比产品
+
+    List<IndexDocView> docList = ViewBag.DocList;
+    //int SHOW_SIZE = 8;//显示总数
+
+}
+<div id="main" class="index-main">
+
+
+    <div id="index-carousel">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-sm-12 col-lg-push-3 img-top">
+                    <div id="index-owl-1" class="owl-carousel owl-theme">
+                        <div class="item"><img src="/content/images/index-carousel-1.jpg" class="img-responsive" /></div>
+                        <div class="item"><img src="/content/images/index-carousel-2.jpg" class="img-responsive" /></div>
+                        <div class="item"><img src="/content/images/index-carousel-3.jpg" class="img-responsive" /></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-7 col-sm-7 col-xs-12 col-lg-pull-6 hidden-xs">
+                    <div class="danny-store-menu">
+                        @Html.Partial("_StoreMenu")
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-5 col-sm-5 col-xs-12">
+                    @*<div id="dvInquiryForm" class="block-form" style="display:none;">
+                            <span class="title">我要询价</span>
+                            <input class="full" type="text" name="name" placeholder="您的姓名" />
+                            <input class="full" type="text" name="contact" placeholder="您的电话" />
+                            <input class="full" type="text" name="email" placeholder="您的邮件地址" />
+                            <textarea class="full" placeholder="项目情况"></textarea>
+                            <button class="full" id="btnInquiry">立即询价</button>
+                        </div>*@
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-6  img-left">
+
+
+                        <!-- 模态框 start-->
+
+                        <div class="inquiry" data-toggle="modal" data-target="#myModal">
+                            <img src="/content/images/index-inquiry-1.png" class="img-responsive" style="width:100%">
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button id="btnInquiryClose" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="dvInquiryForm" class="block-form">
+                                            <span class="title">我要询价</span>
+                                            <input class="full" type="text" name="inquiryName" placeholder="您的姓名" />
+                                            <input class="full" type="text" name="inquiryPhone" placeholder="您的电话" />
+                                            <input class="full" type="text" name="inquiryEmail" placeholder="您的邮件地址" />
+                                            <textarea class="full" placeholder="项目情况" name="inquiryProject"></textarea>
+
+                                            <div class="full">
+                                                <p id="console"></p>
+                                                <div id="filelist" style="clear:both"></div>
+                                                <div id="container">
+                                                    <a id="pickfiles" href="javascript:;">[附件上传]</a><span>仅支持(Word/Excel/Jpg格式上传),其他格式请打包成zip上传</span>
+                                                </div>
+
+                                                <div id="dvUrlHidden"></div>
+                                            </div>
+                                            <button class="full" id="btnInquiry">立即询价</button>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 模态框 end-->
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-6  img-left">
+                        <div class="inquiry"><img src="/content/images/index-inquiry-2.png" class="img-responsive" style="width:100%"></div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--右侧悬浮 start-->
+    <div class="float-menu">
+        <div class="float-menu-child float-menu-top" onclick="$('.float-menu').slideToggle()">关闭</div>
+        <div class="float-menu-child float-menu-ask " data-toggle="modal" data-target="#myModal"><i class="icon-uniE600"></i></br>采购询价</div>
+        <ul>
+            <!-- <li class="float-menu-child"><i class="icon-home-i"></i></br>家装管</li>
+             <li class="float-menu-child"><i class="icon-Set-i"></i></br>工程管</li> -->
+            <li class="float-menu-child"><i class="icon-guan-baby5big"></i></br>呼叫管娃</li>
+
+        </ul>
+        <div class="float-menu-child float-menu-bottom">回到顶部</div>
+    </div>
+    <!--右侧悬浮 end-->
+    <div id="section-1" class="container section">
+
+        <div id="index-owl-2" class="owl-carousel owl-theme">
+            <div class="item"><a href="/Home/List?searchBrand=联塑"><img src="/content/images/index-brand-1.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=伟星"><img src="/content/images/index-brand-2.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=华瀚"><img src="/content/images/index-brand-3.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=美尔固"><img src="/content/images/index-brand-4.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=日丰"><img src="/content/images/index-brand-5.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=公元"><img src="/content/images/index-brand-6.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=金德"><img src="/content/images/index-brand-7.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=金牛角"><img src="/content/images/index-brand-8.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=AKAN"><img src="/content/images/index-brand-9.png" class="img-responsive" /></a></div>
+            <div class="item"><a href="/Home/List?searchBrand=金时通"><img src="/content/images/index-brand-10.png" class="img-responsive" /></a></div>
+
+        </div>
+
+    </div>
+
+
+
+
+    @if (indexCategoryViewList != null && indexCategoryViewList.Count > 0)
+    {
+        <div id="section-2" class="container section">
+            <div class="section-header section-hr">塑料管道</div>
+        </div>
+        int SHOW_SIZE = 8;//显示总数
+
+        IndexCategoryView categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "塑料管道");
+
+        if (categroyView != null)
+        {
+            SHOW_SIZE = 16;
+            if (categroyView.Products != null && (categroyView.Products.Count > SHOW_SIZE || categroyView.Products.Count == SHOW_SIZE))
+            {
+                <div id="section-3-2" class="container section">
+                    <div class="section-header section-header-1">@Html.ActionLink(@categroyView.Category.Name, "List", new { url = @categroyView.Category.url })</div>
+
+                    @{
+                List<IndexProductView> indexProductShow = categroyView.Products.Take(SHOW_SIZE).ToList();
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(0).Product.Url, styleName = "style_1" });}
+
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(1).Product.Url, styleName = "style_1" });}
+                    </div>
+
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="block">
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(2).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(3).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(4).Product.Url, styleName = "style_2" });}
+
+
+                        </div>
+
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="block">
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(5).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(6).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(7).Product.Url, styleName = "style_2" });}
+                        </div>
+                    </div>
+                </div>
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                                @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(8).Product.Url, styleName = "style_1" });}
+
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                                <div class="block">
+                                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(9).Product.Url, styleName = "style_2" });}
+                                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(10).Product.Url, styleName = "style_2" });}
+                                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(11).Product.Url, styleName = "style_2" });}
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                                <div class="block">
+                                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(12).Product.Url, styleName = "style_2" });}
+                                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(13).Product.Url, styleName = "style_2" });}
+                                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(14).Product.Url, styleName = "style_2" });}
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                                @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(15).Product.Url, styleName = "style_1" });}
+                            </div>
+                        </div>
+                    }
+                </div>
+
+
+
+            }
+
+        }
+
+
+        <div id="section-2-2" class="container section">
+            <div class="section-header section-hr">管道配件</div>
+        </div>
+
+        categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "管道配件");
+
+        if (categroyView != null)
+        {
+            SHOW_SIZE = 8;
+            if (categroyView.Products != null && (categroyView.Products.Count > SHOW_SIZE || categroyView.Products.Count == SHOW_SIZE))
+            {
+                <div id="section-3-2" class="container section">
+                    <div class="section-header section-header-1">@Html.ActionLink(@categroyView.Category.Name, "List", new { url = @categroyView.Category.url })</div>
+
+                    @{
+                List<IndexProductView> indexProductShow = categroyView.Products.Take(SHOW_SIZE).ToList();
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="block">
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(0).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(1).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(2).Product.Url, styleName = "style_2" });}
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(3).Product.Url, styleName = "style_1" });}
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(4).Product.Url, styleName = "style_1" });}
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="block">
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(5).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(6).Product.Url, styleName = "style_2" });}
+                            @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(7).Product.Url, styleName = "style_2" });}
+
+                        </div>
+                    </div>
+                </div>
+                    }
+                </div>
+            }
+
+        }
+
+
+
+        <div id="section-2-2" class="container section">
+            <div class="section-header section-hr">复合与金属管道</div>
+        </div>
+
+        <div id="section-3-1" class="container section">
+            <div class="row">
+                @{
+        categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "复合管道");
+        if (categroyView != null)
+        {
+            SHOW_SIZE = 2;
+            if (categroyView.Products != null && (categroyView.Products.Count > SHOW_SIZE || categroyView.Products.Count == SHOW_SIZE))
+            {
+                List<IndexProductView> indexProductShow = categroyView.Products.Take(SHOW_SIZE).ToList();
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                    <div class="section-header section-header-1">@Html.ActionLink(@categroyView.Category.Name, "List", new { url = @categroyView.Category.url })</div>
+                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(0).Product.Url, styleName = "style_1" });}
+
+                </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="section-header section-header-1">&nbsp;</div>
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(1).Product.Url, styleName = "style_1" });}
+                    </div>
+
+            }
+
+        }
+
+        categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "金属管道");
+
+        if (categroyView != null)
+        {
+            SHOW_SIZE = 2;
+            if (categroyView.Products != null && (categroyView.Products.Count > SHOW_SIZE || categroyView.Products.Count == SHOW_SIZE))
+            {
+                List<IndexProductView> indexProductShow = categroyView.Products.Take(SHOW_SIZE).ToList();
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                    <div class="section-header section-header-1">@Html.ActionLink(@categroyView.Category.Name, "List", new { url = @categroyView.Category.url })</div>
+                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(0).Product.Url, styleName = "style_1" });}
+
+                </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="section-header section-header-1">&nbsp;</div>
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(1).Product.Url, styleName = "style_1" });}
+                    </div>
+            }
+
+        }
+
+
+                }
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+        <div id="section-2-2" class="container section">
+            <div class="section-header section-hr">管道原材料</div>
+        </div>
+
+        <div id="section-3-1" class="container section">
+            <div class="row">
+                @{
+        categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "管道原材料");
+        //categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "PE给水");
+        if (categroyView != null)
+        {
+            SHOW_SIZE = 4;
+            if (categroyView.Products != null && (categroyView.Products.Count > SHOW_SIZE || categroyView.Products.Count == SHOW_SIZE))
+            {
+                List<IndexProductView> indexProductShow = categroyView.Products.Take(SHOW_SIZE).ToList();
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                    <div class="section-header section-header-1">@Html.ActionLink(@categroyView.Category.Name, "List", new { url = @categroyView.Category.url })</div>
+                    @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(0).Product.Url, styleName = "style_1" });}
+
+                </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="section-header section-header-1">&nbsp;</div>
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(1).Product.Url, styleName = "style_1" });}
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="section-header section-header-1">&nbsp;</div>
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(2).Product.Url, styleName = "style_1" });}
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                        <div class="section-header section-header-1">&nbsp;</div>
+                        @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(3).Product.Url, styleName = "style_1" });}
+                    </div>
+
+            }
+
+        }
+
+        @*categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "管道设备");
+            //categroyView = indexCategoryViewList.FirstOrDefault(m => m.Category.Name == "PE给水");
+            if (categroyView != null)
+            {
+                SHOW_SIZE = 2;
+                if (categroyView.Products != null && (categroyView.Products.Count > SHOW_SIZE || categroyView.Products.Count == SHOW_SIZE))
+                {
+                    List<IndexProductView> indexProductShow = categroyView.Products.Take(SHOW_SIZE).ToList();
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                <div class="section-header section-header-1">@Html.ActionLink(@categroyView.Category.Name, "List", new { url = @categroyView.Category.url })</div>
+                @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(0).Product.Url, styleName = "style_1" });}
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                <div class="section-header section-header-1">&nbsp;</div>
+                @{Html.RenderAction("IndexProduct", "Home", new { url = indexProductShow.ElementAtOrDefault(1).Product.Url, styleName = "style_1" });}
+            </div>
+                }
+
+            }*@
+
+
+                }
+
+                @*<div class="clearfix visible-xs"></div>*@
+            </div>
+
+
+        </div>
+
+        <div id="section-4" class="container section">
+            <div class="section-header"><a href="/Home/List?url=guangdao">新闻资讯</a></div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                    <div class="block block-type-1">
+                        <div class="cover">
+                            <img src="/content/images/index-section-14-1.jpg" class="img-responsive" />
+                        </div>
+                        <div class="block-caption">
+                            <div class="text-title"><a href="javascript:void(0)">优管社区</a></div>
+                            <div class="text-price"><a href="#"><i class="icon-ep-s"></i>优管APP</a><a href="#"><i class="icon-sina-weibo"></i>优管微博</a><a href="#"><i class="icon-wexin-i"></i>优管公众号</a></div>
+                        </div>
+                    </div>
+                </div>
+                @if (docList != null)
+                {
+                    SHOW_SIZE = 6;
+                    if (docList.Count > SHOW_SIZE || docList.Count == SHOW_SIZE)
+                    {
+                        int middleSize = 3;
+                        List<IndexDocView> firstDocs = docList.Take(middleSize).ToList();
+
+
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12 event-news">
+                            <div class="block">
+                                @foreach (IndexDocView dv in firstDocs)
+                                {
+                                    string picName = dv.Pic.Url;
+
+                                    <div class="event-block">
+                                        <a href="/Cms/Doc/Details/@dv.Doc.Url">
+                                            <div class="cover-small">
+                                                <div class="cover">
+                                                    <img src="@(path + picName)" class="img-responsive" alt="Responsive image">
+                                                </div>
+                                            </div>
+                                            <div class="event-info">
+                                                <span>@dv.Doc.Title</span>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        List<IndexDocView> secondDocs = docList.Skip(middleSize).Take(middleSize).ToList();
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12 event-news">
+                            <div class="block">
+                                @foreach (IndexDocView dv in secondDocs)
+                                {
+                                    string picName = dv.Pic.Url;
+
+                                    <div class="event-block">
+                                        <a href="/Cms/Doc/Details/@dv.Doc.Url">
+                                            <div class="cover-small">
+                                                <div class="cover">
+                                                    <img src="@(path + picName)" class="img-responsive" alt="Responsive image">
+                                                </div>
+                                            </div>
+                                            <div class="event-info">
+                                                <span>@dv.Doc.Title</span>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xm-12">
+                    <div class="block block-type-1">
+                        <a href="javascript:void(0)">
+                            <div class="cover">
+                                <img src="/content/images/index-section-14-2.jpg" class="img-responsive" />
+                            </div>
+                        </a>
+                        <div class="block-caption block-resolve">
+                            <div class="text-title">解决方案</div>
+                            <div class="text-price"><a href="#">集专家之精华</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix visible-xs"></div>
+            </div>
+
+
+
+        </div>
+
+    }
+
+
+
+
+
+</div>
+
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script src="~/Content/js/home/AttachmentUpload.js"></script>
+<script>
+
+    $(document).ready(function () {
+
+        var uploader = createUpload("container", "pickfiles", "filelist", "console");
+
+        uploader.bind("FileUploaded", function (up, file, info) {
+
+            var result = $.parseJSON(info.response);
+            if (result.status == "success") {
+                var url = result.url;
+                var hidden = "<input type='hidden' name='hdAttachmentUrl' value='" + url + "' />";
+                //var hidden = "<input type='text' name='hdAttachmentUrl' value='" + url + "' />";
+                $("#dvUrlHidden").append(hidden);
+            }
+            else {
+                $("#console").html(result.msg);
+
+            }
+
+
+        });
+
+        uploader.init();
+
+
+        $("#btnInquiry").click(function () {
+
+            var inquiryName = $("[name='inquiryName']").val();
+            var inquiryPhone = $("[name='inquiryPhone']").val();
+            var inquiryEmail = $("[name='inquiryEmail']").val();
+            var inquiryProject = $("[name='inquiryProject']").val();
+
+            var attachmentUrlList = new Array();
+
+            $("[name='hdAttachmentUrl']").each(function () {
+                var url = $(this).val();
+                attachmentUrlList.push(url);
+            });
+
+
+            var content = "姓名：" + inquiryName + " <br/>";
+            content += "电话：" + inquiryPhone + " <br/>";
+            content += "邮箱：" + inquiryEmail + " <br/>";
+            content += "项目情况：" + inquiryProject + " <br/>";
+
+            var encContentForm = encodeURI(content);
+            PostInquiry(encContentForm, attachmentUrlList);
+
+        });
+
+    });
+
+    //清空
+    function ClearInquiryForm() {
+        $("[name='inquiryName']").val("");
+        $("[name='inquiryPhone']").val("");
+        $("[name='inquiryEmail']").val("");
+        $("[name='inquiryProject']").val("");
+        $("#dvUrlHidden").html("");
+
+        $("#console").html("");
+        $("#filelist").html("");
+
+    }
+
+    //提交询价
+    function PostInquiry(content, attachmentUrlList) {
+        $.ajax({
+            type: 'post',
+            url: "/Home/IndexInquiry",
+            data: { content: content, attachmentUrlList: attachmentUrlList },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    $("#btnInquiryClose").click();//关闭询价框
+
+                    //清空原有选项
+                    ClearInquiryForm();
+                }
+                else if (result.status == "error") {
+
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+    }
+
+
+
+
+
+</script>
+

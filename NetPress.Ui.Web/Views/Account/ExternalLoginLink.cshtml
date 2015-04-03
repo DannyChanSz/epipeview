@@ -1,0 +1,58 @@
+﻿@model NetPress.Ui.Web.Models.LoginViewModel
+@{
+    ViewBag.Title = "关联";
+    string provider = ViewBag.LoginProvider;
+    switch (provider)
+    {
+        case "QQConnect":
+            provider = "QQ账号";
+            break;
+        default:
+            break;
+    }
+}
+<div class="container">
+
+
+    <h3>关联你的本站帐户</h3>
+
+    @using (Html.BeginForm("ExternalLoginLink", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <p class="text-info">
+            你已成功使用 <strong>@provider</strong> 进行登录。
+            如果您有本站账号，请在下面输入此站点的用户名（Email），和密码
+            如果您没有本站账号，请在下面输入您的Email,和您将要使用的密码，
+            然后单击“关联”按钮关联本站账号
+        </p>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-default" value="关联" />
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,67 @@
+﻿@model NetPress.Models.ExpandProperty
+
+@{
+    ViewBag.Title = "Delete";
+    string errorMsg = ViewBag.ErrorMsg == null ? "" : ViewBag.ErrorMsg;
+}
+
+<h2>删除</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+
+    <hr />
+    <input type="hidden" id="hdErrorMsg" value="@errorMsg">
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PropertyType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PropertyType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DefaultValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DefaultValue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsRequired)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsRequired)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsInfluenceToPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsInfluenceToPrice)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input id="sbDelete" type="submit" value="删除" class="btn btn-default" /> |
+            @Html.ActionLink("返回", "Index")
+        </div>
+    }
+</div>
+<script src="/Content/js/admin/showErrorMsg.js"></script>

@@ -1,0 +1,246 @@
+﻿@using NetPress.Models;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Product product = ViewBag.Product;
+    string path = "/Uploaded/Original/";
+
+
+    List<Pic> indexPics =  ViewBag.IndexPics;
+    List<Pic> listPics =  ViewBag.ListPics;
+    List<Pic> detailPics =ViewBag.DetailPics;
+
+}
+
+
+<h1>@product.Name</h1>
+<input type="hidden" id="hdProductId" value="@product.ProductId" />
+<div >
+    <div id="dvIndex" class="uploadClass" >
+        <h3>首页图片</h3>
+        @{
+            string indexPicName = "";
+            if (indexPics != null && indexPics.Count > 0)
+            {
+                indexPicName = indexPics.First().Url;
+            }
+
+        }
+        <img src="@(path + indexPicName)" id="imgIndex" name="pickfiles"   class="imgShow" style="width:150px;height:150px;">
+        @*<div >
+            <a id="pickfiles_1" name="pickfiles" href="javascript:;">[选择图片]</a>
+        </div>*@
+    </div>
+
+    <div id="dvList" class="uploadClass" >
+        <h3>列表页图片</h3>
+        @{
+            string listPicName = "";
+            if (listPics != null && listPics.Count > 0)
+            {
+                listPicName = listPics.First().Url;
+            }
+
+        }
+        <img src="@(path + listPicName)" id="imgList" name="pickfiles"  class="imgShow" style="width:150px;height:150px;">
+        @*<div >
+            <a id="pickfiles_2" name="pickfiles" href="javascript:;">[选择图片]</a>
+        </div>*@
+    </div>
+</div>
+<div>
+    <div id="detailList" class="uploadClass">
+        <h3>详细页图片</h3>
+        <div id="dvDetailCheck">
+            @{
+                string picSrc_1 = "";
+                string picSrc_2 = "";
+                string picSrc_3 = "";
+                string picSrc_4 = "";
+                string picSrc_5 = "";
+
+                if (detailPics != null && detailPics.Count > 0)
+                {
+                    Pic pic_1 = detailPics.FirstOrDefault(m => m.SubTypeTag == "产品详细-1");
+                    Pic pic_2 = detailPics.FirstOrDefault(m => m.SubTypeTag == "产品详细-2");
+                    Pic pic_3 = detailPics.FirstOrDefault(m => m.SubTypeTag == "产品详细-3");
+                    Pic pic_4 = detailPics.FirstOrDefault(m => m.SubTypeTag == "产品详细-4");
+                    Pic pic_5 = detailPics.FirstOrDefault(m => m.SubTypeTag == "产品详细-5");
+
+                    picSrc_1 = pic_1 == null ? "" : path + pic_1.Url;
+                    picSrc_2 = pic_2 == null ? "" : path + pic_2.Url;
+                    picSrc_3 = pic_3 == null ? "" : path + pic_3.Url;
+                    picSrc_4 = pic_4 == null ? "" : path + pic_4.Url;
+                    picSrc_5 = pic_5 == null ? "" : path + pic_5.Url;
+                }
+            }
+
+            <img id="imgDetail1" src="@picSrc_1" data-subType="产品详细-1"  name="pickfiles" class="imgShow" style="width:150px;height:150px;">
+            <img id="imgDetail2" src="@picSrc_2" data-subtype="产品详细-2"  name="pickfiles" class="imgShow" style="width:150px;height:150px;">
+            <img id="imgDetail3" src="@picSrc_3" data-subtype="产品详细-3"  name="pickfiles" class="imgShow" style="width:150px;height:150px;">
+            <img id="imgDetail4" src="@picSrc_4" data-subtype="产品详细-4"  name="pickfiles" class="imgShow" style="width:150px;height:150px;">
+            <img id="imgDetail5" src="@picSrc_5" data-subtype="产品详细-5"  name="pickfiles" class="imgShow" style="width:150px;height:150px;">
+        </div>
+
+    </div>
+</div>
+<div>
+    <input type="button" id="btnSave" value="保存" />
+</div>
+<div>
+
+    @Html.ActionLink("返回", "Index", "Products", new { Area = "Admin" }, null)
+</div>
+
+@section Scripts {
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+@*<script src="~/Scripts/jquery-1.10.2.js"></script>*@
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script src="~/Content/js/uploadArea/newUploadImage.js"></script>
+<script>
+    var path = "/Uploaded/Original/";
+    $(document).ready(function () {
+
+        //上传控件初始化
+        $("[name='pickfiles']").each(function () {
+            var pickfilesId = $(this).attr("id");
+            var uploader = UpLoaderInit(pickfilesId);
+
+            //var parent = $(this).parents(".uploadClass");
+            //var parentId = parent.attr("id");
+
+            //if (parentId != "detailList") {//首页列表
+            //    uploader.bind("FileUploaded", function (up, file, info) {
+            //        var url = $.parseJSON(info.response).url;
+            //        parent.find(".imgShow").attr("src", path + url);
+            //        parent.find(".imgShow").attr("data-state", "edit");
+                   
+            //    });
+            //}
+            //else//详细
+            //{
+            //    uploader.bind("FileUploaded", function (up, file, info) {
+            //        var url = $.parseJSON(info.response).url;
+            //        var src = path + url;
+            //        var dataName = url;
+
+            //        var imgDoc = "<img src='" + src + "'  data-name='" + dataName + "' class='imgShow' data-state='edit' style='width:150px;height:150px;'>";
+            //        var aDoc = "<a href='javascript:void(0)' name='aDeleteDetailImg' >删除</a>";
+            //        var divDoc = "<div name='dvDetailItem'>" + imgDoc + aDoc + "</div>";
+            //        $("#dvDetailCheck").append(divDoc);
+            //    });
+            //}
+           
+            uploader.bind("FileUploaded", function (up, file, info) {
+                var url = $.parseJSON(info.response).url;
+                $("#" + pickfilesId).attr("src", path + url);
+                $("#" + pickfilesId).attr("data-state", "edit");
+
+            });
+          
+            var pickfilesDoc = this;
+            uploader.bind("Error", function (up, err) {
+                alert("错误：" + err.message);
+                //$("#" + pickfilesId).append("<p>错误：" + err.message + "</p>")
+
+            });
+            
+
+            uploader.init();
+        })
+
+        //从详细中排除选项
+        ////jquery 1.7以后开始抛弃live()使用.on()。 dvNewDetailImg为父节点ID
+        $("#dvDetailCheck").on('click', "[name='aDeleteDetailImg']", function () {
+            DeleteDetails($(this));
+        })
+
+        //保存
+        $("#btnSave").click(function () {
+            var picList = FormatPics();
+            if (picList.length > 0) {
+                AddProductPicture(picList);
+            }
+        });
+
+    });
+
+
+    //图片模型
+    function PicModel() {
+        this.Url;
+        this.SubTypeTag;
+    }
+
+    //把选项格式化json数据
+    function FormatPics()
+    {
+        var picArr = new Array();
+        var index = 0;
+
+        $(".imgShow").each(function () {
+            var id = $(this).attr("id");
+            var name = $(this).attr("src");
+            if ($(this).attr("data-state") == "edit") {
+                var pic = new PicModel();
+                pic.Url = name;
+
+                if (id == "imgIndex")//首页
+                {
+                    pic.SubTypeTag = "产品首页";   
+                }
+                else if (id == "imgList")//列表页
+                {
+                    pic.SubTypeTag = "产品列表";
+                }
+                else {
+                    pic.SubTypeTag = $(this).attr("data-subType");
+                }
+
+                picArr[index] = pic;
+                index++;
+            }
+        });
+        return picArr;
+    }
+
+    /*---------------交互部分-----------------*/
+    //添加产品图片关系
+    function AddProductPicture(picArr) {
+        var productId = $("#hdProductId").val();
+        $.ajax({
+            type: 'post',
+            url: "/UploadArea/ImageUpload/AddProductPicture",
+            data: { "productId": productId, "picArr": picArr },
+            success: function (result) {
+                if (result.status == "success") {
+      
+                    location.href = "/Admin/Products/Index";
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

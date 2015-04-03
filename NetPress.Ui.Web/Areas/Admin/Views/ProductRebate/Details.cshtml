@@ -1,0 +1,34 @@
+﻿@model NetPress.Models.ProductRebate
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProductRebate</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductPrice.ProductPriceId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductPrice.ProductPriceId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RebateValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RebateValue)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ProductRebateId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,82 @@
+﻿@using NetPress.Models;
+
+@{
+    ViewBag.Title = "AddDoc";
+
+    string type = ViewBag.type;
+
+    string SpecialTopicId = ViewBag.SpecialTopicId;
+    
+    List<Doc> Docs = ViewBag.Docs;
+}
+
+<h2>AddDoc</h2>
+
+<input type="hidden" value="@SpecialTopicId" id="hidvalue">
+
+@if (Docs != null && Docs.Count > 0)
+{
+    <table>
+        <tr>
+            <th>标题</th>
+            <th>所属分类</th>
+            <th>是否添加</th>
+        </tr>
+
+        @foreach (var item in Docs)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.DocCategory.Name</td>
+                <td><input type="checkbox"  value="@item.DocId" class="selDoc">是否添加</td>
+            </tr>
+        }
+
+    </table>
+}
+
+<input  type="button" id="sub" value="添加"> 
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/ImageUoload.js"></script>
+
+<script>
+    function SpecialTopicItem(SpecialTopicItemId, SpecialTopicId, TopicItemType, ReferenceId)
+    {
+        this.SpecialTopicItemId = SpecialTopicItemId;
+
+        this.SpecialTopicId = SpecialTopicId;
+
+        this.TopicItemType = TopicItemType;
+
+        this.ReferenceId = ReferenceId;
+    }
+
+    $(document).ready(function () {
+
+        $("#sub").click(function () {
+
+            var ObjArrar = new Array();
+
+            var SpecialTopicId = $("#hidvalue").val();
+
+            $('input:checkbox[class=selDoc]:checked').each(function (i) {
+
+                // str.push($(this).val());
+                var ReferenceId = $(this).val();//文章资讯编号
+
+                var SpecialTopicItemId = "00000000-0000-0000-0000-000000000000";
+
+                var TopicItem = new SpecialTopicItem(SpecialTopicItemId, SpecialTopicId, "文章", ReferenceId);
+
+                ObjArrar.push(TopicItem);
+            });
+
+            //ajax提交 
+            SpecialTopics("/Admin/SpecialTopics/AddSpecialItem", ObjArrar);
+
+
+          //  SpecialTopics("/Admin/SpecialTopics/AddSpecialItem", ObjArrar, "doc", $("#hidvalue").val());
+        });
+    });
+</script>

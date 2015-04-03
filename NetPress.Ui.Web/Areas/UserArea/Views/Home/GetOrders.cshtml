@@ -1,0 +1,700 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    ViewBag.Title = "GetOrders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<OrderView> orderViews = ViewBag.OrderViews;
+    string path = "/Uploaded/Original/";
+
+ }
+
+<div class="login">
+    <div class="container">
+        @Html.Partial("_Aside")
+
+        <div class="col-lg-9  col-md-10 col-sm-11">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">我的订单</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>订单商品 </th>
+                            <th>单价 </th>
+                            <th>数量 </th>
+                            <th>应付款 </th>
+                            <th>操作 </th>
+                            <th>订单总额 </th>
+                            <th>订单状态 </th>
+                            <th>支付 </th>
+                        </tr>
+                    </thead>
+
+                    @if (orderViews != null && orderViews.Count > 0)
+                    {
+
+                        foreach (OrderView orderView in orderViews.ToList())
+                        {
+                            int i = 0;
+                            int odvCount = orderView.OrderDetailViews.Count;
+
+                                string className = "";
+                                string attr="";
+                                if (orderView.IsLost || orderView.Order.OrderState != OrderState.待支付)//无效样式
+                                {
+                                    className = "failure";
+                                    attr = "disabled='disabled'";
+                                }
+
+
+                                <tbody name="singleOrder" data-ifchange="false" data-orderid="@(orderView.Order.OrderId)" class="@className">
+                                    @*@if (orderView.IsLost == false )//有效订单 可支付
+                                    {
+                                        <tr class="order-head">
+                                            <td colspan="8">
+                                                <span><input type="checkbox" name="checkOrder" /></span>
+                                                <span class="">@orderView.Order.CreateTime.ToString("yyyy-MM-dd")</span>
+                                                <span class="">订单号：@orderView.Order.Name</span>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                    else//失效订单
+                                    {
+                                        <tr class="order-head">
+                                            <td colspan="8">
+                                                <span><input type="checkbox" disabled="disabled" /></span>
+                                                <span class="">@orderView.Order.CreateTime.ToString("yyyy-MM-dd")</span>
+                                                <span class="">订单号：@orderView.Order.Name</span>
+                                                <span class="@className"></span>
+                                            </td>
+                                        </tr>
+
+                                    }*@
+
+                                    <tr class="order-head">
+                                        <td colspan="8">
+                                            <span><input type="checkbox" name="checkOrder" @attr /></span>
+                                            <span class="">@orderView.Order.CreateTime.ToString("yyyy-MM-dd")</span>
+                                            <span class="">订单号：@orderView.Order.Name</span>
+                                            @if (orderView.IsLost && orderView.Order.OrderState == OrderState.待支付)//已取消的订单显示失效
+                                            { 
+                                            <span class="@className"></span>
+                                            }
+                                        </td>
+                                    </tr>
+
+                                    @foreach (OrderDetailView odv in orderView.OrderDetailViews)
+                                    {
+
+                                        <tr name="singleDetail" data-ifchange="false" data-detailid="@odv.OrderDetail.OrderDetailsId">
+                                            @if (odv.IsLost == true || orderView.Order.OrderState != OrderState.待支付)//失效
+                                            {
+                                                if (odv.LostReason != LostReason.属性组合从不存在) //只有系统错误才会存在else
+                                                {
+                                                    string imgUrl = "";
+                                                    if (odv.Pics != null && odv.Pics.Count > 0)
+                                                    {
+                                                        imgUrl = path + odv.Pics.First().Url;
+                                                    }
+
+
+                                                    <td>
+                                                        <img class="order-img" src="@imgUrl" class="img-responsive" />
+                                                        <div class="event-info">@odv.ProductPrice.Product.Name</div>
+                                                        @if (orderView.Order.OrderState == OrderState.待支付)//可删除
+                                                        {
+                                                            <span class="failure"></span>
+                                                        }
+                                                    </td>
+                                                    <td>@(odv.ProductPrice.Price.ToString("f2"))</td>
+                                                    <td>
+                                                        <input class="change-num reduce" type="button" value="-" disabled="disabled" />
+                                                        <input class="product-num" type="text" value="@(odv.OrderDetail.PurchaseVolume)" readonly="readonly" />
+                                                        <input class="change-num raise" type="button" value="+" disabled="disabled" />
+                                                    </td>
+                                                    <td>@(@odv.OrderDetail.Price.ToString("f2"))</td>
+                                                }
+
+                                                if (orderView.Order.OrderState == OrderState.待支付)//可删除
+                                                {
+                                                    <td><font><a href="javascript:void(0)" name="closeDetail">删除</a></font></td>
+                                                }
+                                                else
+                                                {
+                                                    <td><font><span>删除</span></font></td>
+                                                }
+                                                @*else//失效子项 不存在任何事件或操作
+                                                    {
+
+                                                        <td>
+                                                            <img class="order-img" src="" class="img-responsive" />
+                                                            <div class="event-info">@odv.ProductPrice.Product.Name</div>
+                                                            <span class="failure"></span>
+                                                        </td>
+                                                        <td>￥@(odv.ProductPrice.Price)</td>
+                                                        <td>
+                                                            <input class="change-num reduce" type="button" value="-" disabled="disabled" />
+                                                            <input class="product-num" type="text" value="@(odv.OrderDetail.PurchaseVolume)" readonly="readonly" />
+                                                            <input class="change-num raise" type="button" value="+" disabled="disabled" />
+                                                        </td>
+                                                        <td>￥@(@odv.OrderDetail.Price)</td>
+                                                        <td><font><a href="javascript:void(0)" name="closeDetail">删除</a></font></td>
+
+
+                                                    }*@
+
+
+                                            }
+                                            else//有效
+                                            {
+
+                                                <td>
+                                                    <img class="order-img" src="@(path + odv.Pics.First().Url)" class="img-responsive" />
+                                                    <div class="event-info"><a href="/Home/Details/@odv.ProductPrice.Product.Url">@odv.ProductPrice.Product.Name</a></div>
+                                                </td>
+                                                <td><span name="detailProductPrice">@(odv.ProductPrice.Price.ToString("f2"))</span></td>
+
+                                                <td>
+                                                    <input class="change-num reduce" type="button" value="-" />
+                                                    <input class="product-num" type="text" name="detailNumber" data-originalnumber="@(odv.OrderDetail.PurchaseVolume)" value="@(odv.OrderDetail.PurchaseVolume)" />
+                                                    <input class="change-num raise" type="button" value="+" />
+                                                </td>
+                                                <td>
+                                                    <span name="detailPrice">@(@odv.OrderDetail.Price.ToString("f2"))</span><br />
+                                                    <span name="tempDetailPrice"></span>
+                                                </td>
+                                                <td><font><a href="javascript:void(0)" name="closeDetail">删除</a></font></td>
+                                            }
+
+                                            @if (i == 0)
+                                            {
+                                                i++;
+
+                                                <td rowspan="@(odvCount)">
+                                                    <span name="singleOrderPrice">@(orderView.Order.Price.ToString("f2"))</span><br />
+                                                    <span name="tempSingleOrderPrice"></span>
+                                                </td>
+                                                if (orderView.Order.OrderState == OrderState.待支付)
+                                                {
+                                                    <td rowspan="@(odvCount)" class="unpaid">@(orderView.Order.OrderState)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td rowspan="@(odvCount)" >@(orderView.Order.OrderState)</td>
+                                                }
+
+                                                <td rowspan="@(odvCount)">
+                                                    @if (orderView.IsLost == false && orderView.Order.OrderState == OrderState.待支付)//有效 待支付
+                                                    {
+                                                        <button type="button" name="toComfirmOrder">立即付款</button><br />
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" disabled="disabled">立即付款</button><br />
+                                                    }
+
+                                                    @if (orderView.Order.OrderState == OrderState.待支付)
+                                                    {
+                                                        <a href="javascript:void(0)" name="closeOrder">取消订单</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>取消订单</span>
+                                                    }
+                                                </td>
+                                            }
+
+
+
+                                        </tr>
+                                    }
+
+                                    <tr class="order-padding">
+                                        <td colspan="7"></td>
+                                    </tr>
+                                </tbody>
+
+
+                        }
+                        <tfoot>
+                            <tr class="order-foot">
+                                <td colspan="8">
+                                    <div>
+                                        @*共1件商品，总金额：<span>￥1800</span><br />*@
+                                        应付金额(不含运费)：<span class="sum-m" name="orderSum">￥0.00</span><br />
+                                        @*全场满99包邮*@ <font><a href="/Home/Index">继续购物>></a></font><br /><br />
+                                        <span class="pay-all">
+                                            <button type="button" id="btnSettlement">马上结算</button>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    }
+
+
+
+
+                </table>
+
+
+
+
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script src="/Content/js/RegExpHelper.js"></script>
+<script>
+    $(document).ready(function () {
+
+        //选择订单
+        CheckOrderEven();
+
+        //立即付款
+        ComfirmOrderEven();
+
+        //订单变更—数量变更
+        $("input[name='detailNumber']").each(function () {
+
+            $(this).keyup(function () {
+
+                var singleDetail = $(this).parents("[name='singleDetail']");
+
+                ReloadDetailPrice(singleDetail);
+
+
+            })
+        });
+
+        //订单变更—订单子项删除
+        $("[name='closeDetail']").each(function () {
+            $(this).click(function () {
+                var singleOrder = $(this).parents("[name='singleOrder']");
+
+                var detailCount = singleOrder.find("[name='singleDetail']").length;
+                var orderId = singleOrder.attr("data-orderid");
+                var priceId = singleOrder.attr("data-priceId");
+
+                if(detailCount==1)//仅有一条订单子项 删除就是关闭订单
+                {
+                    CloseOrder(orderId);
+                }
+                else//存在多条子项 关闭原有订单 重新生成新订单
+                {
+                    var singleDetail = $(this).parents("[name='singleDetail']");
+                    var detailId = singleDetail.attr("data-detailId");
+                    DeleteDetail(orderId, detailId);
+                }
+            })
+        });
+
+        //订单变更—订单删除
+        $("[name='closeOrder']").click(function () {
+            var orderId = $(this).parents("[name='singleOrder']").attr("data-orderid");
+            CloseOrder(orderId);
+        });
+
+        //订单变更 - 马上结算
+        $("#btnSettlement").click(function () {
+
+            var checkedCount = $("input[name='checkOrder']:checked").length;
+
+            if (checkedCount == 0)
+            {
+                alert("请选择要结算的订单");
+            }
+            else if (checkedCount == 1)
+            {
+                var singleOrder =  $("input[name='checkOrder']:checked").parents("[name='singleOrder']");
+                var ifChange = singleOrder.attr("data-ifchange");
+                var orderId = singleOrder.attr("data-orderid");
+
+                if(ifChange=="false")
+                {
+                    ToConfirmOrder(orderId);//不改变直接支付
+                }
+                else
+                {
+                    ComfirmOrder($("input[name='checkOrder']:checked"));//生成单一订单并支付
+                }
+
+            }
+            else
+            {
+                var orderIds = new Array();
+                var changeDetailArr = new Array();
+                var unchangeOrderIds = new Array();
+
+                $("input[name='checkOrder']:checked").each(function () {
+
+                    var singleOrder = $(this).parents("[name='singleOrder']");
+                    var ifChange = singleOrder.attr("data-ifchange");
+                    var orderId = singleOrder.attr("data-orderId");
+
+                    if(ifChange=="true")//改变的订单
+                    {
+
+                        singleOrder.find("[name='singleDetail']").each(function () {
+
+                            var detailId = $(this).attr("data-detailId");
+                            var number = $(this).find("[name='detailNumber']").val();
+
+                            var changeModel = new ChangeItemModel();
+                            changeModel.DetialId = detailId;
+                            changeModel.Number = number;
+
+                            changeDetailArr.push(changeModel);
+                        });
+                        orderIds.push(orderId);
+
+                    }
+                    else//未改变的订单
+                    {
+                        unchangeOrderIds.push(orderId);
+                    }
+
+                    
+                })
+                ChangeOrder(orderIds, changeDetailArr, unchangeOrderIds);
+            }
+
+
+
+        });
+
+    })
+
+    //订单选择事件
+    function CheckOrderEven() {
+
+        //所选订单 显示计算 数据不纳入后台
+        $("input[name='checkOrder']").change(function () {
+            ReloadOrdersSum();
+        })
+    }
+
+    //立即付款事件
+    function ComfirmOrderEven() {
+
+        $("[name='toComfirmOrder']").click(function () {
+   
+            ComfirmOrder(this);
+        });
+
+    }
+
+    function ComfirmOrder(doc)
+    {
+        var singleTable = $(doc).parents("[name='singleOrder']");
+      
+        var ifChange = singleTable.attr("data-ifChange");
+
+        var orderId = singleTable.attr("data-orderId");
+        if (ifChange == "false") {
+            ToConfirmOrder(orderId);
+        }
+        else//改变了数量
+        {
+            var orderIds = new Array();
+            var changeDetailArr = new Array();
+
+            singleTable.find("[name='singleDetail']").each(function () {
+
+                var detailId = $(this).attr("data-detailId");
+                var number = $(this).find("[name='detailNumber']").val();
+
+                var changeModel = new ChangeItemModel();
+                changeModel.DetialId = detailId;
+                changeModel.Number = number;
+
+                changeDetailArr.push(changeModel);
+            });
+
+            orderIds.push(orderId);
+            ChangeOrder(orderIds, changeDetailArr,new Array());
+
+        }
+    }
+
+    //计算订单所有子项价格
+    function ReloadDetailPrice(doc)
+    {
+        var singleOrder = doc.parents("[name='singleOrder']");
+
+        //计算每个子项新价格
+        singleOrder.find("[name='singleDetail']").each(function () {
+            ReloadSingleDetailPrice($(this));
+        })
+
+
+        var ifChange = false;
+        singleOrder.find("[name='singleDetail']").each(function () {
+            if ($(this).attr("data-ifchange") == "true") {
+                ifChange = true;
+            }
+
+        })
+
+        if (ifChange == false)
+        {
+            singleOrder.find("[name='tempDetailPrice']").html("");
+        }
+
+
+        ReloadOrderPrice(singleOrder);
+    }
+
+    //重新计算订单子项价格小计（doc:包裹所有信息的父节点）
+    function ReloadSingleDetailPrice(doc)
+    {
+        var singleOrder = doc.parents("[name='singleOrder']");
+
+        var detailNumberDoc= $(doc).find("input[name='detailNumber']");
+        var number = detailNumberDoc.val();
+        var originalNumber = detailNumberDoc.attr("data-originalnumber");
+
+        //数量异常输入
+        if (!RegExpHelper.isPositiveInt(number)) {//异常输入 非正整数
+            var defaultNumber = 1;//错误默认数量
+            detailNumberDoc.val(defaultNumber);
+            number = defaultNumber;
+        }
+
+        var ifChange = false;
+        singleOrder.find("[name='singleDetail']").each(function(){
+            if($(this).attr("data-ifchange")=="true")
+            {
+                ifChange=true;
+            }
+
+        })
+
+
+        if (originalNumber != number || ifChange)//原有数量以被改变
+        {
+            var productPrice = doc.find("[name='detailProductPrice']").html();//产品价格
+            var newDetailPrice = number * parseFloat(productPrice);
+            $(doc).find("[name='tempDetailPrice']").html(newDetailPrice.toFixed(2));//显示新价格
+            //禁用原有价格
+            //$(doc).find("[name='detailPrice']").attr("class",);
+
+            if (originalNumber != number) {
+                doc.attr("data-ifchange", "true");
+            }
+            else
+            {
+                doc.attr("data-ifchange", "false");
+            }
+        }
+        //else
+        //{
+        //    $(doc).find("[name='tempDetailPrice']").html("");
+        //    //解用原有价格
+        //    //$(doc).find("[name='detailPrice']").css();
+        //    doc.attr("data-ifchange", "false");
+
+        //}
+
+
+    }
+
+
+
+
+    //重新计算订单价格 （doc:包裹所有信息的父节点）
+    function ReloadOrderPrice(doc)
+    {
+        var ifChange = false;
+        var orderPrice = 0;
+        doc.find("[name='singleDetail']").each(function () {
+
+            var detailIfChange = $(this).attr("data-ifchange");
+
+            if (detailIfChange == "true") {
+                var detailPrice = $(this).find("[name='tempDetailPrice']").html();
+                orderPrice += parseFloat(detailPrice);
+                ifChange = true;
+            }
+            else if(detailIfChange == "false")
+            {
+                var detailPrice = $(this).find("[name='detailPrice']").html();
+                orderPrice += parseFloat(detailPrice);
+            }
+
+        });
+
+        if (ifChange) {
+            doc.find("[name='tempSingleOrderPrice']").html(orderPrice.toFixed(2));
+            doc.attr("data-ifchange", "true");
+        }
+        else
+        {
+            doc.find("[name='tempSingleOrderPrice']").html("");
+            doc.attr("data-ifchange", "false");
+        }
+
+        ReloadOrdersSum();
+    }
+
+    //重新计算所选订单总额
+    function ReloadOrdersSum()
+    {
+        var sum = 0;
+        $("[name='checkOrder']").each(function () {
+            if (this.checked) {
+                var singlePrice = 0;
+                if ($(this).parents("[name='singleOrder']").attr("data-ifchange") == "true") {
+                    singlePrice = $(this).parents("[name='singleOrder']").find("[name='tempSingleOrderPrice']").html();
+                }
+                else {
+                    singlePrice = $(this).parents("[name='singleOrder']").find("[name='singleOrderPrice']").html();
+                }
+
+                sum += parseFloat(singlePrice);
+            }
+        });
+        $("[name='orderSum']").html("￥" + sum.toFixed(2));
+    }
+
+    /*-----------交互部分-------------*/
+    //跳转订单确认页
+    function ToConfirmOrder(orderId)
+    {
+        location.href = "/ShoppingArea/Order/ConfirmOrder/" + orderId;
+    }
+
+
+    //关闭订单
+    function CloseOrder(orderId)
+    {
+        $.ajax({
+            type: 'post',
+            url: "/UserArea/Home/CloseOrder",
+            data: { "orderId": orderId },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    //刷新
+                    location.href = "/UserArea/Home/GetOrders";
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+
+    }
+
+    //删除订单子项
+    function DeleteDetail(orderId, detailId)
+    {
+        $.ajax({
+            type: 'post',
+            url: "/UserArea/Home/DeleteOrderDetail",
+            data: { "orderId": orderId, "detailId": detailId },
+            success: function (result) {
+                if (result.status == "success") {
+                    //var orderId = result.orderId;
+                    //if (orderId != null && orderId != "undefined") {
+                    //    ToConfirmOrder(detailId);
+                    //}
+
+                    //刷新
+                    location.href = "/UserArea/Home/GetOrders";
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+
+    //修改订单
+    function ChangeOrder(orderIds,changeItems,unChangeOrderIds)
+    {
+
+        $.ajax({
+            type: 'post',
+            url: "/UserArea/Home/ChangeOrder",
+            //data: { "orderIds": orderIds, "changeItems": changeItems, "unChangeOrderIds": unChangeOrderIds },
+            data: { "orderIds": orderIds, "changeItems": changeItems, "unChangeOrderIds": unChangeOrderIds },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    var newOrderId = result.orderId;
+                    ToConfirmOrder(newOrderId);
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+    //订单修改 子项模型
+    function ChangeItemModel()
+    {
+        this.DetialId;
+        this.Number;
+    }
+
+
+</script>
+
+<!--紫娟童鞋的js--->
+<script>
+
+    $(".raise").click(function () {
+        console.log($(this).siblings(".product-num").val());
+        var num = $(this).siblings(".product-num").val();
+        num++;
+        $(this).siblings(".product-num").val(num);
+        $(".product-num").change(function () {
+            num = $(this).val();
+        });
+
+        var singleDetail = $(this).parents("[name='singleDetail']");
+
+        ReloadDetailPrice(singleDetail);
+
+    });
+    $(".reduce").click(function () {
+        var num = $(this).siblings(".product-num").val();
+        if (num > 1) {
+            num--;
+            $(this).siblings(".product-num").val(num);
+        }
+        $(".product-num").change(function () {
+            num = $(this).val();
+        });
+
+        var singleDetail = $(this).parents("[name='singleDetail']");
+
+        ReloadDetailPrice(singleDetail);
+
+    });
+
+
+</script>

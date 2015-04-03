@@ -1,0 +1,81 @@
+﻿@model NetPress.Models.CustomerRight
+@using NetPress.Models;
+
+@{
+    ViewBag.Title = "Create";
+
+    List<RightModule> RightModules = ViewBag.RightModules;
+}
+<h2>新建</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>CustomerRight</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.CustomerRoleId, "CustomerRoleId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CustomerRoleId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CustomerRoleId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RightModuleId, "RightModuleId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @* @Html.DropDownList("RightModuleId", null, htmlAttributes: new { @class = "form-control" })*@
+             @*   @Html.ValidationMessageFor(model => model.RightModuleId, "", new { @class = "text-danger" })*@
+
+                @if (RightModules != null && RightModules.Count > 0)
+                {
+                    foreach (var item in RightModules)
+                    {
+                        <input type="checkbox" class="RightSel"  value="@item.RightModuleId">@item.Name
+                    }
+                }
+            </div>
+        </div>
+        <input type="hidden" id="checkedstr" name="checkedstr" value="" />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script>
+    
+    $(document).ready(function () {
+        //选中checkbox
+        $(".RightSel").click(function(){
+            var CheckedStr = GetCheckedList();
+            $("#checkedstr").val(CheckedStr);
+           // alert($("#checkedstr").val());
+        });
+    });
+
+    //获取选中的权限
+    function GetCheckedList()
+    {
+        var str = new Array();
+        $('input:checkbox[class=RightSel]:checked').each(function (i) {
+            str.push($(this).val());
+        });
+        return str;
+    }
+
+   
+
+</script>

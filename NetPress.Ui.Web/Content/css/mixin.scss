@@ -1,0 +1,47 @@
+﻿@mixin rounded-clear {
+    border-radius: 0;
+}
+
+@mixin main-font {
+    font: {
+        family: '微软雅黑',"Microsoft YaHei",'黑体' !important;
+        weight: 600;
+    }
+}
+
+@mixin heading-font {
+    font: {
+        family: '微软雅黑',"Microsoft YaHei",'黑体' !important;
+        weight: 900;
+    }
+}
+
+/*阴影*/
+
+@mixin shadow {
+    -webkit-filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
+    -moz-filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
+    -ms-filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
+    box-shadow: rgba(0,0,0,.3) 1px 1px 5px;
+    /* 投影数字顺序依次是：右边 下边 投影模糊大小 */
+    /* 内阴影数字顺序依次是：左边 上边 阴影模糊大小 */
+}
+
+@mixin clear-shadow {
+    -webkit-filter: initial;
+    -moz-filter: initial;
+    -ms-filter: initial;
+    filter: initial;
+    -webkit-box-shadow: initial;
+    box-shadow: initial;
+}
+
+/*圆角*/
+@mixin rounded-clear{
+     -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+}

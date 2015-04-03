@@ -1,0 +1,42 @@
+﻿@model NetPress.Models.OrderRebate
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>OrderRebate</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Order.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Order.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Referee.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Referee.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RebateValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RebateValue)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.OrderRebateId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,49 @@
+﻿@model NetPress.Models.ProductPropertyMapping
+
+@{
+    ViewBag.Title = "Delete";
+    Guid productId = ViewBag.ProductId;
+}
+
+<h2>删除</h2>
+
+
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductProperty.ExpandProperty.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductProperty.ExpandProperty.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Provalue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Provalue)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="删除" class="btn btn-default" /> |
+            @Html.ActionLink("返回", "GetByProductId", new { id = productId })
+        </div>
+    }
+</div>

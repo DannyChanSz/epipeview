@@ -1,0 +1,247 @@
+﻿@using NetPress.Models
+@using NetPress.ViewModels
+@{
+    Layout = null;
+
+    List<ProductCategory> onlineCategoryList = ViewBag.SelectCategory;//分类选项
+    List<SelectBoxListView> selectCategroyList = ViewBag.SelectCategroyList;//拓展属性选项
+
+    ProductCategory category = ViewBag.Category;//当前分类
+    string categoryUrl = category.url;
+    List<ProductCategory> CategoryParents = ViewBag.CategoryParents;
+
+}
+
+<div id="productFilter">
+    <div class="container">
+
+
+
+        <input type="hidden" name="selectValue" />
+        <input type="hidden" id="hdCategoryUrl" value="@categoryUrl" />
+        <div class="row">
+            <div class="col-lg-12 filter-point" onclick="$('.product-filter').toggle();"><i class="icon-filter-i"></i>筛选</div>
+            <div style="clear:both;">
+                <div class="col-lg-12 product-filter">
+                    <ul>
+                        @if (selectCategroyList != null && selectCategroyList.Count > 0)
+                        {
+                            foreach (SelectBoxListView selBoxList in selectCategroyList)
+                            {
+                                <li>
+                                    <ul name="ulSingleExpand">
+                                        <li><span name="expandName" data-name="@selBoxList.SelectExpandName" class="products-filter-title">@selBoxList.SelectExpandName：</span></li>
+                                        <li><a class="second-li" name="aUnlimited" href="javascript:void(0)">不限</a></li>
+                                        @foreach (SelectBoxItemView box in selBoxList.SelectBoxItems)
+                                        {
+                                            <li>
+                                                <a href="javascript:void(0)">
+                                                    <span name="selectItem" data-expandid="@selBoxList.SelectExpandId" data-itemname="@box.Name" date-checkstate="false" class="ItemUnCheck">@box.Name</span>
+                                                </a>
+                                            </li>
+                                        }
+                                        
+                     
+                                        @*<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                            <div class="selectBox">
+                                                <ul>
+                                                    @foreach (SelectBoxItemView box in selBoxList.SelectBoxItems)
+                                                    {
+                                                        <li>
+                                                            <a href="javascript:void(0)">
+                                                                <span name="selectItem" data-expandid="@selBoxList.SelectExpandId" data-itemname="@box.Name" date-checkstate="false" class="ItemUnCheck">@box.Name</span>
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>*@
+
+
+                                        <div style="clear:both"></div>
+                                    </ul>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--测试样式-->
+<style>
+        .ItemChecked {
+              color: red;
+        }
+
+        .ItemUnCheck {
+              /*color: black;*/
+        }
+
+    </style>
+<script src="/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //选择事件
+        $("[name='selectItem']").each(function () {
+            $(this).click(function () {
+                ItemState(this);
+                ReloadProducts();
+            })
+        })
+
+        //不限
+        $("[name='aUnlimited']").each(function () {
+
+            $(this).click(function () {
+                $(this).parents("ul [name='ulSingleExpand']").find("[name='selectItem']").each(function () {
+                    $(this).attr("date-checkState", "false");
+                    $(this).attr("class", "ItemUnCheck");
+                })
+                ReloadProducts();
+            })
+
+        })
+
+
+
+        LoadPagination();
+
+
+        //品牌搜索 模拟点击
+        var searchBrand = $("#hdSearchBrand").val();
+        if (searchBrand != "") {
+
+            $("[name='selectItem']").each(function () {
+                //var brandName = $.trim($(this).attr("data-itemname"));
+                var brandName = $(this).attr("data-itemname");
+                if (brandName == searchBrand) {
+                    $(this).click();
+                }
+            })
+
+        }
+    });
+
+    //选中与否
+    function ItemState(doc) {
+        var oldState = $(doc).attr("date-checkState");
+        var newState = "";
+        if (oldState == "false") {
+            $(doc).attr("date-checkState", "true");
+            $(doc).attr("class", "ItemChecked");
+            return true;
+        }
+        else {
+            $(doc).attr("date-checkState", "false");
+            $(doc).attr("class", "ItemUnCheck");
+            return false;
+        }
+    }
+
+    //查询条件实体
+    function Conditions() {
+        this.ExpandId;
+        this.Items;
+    }
+
+    //多选子项
+    function ConditionItems() {
+        this.Name;
+    }
+
+    //查询条件数组是否已存在该拓展的选项
+    function IsExistExpand(conditionArr, expandId) {
+        if (conditionArr.length > 0) {
+            for (var i = 0; i < conditionArr.length; i++) {
+                if (conditionArr[i].ExpandId == expandId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    //改变选项重新加载产品列表
+    function ReloadProducts() {
+        var conditionsArr = new Array();//条件集
+        $("[name='selectItem'][date-checkstate='true']").each(function () {
+            var isExist = false;
+            //所选项
+            var selectItemName = $(this).attr("data-itemname");
+            var expandId = $(this).attr("data-expandid");
+            var conditionItem = new ConditionItems();
+            conditionItem.Name = selectItemName;
+
+            if (conditionsArr.length > 0) {//重复行判断
+                for (var i = 0; i < conditionsArr.length; i++) {
+                    var tempCondition = conditionsArr[i];
+                    if (tempCondition.ExpandId == expandId) {//已存在同行分类
+                        if (tempCondition.Items == null) {
+                            tempCondition.Items = new Array();
+                        }
+                        tempCondition.Items.push(conditionItem);
+                        isExist = true;
+                    }
+                }
+            }
+
+            if (!isExist)//需要新增分类 才可在其下添加选项
+            {
+                var conditionsCategory = new Conditions();
+                conditionsCategory.ExpandId = expandId;
+                conditionsCategory.Items = new Array();
+                conditionsCategory.Items.push(conditionItem);
+
+                conditionsArr.push(conditionsCategory);
+            }
+        });
+        var strJsonConditions = JSON.stringify(conditionsArr);
+
+        $("[name='selectValue']").val(strJsonConditions);
+        //$("#selectForm").submit();
+
+        //$("#dvSelectProducts")
+        ReloadSelectProducts(strJsonConditions, 1);
+    }
+
+    //更新产品列表信息（更新Lsit页dvSelectProducts内容）
+    function ReloadSelectProducts(selectValue, page) {
+        var url = $("#hdCategoryUrl").val();
+
+        //下单页面
+        $.ajax({
+            type: 'post',
+            url: "/Home/SelectProducts",
+            data: { "url": url, "page": page, "selectValue": selectValue },
+            success: function (result) {
+                $("#dvSelectProducts").html(result);
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+    }
+
+    //绑定分页按钮
+    function LoadPagination() {
+
+        $("#dvSelectProducts").on('click', "[name='pageChange']", function () {
+            var selectValue = $("[name='selectValue']").val();
+            var page = $(this).attr("data-page");
+            ReloadSelectProducts(selectValue, page);
+        });
+        //$(".pagination").on('click', "[name='pageChange']", function () {
+        //    var page = $(this).attr("data-page");
+        //    ReloadSelectProducts(selectValue, page);
+        //});
+    }
+
+
+
+
+
+</script>

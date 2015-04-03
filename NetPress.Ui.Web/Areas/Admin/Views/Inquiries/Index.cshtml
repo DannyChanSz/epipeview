@@ -1,0 +1,107 @@
+﻿@model IEnumerable<NetPress.ViewModels.InquiryFileView>
+
+@{
+    ViewBag.Title = "Index";
+    string path = "/Uploaded/Original/";
+}
+
+<h2>询价管理</h2>
+
+<p>
+    @*@Html.ActionLink("Create New（测试用）", "Create")*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Inquiry.Customer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Inquiry.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Inquiry.Adress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Inquiry.Requirement)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Inquiry.ContactInfo)
+        </th>
+        <th>
+            附件
+        </th>
+        <th>
+            处理结果
+        </th>
+        <th>操作</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inquiry.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inquiry.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inquiry.Adress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inquiry.Requirement)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inquiry.ContactInfo)
+        </td>
+        <td>
+            @if (item.Files != null && !(string.IsNullOrEmpty( item.Files.Url)))
+            {
+                <a href="javascript:void(0)" name="aFileDownLoad" data-url="@(path + item.Files.Url)" >下载</a>
+            }
+            else
+            {
+                <p>无附件</p>
+            }
+        </td>
+        <td>
+            @if (item.InquiryResult==null)
+            {
+                <p>未处理</p>
+            }
+            else
+            {
+                <p>@item.InquiryResult.InquiryResultType</p>
+            }
+        </td>
+        <td>
+            @*@Html.ActionLink("Edit", "Edit", new { id = item.Inquiry.InquiryId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Inquiry.InquiryId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Inquiry.InquiryId }) |*@
+            @if (item.InquiryResult==null)
+            {
+                @Html.ActionLink("关闭询价单/", "Delete", new { id = item.Inquiry.InquiryId }) 
+                @*@Html.ActionLink("关闭询价单 |", "CloseInquiry", new { InquiryId = item.Inquiry.InquiryId })*@ 
+                @Html.ActionLink("分配询价订单 |", "ReassignedOrder", "Orders", new { InquiryId = item.Inquiry.InquiryId }, null) 
+            }
+            
+
+        </td>
+    </tr>
+}
+
+</table>
+<script>
+    $(document).ready(function(){
+    
+        $("[name='aFileDownLoad']").each(function () {
+            $(this).click(function () {
+                var url = $(this).attr("data-url");
+                window.open(url);
+
+            });
+
+        })
+
+    });
+
+</script>

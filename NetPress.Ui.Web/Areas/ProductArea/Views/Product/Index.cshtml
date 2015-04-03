@@ -1,0 +1,233 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    //List<ProductCategory> categoryList = ViewBag.CategoryList;
+    string path = "/Uploaded/Original/";
+    List<IndexCategoryView> indexCategoryViewList = ViewBag.IndexCategoryList;
+
+    List<IndexProductView> RecommendProductList= ViewBag.RecommendProductList ;//推荐产品
+    
+    List<IndexProductView> LowPriceProductList = ViewBag.LowPriceProductList;//高性价比产品
+    
+    int SHOW_SIZE = 8;//显示总数
+
+}
+<div id="main" class="index-main">
+
+    @*----------顶部----------*@
+    <div id="index-carousel">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    <div id="index-owl-1" class="owl-carousel owl-theme">
+                        <div class="item"><img src="/content/images/index-carousel-1.jpg" class="img-responsive" /></div>
+                        <div class="item"><img src="/content/images/index-carousel-2.jpg" class="img-responsive" /></div>
+                        <div class="item"><img src="/content/images/index-carousel-3.jpg" class="img-responsive" /></div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12">
+
+                    <div class="row" id="index-4-block">
+                        <div class="col-lg-6 col-md-6 col-sm-3 col-xs-6">
+                            <img src="/content/images/index-1.jpg" class="img-responsive" />
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-3 col-xs-6">
+                            <img src="/content/images/index-2.jpg" class="img-responsive" />
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-3 col-xs-6">
+                            <img src="/content/images/index-3.jpg" class="img-responsive" />
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-3 col-xs-6">
+                            <img src="/content/images/index-4.jpg" class="img-responsive" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @*----------品牌----------*@
+    <div id="section-1" class="container section">
+
+        <div id="index-owl-2" class="owl-carousel owl-theme">
+            <div class="item"><img src="/content/images/index-brand-1.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-2.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-3.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-4.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-5.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-6.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-7.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-8.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-9.png" class="img-responsive" /></div>
+            <div class="item"><img src="/content/images/index-brand-10.png" class="img-responsive" /></div>
+
+        </div>
+
+    </div>
+    @*--------推荐产品/高性价比--------*@
+    <div id="section-2" class="container section">
+        <div class="row">
+            @*--------推荐产品--------*@
+
+
+            @if (RecommendProductList != null && RecommendProductList.Count > 0)
+            {
+                int i = 0;
+                List<IndexProductView> showList = RecommendProductList.Take(2).ToList();//测试显示2个
+                foreach (IndexProductView product in showList)
+                {
+                    string picName = "";
+                    if (product.ProductPic != null && product.ProductPic.Count > 0)
+                    {
+                        picName = product.ProductPic.First().Url;
+                    }
+                    string minPrice = "";//显示最小价格
+                    string price = product.Product.Price;
+                    string[] priceArr = price.Split('~');
+                    if (priceArr.Count() > 0)
+                    {
+                        minPrice = priceArr[0];
+                    }
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xm-12">
+                        @if (i == 0)//测试
+                        {
+                            <h2>推荐产品</h2>
+                        }
+                        else
+                        {
+                            <h2>&nbsp;</h2>
+                        }
+
+                        <div class="block block-type-1">
+                            <a href="/ProductArea/Product/Details/@product.Product.Url">
+                                <img src="@(path + picName)" class="img-responsive"  />@*--测试大小---*@
+                                <div class="block-caption">
+                                    @*<div class="text-title">@Html.ActionLink(product.Product.Name, "Details", new { url = product.Product.Url })</div>*@
+                                    <div class="text-title">@product.Product.Name</div>
+                                    <div class="text-price">￥@(minPrice)</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                        i++;
+                }
+            }
+
+            @*--------高性价比--------*@
+            @if (LowPriceProductList != null && LowPriceProductList.Count > 0)
+            {
+                for (int i = 0; i < 2; i++)//循环测试数据
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xm-12">
+                        @if (i == 0)//测试
+                        {
+                            <h2>高性价比</h2>
+                        }
+                        else
+                        {
+                            <h2>&nbsp;</h2>
+                        }
+                        <div class="block block-type-2">
+                            @{
+                        List<IndexProductView> showList = LowPriceProductList.Take(3).ToList();//测试显示3个
+                        foreach (IndexProductView product in showList)
+                        {
+                            string picName = "";
+                            if (product.ProductPic != null && product.ProductPic.Count > 0)
+                            {
+                                picName = product.ProductPic.First().Url;
+                            }
+                            string minPrice = "";//显示最小价格
+                            string price = product.Product.Price;
+                            string[] priceArr = price.Split('~');
+                            if (priceArr.Count() > 0)
+                            {
+                                minPrice = priceArr[0];
+                            }
+                            <div class="block-inner-warp">
+                                <a href="/ProductArea/Product/Details/@product.Product.Url">
+                                    <div class="block-img">
+                                        <img src="@(path + picName)" class="img-responsive"  />@*--测试大小---*@
+                                    </div>
+                                    <div class="block-caption">
+                                        @*<div class="text-title">@Html.ActionLink(product.Product.Name, "Details", new { url = product.Product.Url })</div>*@
+                                        <div class="text-title">@product.Product.Name</div>
+                                        <div class="text-price">￥@(minPrice)</div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                            }
+                        </div>
+
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+
+
+
+        @*-------分类产品----------*@
+
+        @if (indexCategoryViewList != null && indexCategoryViewList.Count > 0)
+        {
+            foreach (IndexCategoryView indexCategory in indexCategoryViewList)
+            {
+                <div id="section-3" class="container section">
+                    <div class="section-header">@Html.ActionLink(indexCategory.Category.Name, "List", new { url = indexCategory.Category.url })</div>
+
+                    <div class="row">
+
+                        @if (indexCategory.Products != null && indexCategory.Products.Count > 0)
+                        {
+                            int count = SHOW_SIZE > indexCategory.Products.Count ? indexCategory.Products.Count : SHOW_SIZE;//显示个数
+
+                            List<IndexProductView> indexProductShow = indexCategory.Products.Take(count).ToList();
+                            foreach (IndexProductView indexProduct in indexProductShow)
+                            {
+                                string picName = "";
+                                if (indexProduct.ProductPic != null && indexProduct.ProductPic.Count > 0)
+                                {
+                                    picName = indexProduct.ProductPic.First().Url;
+                                }
+                                string minPrice = "";//显示最小价格
+                                string price = indexProduct.Product.Price;
+                                string[] priceArr = price.Split('~');
+                                if (priceArr.Count() > 0)
+                                {
+                                    minPrice = priceArr[0];
+                                }
+
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xm-12">
+                                    <div class="block block-type-1">
+                                        <a href="/ProductArea/Product/Details/@indexProduct.Product.Url">
+                                            <img src="@(path + picName)" class="img-responsive"  />@*--测试大小---*@
+                                            <div class="block-caption">
+                                                @*<div class="text-title">@Html.ActionLink(indexProduct.Product.Name, "Details", new { url = indexProduct.Product.Url })</div>*@
+                                                <div class="text-title">@indexProduct.Product.Name</div>
+                                                <div class="text-price">￥@(minPrice)</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            }
+
+
+                        }
+                    </div>
+
+
+
+                </div>
+            }
+        }
+
+    </div>
+

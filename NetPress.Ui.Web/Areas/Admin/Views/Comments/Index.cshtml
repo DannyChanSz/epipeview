@@ -1,0 +1,75 @@
+﻿@model IEnumerable<NetPress.Models.Comment>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>评论管理</h2>
+
+<p>
+    @*@Html.ActionLink("新建", "Create")*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DetailsId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Star)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Thumbsup)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.isAuthorized)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Content)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Category)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DetailsId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Star)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Thumbsup)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.isAuthorized)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Edit", new { id=item.CommentId }) |
+            @*@Html.ActionLink("Details", "Details", new { id=item.CommentId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.CommentId })*@
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,15 @@
+﻿.margin-20 {
+    margin: 20px;
+}
+
+.margin-top-bottom-20 {
+    margin:20px 0;
+}
+
+.margin-top-bottom-10 {
+    margin:10px 0;
+}
+
+.margin-bottom-10 {
+    margin-bottom:10px;
+}

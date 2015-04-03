@@ -1,0 +1,131 @@
+﻿@model NetPress.Models.Customer
+@using NetPress.BLL;
+@using NetPress.Models;
+@{
+    ViewBag.Title = "信息修改";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string ImgPath = "#";
+    if (ViewBag.pic != null)
+    {
+        Pic pic = ViewBag.pic;
+        string Uploaded = "/Uploaded/Original/";
+        ImgPath = Uploaded + pic.Url;
+    }
+}
+<!--主内容-->
+<div class="login">
+    <div class="container">
+        @Html.Partial("_Aside")
+
+        <div class="col-lg-9 col-md-9">
+            <p><i class="icon-moon-my-i icon-2x"></i></p>
+            <div>
+                <h4>个人信息</h4>
+                <hr />
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Passwd)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Passwd)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.NickName)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.NickName)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Gender)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Gender)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Email)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.QQ)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.QQ)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.TelePhone)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.TelePhone)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CellPhone)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.CellPhone)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Address)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Sina)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Sina)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.RecommendedCode)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.RecommendedCode)
+                    </dd>
+                    <dt>
+                        头像
+                    </dt>
+                    <dd>
+                        <img src="@ImgPath" id="image" style="width:150px;height:150px;" />
+                    </dd>
+
+                </dl>
+            </div>
+            <p class="btnEdit">
+
+
+                @Html.ActionLink("修改", "Edit", new { id = Model.CustomerId })
+            </p>
+
+
+        </div>
+    </div>
+</div>

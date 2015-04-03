@@ -1,0 +1,218 @@
+﻿@using NetPress.Models;
+@{
+    List<ExpandProperty> expandList = ViewBag.ExpandList;
+    Product product = ViewBag.Product;
+
+    List<ProductPropertyMapping> mapsList = ViewBag.MapsList;
+}
+
+<div><h1>@product.Name</h1></div>
+<div>
+    <input type="hidden" id="hdProductId" value="@product.ProductId" />
+</div>
+<div>
+    @if(expandList!=null&&expandList.Count>0)
+    {
+        foreach(ExpandProperty e in expandList)
+        {
+        <div >
+           <h3>
+               @(e.name):
+           </h3>
+            <!---相同扩展属性选项---->
+            <div id="@e.ExpandPropertyId">
+                <div>
+                    <h6>默认选项：</h6>
+                    @if (e.CategoryProperties != null && e.CategoryProperties.Count > 0)
+                    {
+                        foreach (CategoryProperty cp in e.CategoryProperties)
+                        {
+                            if (cp.ProductCategoryId==product.ProductCategoryId)
+                            { 
+                            <input name="ckCategoryProperty" type="checkbox" data-expandid="@e.ExpandPropertyId" value="@cp.Provalue" />@cp.Provalue
+                            }   
+                        }
+                    }
+                </div>
+                <div>
+                    <h6>该商品属性：</h6>
+                    @if (mapsList != null && mapsList.Count > 0)
+                    {
+                        foreach (ProductPropertyMapping m in mapsList)
+                        {
+                            if (m.ProductProperty.ExpandPropertyId == e.ExpandPropertyId)
+                            {
+                                <input name="ckProperty" type="checkbox"  disabled="disabled" checked="checked" data-expandid="@e.ExpandPropertyId" value="@m.Provalue" />@m.Provalue
+                            }
+                        }
+                    }
+                </div>
+                </div>
+            <!---相同扩展属性选项 end---->
+            <!---新增同扩展属性选项功能---->
+            <input type="button" class="newProperty" value="新增其他" />
+            <div style="display:none">
+                <input type="text" name="txtCreateProperty" data-expandid="@e.ExpandPropertyId" />
+                <input type="button" name="btnCreateProperty"  value="确定" />
+            </div>
+            <!---新增同扩展属性选项功能 end---->
+        </div>
+        }
+    }
+</div>
+<div>
+    <input id="btnSave" type="button" value="保存" />
+    @Html.ActionLink("返回", "GetByProductId", new { id = product.ProductId })
+</div>
+<script>
+    function PropertyMapsModel()
+    {
+        this.ExpandPropertyId;
+        this.Provalue;
+    }
+
+
+    $(document).ready(function () {
+        //默认属性选择
+        $("input[name='ckCategoryProperty']").click(function () {
+            if(this.checked)
+            {
+                //重复筛选
+                var isExist = false;
+                var categoryPropertyVal = $(this).val();
+                $("input[name='ckProperty']").each(function () {
+                    if($(this).val()==categoryPropertyVal)
+                    {
+                        isExist = true;
+                    }
+                });
+                //添加
+                if(!isExist)
+                {
+                    var expandid = $(this).attr("data-expandid");
+                    var value = $(this).val();
+                    CreateProperty(expandid, value);
+                }
+                else
+                {
+                    alert("属性已存在");
+                    this.checked = false;
+                }
+            }
+        });
+
+        //新增其他属性
+        $(".newProperty").each(function () {
+            $(this).click(function () {
+                $(this).next().css("display", "block");
+            });
+        });
+
+        //确定新增
+        $("input[name='btnCreateProperty']").each(function () {
+            $(this).click(function () {
+                //新增选项
+                var txtDoc = $(this).prev();
+                var expandid = txtDoc.attr("data-expandid");
+                var value = txtDoc.val();
+             
+                if (CreateProperty(expandid, value)) {
+                    //隐藏新增操作
+                    $(this).parent().css("display", "none");
+                    txtDoc.val("");
+                }
+            });
+        });
+
+        //保存
+        $("#btnSave").click(function () {
+            SaveProperty();
+        });
+
+    });
+
+    //新增属性选项
+    function CreateProperty(expandId,value)
+    {
+        if (CheckInput(expandId, value)) {
+            var expandDiv = $("#" + expandId);
+            var checkboxHtml = "<input name='ckProperty' type='checkbox' data-expandid='" + expandId + "'  value='" + value + "' checked='checked' />" + value;
+            expandDiv.append(checkboxHtml);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //检查输入项
+    function CheckInput(expandId,value)
+    {
+        value = $.trim(value);
+        var ifTrue = true;
+        if (value == "") {
+            alert("请填写属性");
+            ifTrue= false;
+        }
+        else {
+            
+            $("#" + expandId+" input[name='ckProperty']").each(function () {
+                var checkVal = $.trim($(this).val());
+                if (checkVal == value) {
+                    alert("请勿添加相同项");
+                    ifTrue = false;
+                    return;
+                }
+            });
+        }
+        return ifTrue;
+    }
+
+    //保存所有选项
+    function SaveProperty()
+    {
+        var propertyArr = new Array();
+        var index = 0;
+
+        $("input[name='ckProperty']").each(function () {
+            var isChecked = this.checked;
+            var isOld = $(this).attr("disabled");//商品原有
+            if (isChecked && isOld != "disabled")
+            {
+                var model = new PropertyMapsModel();
+                model.ExpandPropertyId = $(this).attr("data-expandid");
+                model.Provalue = $(this).val();
+                propertyArr[index] = model;
+                index++;
+            } 
+        });
+        //保存
+        PostSave(propertyArr);
+    }
+
+    //提交
+    function PostSave(modelArr)
+    {
+        var productId = $("#hdProductId").val();
+        $.ajax({
+            type: 'post',
+            url: "/ProductPropertyMapping/CreateMaps",
+            data: { "productId": productId, "propertyArr": modelArr },
+            success: function (result) {
+                if (result.status == "success") {
+                    location.href = "GetByProductId?id="+productId;
+                }
+                else
+                {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+</script>

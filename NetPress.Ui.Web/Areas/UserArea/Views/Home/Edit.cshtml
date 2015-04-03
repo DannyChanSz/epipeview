@@ -1,0 +1,257 @@
+﻿@model NetPress.Models.Customer
+@using NetPress.BLL;
+@using NetPress.Models;
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Uploaded = "/Uploaded/Original/";
+    string json = string.Empty;
+
+    string ImgPath = string.Empty;
+    string ImgName = string.Empty;
+    if (ViewBag.pic != null)
+    {
+
+        Pic pic = ViewBag.pic;
+        ImgName = pic.Url;
+        ImgPath = Uploaded + pic.Url;
+        json = "[{'Url':'" + pic.Url + "','SubTypeTag':'" + pic.SubTypeTag + "'}]";
+    }
+}
+
+<style>
+    .form-control {
+        width: 300px;
+    }
+</style>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+
+<script language="javascript">
+
+</script>
+
+<div class="container">
+    <div class="row">
+        @Html.Partial("_Aside")
+
+        <div class="col-lg-9 col-md-9">
+            <p><i class="icon-moon-my-i icon-2x"></i></p>
+            @*@using (Html.BeginForm())*@
+            @using (Html.BeginForm("Edit", "Home", FormMethod.Post, new { id = "form1" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal" style="width:500px;">
+                    <h4>编辑信息</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.CustomerId)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Passwd, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Passwd, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Passwd, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.NickName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.NickName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EnumDropDownListFor(model => model.Gender, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.QQ, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.QQ, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.QQ, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TelePhone, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.TelePhone, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.TelePhone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CellPhone, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CellPhone, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CellPhone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CreatedOn, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CreatedOn, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CreatedOn, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                   
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Sina, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Sina, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Sina, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                 
+
+                    <div class="form-group">
+
+                        <input type="hidden" name="Photo" id="Photo" value="@json">
+                        <span class="control-label col-md-2">头像</span>
+                      
+                        <div class="col-md-10">
+                            <img src="@ImgPath" id="image" style="width:150px;height:150px;float:left;" />
+                        </div>
+
+                        <div id="filelist" style="clear:both"></div>
+                        <br />
+                        <div id="container">
+                            <a id="pickfiles" href="javascript:;">[选择文件]</a>
+                            <a id="uploadfiles" href="javascript:;">[开始上传]</a>
+                        </div>
+                        <br />
+
+                        <script src="~/Scripts/ImageUoload.js"></script>
+                        <script>
+
+                            var Uploaded = "/Uploaded/Original/";
+                            var ReturnFiles = new Array();
+                            var uploader = createUpload('container', 'pickfiles', 'uploadfiles', 'filelist');
+
+                            uploader.bind("FileUploaded", function (up, file, info) {
+                                var url = $.parseJSON(info.response).url;
+
+                                document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                                $("#image").attr('src', Uploaded + url);
+                                var tempic = new mpic(url, " 客户头像");
+                                ReturnFiles.push(tempic);
+
+                                $("#Photo").val(JSON.stringify(ReturnFiles));
+
+                            });
+
+                            uploader.init();
+                        </script>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Save" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @*@using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "form2", style = "display:none" }))*@
+
+        
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+</script>
+
+@*<script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#SelPic").click(function () {
+
+                $("#fileup").click();
+            });
+
+            //提交
+            $("#UpPic").click(function () {
+
+                var str = $("#fileup").val();
+
+                $("#form2").submit();
+
+            });
+        });
+    </script>*@
+
+@*<script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#SelPic").click(function () {
+                $("#fileup").click();
+            });
+
+            $("#UpPic").click(function () {
+                if ($("#fileup").val() == "") {
+                    alert("请选择一个图片文件，再点击上传。");
+                    return;
+                }
+                $('#form2').ajaxSubmit({
+                    success: function (html, status) {
+                        $("#image").attr('src', html);
+                    }
+                });
+            });
+
+
+
+
+        });
+
+
+
+
+    </script>*@

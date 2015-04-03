@@ -1,0 +1,148 @@
+﻿@using NetPress.Models
+@model NetPress.Models.OrderDetails
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>改价</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>订单明细</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.OrderDetailsId)
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.CustomerId, "CustomerId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CustomerId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PriceId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PriceId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PriceId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PackType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.PackType, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PackType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PurchaseVolume, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PurchaseVolume, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PurchaseVolume, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OrderId, "OrderId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("OrderId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OrderId, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Customer.Name)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Customer.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.PackType)
+            <div class="col-md-10">
+                @if (Model.PackType == PackType.SingleItem)//单一产品
+                {
+                    <p>单一商品</p>
+                }
+                else if(Model.PackType == PackType.PackItem)//套餐
+                {
+                    <p>套餐</p>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.PurchaseVolume)
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.PurchaseVolume)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Price)
+            <div class="col-md-10">
+                <div id="dvOldPrice">@Html.DisplayFor(model => model.Price)</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            修改价：
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+
+                <span>选择折扣：</span>
+                <select id="selDiscount"></select>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("返回", "Index", new { orderId  = Model.OrderId})
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    $(document).ready(function () {
+
+        $("#selDiscount").append("<option value='10'>不打折</option>");
+
+        for (var i = 9.5; i > 0; i = i - 0.5) {
+            var option = "<option value='" + i + "'>" + i.toFixed(1) + "</option>";
+            $("#selDiscount").append(option);
+        }
+
+        $("#selDiscount").on('click', "option", function () {
+            var oldPrice = parseFloat($("#dvOldPrice").html());
+            var sum = $(this).val() * oldPrice * 0.1;
+            $("[name='Price']").val(sum.toFixed(2));
+        })
+
+    });
+</script>

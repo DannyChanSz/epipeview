@@ -1,0 +1,80 @@
+﻿@model IEnumerable<NetPress.Models.SinglePage>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>单页管理</h2>
+
+<p>
+    @Html.ActionLink("新增", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KeyWords)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.State)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TagSearch)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TagSeo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateOn)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.KeyWords)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Url)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.State)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TagSearch)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TagSeo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateOn)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Edit", new { id=item.SinglePageId }) |
+            @Html.ActionLink("删除", "Delete", new { id=item.SinglePageId })
+        </td>
+    </tr>
+}
+
+</table>

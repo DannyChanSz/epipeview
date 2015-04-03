@@ -1,0 +1,210 @@
+﻿@model IEnumerable<NetPress.Models.ProductCategory>
+
+@{
+    //Layout = null;
+    ViewBag.Title = "Index";
+}
+
+<h2>分类</h2>
+
+<p>
+    @Html.ActionLink("新增", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>展开</th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.Parent.Name)*@
+            父分类名
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SortNo)
+        </th>       
+        <th>
+            @Html.DisplayNameFor(model => model.IsAvailable)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.url)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TagSearch)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model)
+{
+    <tr id="@item.ProductCategoryId">
+        <td>
+            @if (item.Children != null && item.Children.Count > 0)
+            {
+                <a name="show" href="javascript:void(0)" data-id="@item.ProductCategoryId" data-deepth="0">+</a>
+            }
+            else
+            {
+                <a name="end" href="javascript:void(0)" data-id="@item.ProductCategoryId" data-deepth="0">x</a>
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Parent.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SortNo)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.IsAvailable)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.url)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TagSearch)
+        </td>
+        @if (item.Parent != null)
+        {
+            <td>
+                @Html.ActionLink("修改", "Edit", new { id = item.ProductCategoryId }) |
+                @Html.ActionLink("详细", "Details", new { id = item.ProductCategoryId }) |
+                @Html.ActionLink("删除", "Delete", new { id = item.ProductCategoryId }) |
+                @Html.ActionLink("添加分类的拓展", "CategoryProductProperties", "ProductProperties", new { id = item.ProductCategoryId }, null) |
+
+                @if (item.ProductProperties != null && item.ProductProperties.Count > 0)
+                {
+                    @Html.ActionLink("添加分类默认属性", "Index", "CategoryProperties", new { categoryId = item.ProductCategoryId }, null)
+                }
+                else
+                {
+                    <a>添加分类默认属性(请先添加拓展)</a>
+                }
+            </td>
+        }
+        else
+        {
+            <td>
+                <p>修改 | 详细 | 删除 | 添加分类的拓展 | 添加分类默认属性</p>
+
+            </td>
+        }
+    </tr>
+
+}
+
+</table>
+
+<script>
+
+
+    $(document).ready(function () {
+
+        LoadEven();
+
+    });
+
+
+    function LoadEven()
+    {
+        $("[name='show']").each(function () {
+            $(this).unbind();
+        });
+
+        $("[name='hide']").each(function () {
+            $(this).unbind();
+        });
+
+
+        $("[name='show']").each(function () {
+            $(this).click(function () {
+                var id = $(this).attr("data-id");
+                var deepth = $(this).attr("data-deepth");
+
+                GetChildrens(id, deepth);
+                $(this).attr("name", "hide");
+
+                $(this).html(stringDeepth(deepth) + "-");
+                //alert("show");
+            });
+        });
+
+
+        $("[name='hide']").each(function () {
+            $(this).click(function () {
+                var id = $(this).attr("data-id");
+                var deepth = $(this).attr("data-deepth");
+
+                $(this).attr("name", "show");
+
+                $(this).html(stringDeepth(deepth) + "+");
+
+                //遍历清理子节点
+                Hidden(id);
+                //alert("hide");
+                LoadEven();
+            });
+        });
+
+
+        //$(".table").on("click", "[name='show']", function () {
+        //        var id = $(this).attr("data-id");
+        //        GetChildrens(id);
+
+        //        $(this).attr("name", "hide");
+        //})
+
+        //$(".table").on("click", "[name='hide']", function () {
+        //    var id = $(this).attr("data-id");
+
+        //    $("[name='childrens'][data-parentId='" + id + "']").each(function () {
+        //        $(this).remove();
+        //        $(this).attr("name", "show");
+        //    })
+
+        //})
+    }
+
+    function stringDeepth(deepth)
+    {
+        var str = "";
+        for(var i=0;i<deepth;i++)
+        {
+            str += "&nbsp";
+        }
+        return str;
+    }
+
+    //遍历清理子节点
+    function Hidden(parentId)
+    {
+        $("[name='childrens'][data-parentId='" + parentId + "']").each(function () {
+            var childrenId = $(this).attr("id");
+            Hidden(childrenId);
+            $(this).remove();
+        });
+    }
+
+
+    //获取分类子集视图
+    function GetChildrens(parentId, deepth)
+    {
+        $.ajax({
+            type: 'post',
+            url: "/Admin/ProductCategories/GetIndexChildrens",
+            data: { "parentId": parentId, "deepth": deepth },
+            success: function (result) {
+                $("#" + parentId).after(result);
+                LoadEven();
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+
+    }
+
+</script>

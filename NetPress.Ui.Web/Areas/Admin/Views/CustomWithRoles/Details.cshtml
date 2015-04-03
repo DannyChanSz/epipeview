@@ -1,0 +1,34 @@
+﻿@model NetPress.Models.CustomWithRole
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CustomWithRole</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Customer.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CustomerRole.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CustomerRole.name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CustomWithRoleId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

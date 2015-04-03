@@ -1,0 +1,39 @@
+﻿@model IEnumerable<NetPress.Models.SysUserInRole>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>列表</h2>
+
+<p>
+    @Html.ActionLink("新建", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SysRole.RoleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SysUser.UserName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.SysRole.RoleName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SysUser.UserName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.UserInRoleId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.UserInRoleId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.UserInRoleId })
+        </td>
+    </tr>
+}
+
+</table>

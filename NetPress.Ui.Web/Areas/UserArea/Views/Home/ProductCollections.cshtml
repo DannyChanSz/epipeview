@@ -1,0 +1,110 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "ProductCollections";
+    List<ProductCollectionView> collectionViews = ViewBag.ProductCollectionViews;
+
+    string path = "/Uploaded/Original/";
+
+}
+
+
+<div class="login">
+    <div class="container">
+        @Html.Partial("_Aside")
+        <div class="col-lg-9  col-md-9 col-sm-9 store-products">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">我的收藏</h3>
+                </div>
+                <div class="row">
+
+
+                    @foreach (var cv in collectionViews)
+                    {
+
+                        ProductCollection productCollection = cv.ProductCollection;
+                        <div class="col-lg-4  col-md-4 col-sm-6 ">
+                            <div class="block block-type-1">
+                                @if (!cv.IsLost)//正常产品
+                                {
+
+                                    string minPrice = "";//显示最小价格
+                                    string price = productCollection.Product.Price;
+                                    string[] priceArr = price.Split('~');
+                                    if (priceArr.Count() > 0)
+                                    {
+                                        minPrice = priceArr[0];
+                                    }
+
+                                    <img src="@(path + cv.ProductPics.First().Url)" alt=" alternate text" class="img-responsive" />
+                                    <div class="block-caption">
+                                        <div class="text-title"><a href="/Home/Details/@productCollection.Product.Url">@productCollection.Product.Name</a></div>
+                                        <div class="text-price">￥@(minPrice)</div>
+                                    </div>
+
+                                }
+                                else//失效产品
+                                {
+                                    <img src="" alt=" alternate text" class="img-responsive" />
+                                    <div class="block-caption">
+                                        <div class="text-title">@productCollection.Product.Name@*<a href="javascript:void(0)">@productCollection.Product.Name</a>*@</div>
+                                        <div class="text-price">----</div>
+                                    </div>
+                                }
+                            </div>
+
+                            <a href="javascript:void(0)" name="aDelete" data-productCollectionId="@cv.ProductCollection.ProductCollectionId">删除</a>
+                        </div>
+                        
+                    }
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("[name='aDelete']").click(function () {
+            var productCollectionId = $(this).attr("data-productCollectionId");
+            PostDelete(productCollectionId);
+        });
+    })
+
+    function PostDelete(productCollectionId)
+    {
+        //下单页面
+        $.ajax({
+            type: 'post',
+            url: "/UserArea/Home/DeleteProductCollection",
+            data: { "productCollectionId": productCollectionId },
+            success: function (result) {
+                if (result.status == "success") {
+                    //alert("跳转个人中心购物车url");
+                    location.href = "/UserArea/Home/ProductCollections"
+                }
+                else if (result.status == "error") {
+                    alert(result.msg);
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+
+
+
+    }
+
+
+</script>
+

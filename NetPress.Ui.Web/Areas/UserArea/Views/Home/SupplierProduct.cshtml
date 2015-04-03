@@ -1,0 +1,36 @@
+﻿@using NetPress.Models;
+@using NetPress.BLL;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    ViewBag.Title = "SupplierProduct";
+   // List<ProductPropertyMapping> ProductMap =  ViewBag.Product;
+
+    List<Product> ProductMap = ViewBag.Product;
+    
+    UnitOfWork db=new UnitOfWork();
+}
+
+<h2>SupplierProduct</h2>
+@if(ProductMap!=null)
+{
+    foreach(var item in ProductMap)
+    {
+        <div>商品信息:</div>
+        <div>商品名:@item.Name</div>
+        <div>商品分类:@item.ProductCategory.Name</div>
+        <div>详细地址:@item.Url</div>
+        <div>扩展属性:</div>
+        Guid ProductId = item.ProductId;
+        List<ProductPropertyMapping> Expand = db.Products.MapOfProduct(ProductId).ToList();
+        foreach (var ExpanItem in Expand)
+        {
+            <div>@ExpanItem.ProductProperty.ExpandProperty.name:@ExpanItem.Provalue</div>
+        }
+    }
+}
+
+else
+{
+ <div>暂时没有商品</div>
+}

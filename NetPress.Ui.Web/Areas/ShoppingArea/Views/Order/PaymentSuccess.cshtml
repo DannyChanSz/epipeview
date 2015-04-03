@@ -1,0 +1,19 @@
+﻿@model NetPress.Ips.IpsPaymentResponse
+@{
+    ViewBag.Title = "支付成功";
+
+
+}
+
+<h2>支付结果</h2>
+
+<p>
+    @if (ViewBag.PaymentResult)
+    {
+        <span>支付成功</span>
+    }
+    else
+    {
+        <span>支付失败</span>
+    }
+</p>

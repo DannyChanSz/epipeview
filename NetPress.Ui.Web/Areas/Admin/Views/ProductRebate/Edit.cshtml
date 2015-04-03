@@ -1,0 +1,46 @@
+﻿@model NetPress.Models.ProductRebate
+
+@{
+    bool isExist = ViewBag.IsExist;
+}
+
+@if (isExist)
+{
+    <h2>修改</h2>
+}
+else
+{
+    <h2>新增</h2>
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @*<h4>ProductRebate</h4>*@
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ProductRebateId)
+        @Html.HiddenFor(model => model.ProductId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RebateValue, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.RebateValue)
+                @Html.ValidationMessageFor(model => model.RebateValue)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("返回", "Index", "Products", null, null) |
+</div>

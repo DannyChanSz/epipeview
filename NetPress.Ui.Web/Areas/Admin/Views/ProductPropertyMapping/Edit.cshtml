@@ -1,0 +1,46 @@
+﻿@using NetPress.Models;
+@model NetPress.Models.ProductPropertyMapping
+
+@{
+    ViewBag.Title = "Edit";
+    Product product = ViewBag.Product;
+    string error = ViewBag.ErrorMessage == null ? "" : (string)ViewBag.ErrorMessage;
+}
+
+<h2>修改</h2>
+<input type="hidden" id="hdErrorMsg" value="@error" />
+<script src="/Content/js/admin/showErrorMsg.js"></script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ProductPropertyMappingId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Provalue, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Provalue)
+                    @Html.ValidationMessageFor(model => model.Provalue, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("返回", "GetByProductId", new { id = product.ProductId })
+
+</div>

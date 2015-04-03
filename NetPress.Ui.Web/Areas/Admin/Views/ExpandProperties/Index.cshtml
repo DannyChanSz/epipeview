@@ -1,0 +1,58 @@
+﻿@model IEnumerable<NetPress.Models.ExpandProperty>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>拓展属性</h2>
+
+<p>
+    @Html.ActionLink("新增", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PropertyType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DefaultValue)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsRequired)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsInfluenceToPrice)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PropertyType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DefaultValue)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsRequired)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsInfluenceToPrice)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Edit", new { id=item.ExpandPropertyId }) |
+            @Html.ActionLink("详情", "Details", new { id=item.ExpandPropertyId }) |
+            @Html.ActionLink("删除", "Delete", new { id=item.ExpandPropertyId })
+        </td>
+    </tr>
+}
+
+</table>
+@*@Html.ActionLink("返回", "../ProductCategories/Index")*@

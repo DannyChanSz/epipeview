@@ -1,0 +1,245 @@
+﻿@model NetPress.Models.Doc
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>资讯管理</h2>
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script src="/Plugins/tinymce/tinymce.min.js"></script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>新建</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SubTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SubTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SubTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+  
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Clicks, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Clicks, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Clicks, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.Contents, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Contents, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Contents, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Contents, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Contents, htmlAttributes: new { @style = "width:50%;" })
+                @Html.ValidationMessageFor(model => model.Contents, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.SysUserId, "SysUserId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SysUserId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SysUserId, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DocCategoryId,  htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("DocCategoryId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DocCategoryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DirectlyUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DirectlyUrl, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DirectlyUrl, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-left:150px">
+            <div id="filelist" style="clear:both"></div>
+            <p> 文章首页</p>
+            <img src="#" id="pic1" style="width:150px;height:150px;">
+            <div id="container">
+                <a id="pickfiles" href="javascript:;">[选择图片]</a>
+                <a id="uploadfiles" href="javascript:;">[上传图片]</a>
+            </div>
+
+            <p>文章列表页</p>
+            <img src="#" id="pic2" style="width:150px;height:150px;">
+            <div id="container2">
+                <a id="pickfiles2" href="javascript:;">[选择图片]</a>
+                <a id="uploadfiles2" href="javascript:;">[上传图片]</a>
+            </div>
+
+            <p>文章详细页</p>
+            <img src="#" id="pic3" style="width:150px;height:150px;">
+            <div id="container3">
+                <a id="pickfiles3" href="javascript:;">[选择图片]</a>
+                <a id="uploadfiles3" href="javascript:;">[上传图片]</a>
+            </div>
+            <input type="hidden" name="Photo" id="Photo" value="">
+        </div>
+
+        <script src="~/Scripts/ImageUoload.js"></script>
+        <script>
+            var Uploaded = "/Uploaded/Original/";
+            var ReturnFiles = new Array();
+
+            var uploader = createUpload('container', 'pickfiles', 'uploadfiles', 'filelist');
+            uploader.bind("FileUploaded", function (up, file, info) {
+                var url = $.parseJSON(info.response).url;
+
+                document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                $("#pic1").attr('src', Uploaded + url);
+               
+                var tempic = new mpic(url, "文章首页");
+                ReturnFiles.push(tempic);
+          
+                $("#Photo").val(JSON.stringify( ReturnFiles));
+            });
+            uploader.init();
+
+            var uploader2 = createUpload('container2', 'pickfiles2', 'uploadfiles2', 'filelist');
+            uploader2.bind("FileUploaded", function (up, file, info) {
+                var url = $.parseJSON(info.response).url;
+
+                document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                $("#pic2").attr('src', Uploaded + url);
+
+                var tempic = new mpic(url, "文章列表页");
+                ReturnFiles.push(tempic);
+            
+                $("#Photo").val(JSON.stringify(ReturnFiles));
+            });
+            uploader2.init();
+
+            var uploader3 = createUpload('container3', 'pickfiles3', 'uploadfiles3', 'filelist');
+            uploader3.bind("FileUploaded", function (up, file, info) {
+                var url = $.parseJSON(info.response).url;
+
+                document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                $("#pic3").attr('src', Uploaded + url);
+
+                var tempic = new mpic(url, "文章详细页");
+                ReturnFiles.push(tempic);
+              
+                $("#Photo").val(JSON.stringify(ReturnFiles));
+            });
+            uploader3.init();
+
+        </script>
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.thumbIndex, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.thumbIndex, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.thumbIndex, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Recommended, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Recommended)
+                    @Html.ValidationMessageFor(model => model.Recommended, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsHot, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsHot)
+                    @Html.ValidationMessageFor(model => model.IsHot, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="创建" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("返回列表", "Index")
+</div>
+
+<style>
+    #Contents {
+        width: 650px;
+        height: 400px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        //富文本
+        tinymce.init({
+            selector: '#Contents',
+            language: "zh_cn",
+            theme: 'modern',
+            convert_urls: false,
+            plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker", "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking", "save table contextmenu directionality emoticons template paste textcolor"]
+        });
+
+        //图片上传
+        //var uploader = $("#Uploader").pluploadQueue();
+        //uploader.bind("FileUploaded", function (upload, file, response) {
+        //    // remove the file from the list
+        //    upload.removeFile(file);
+
+        //    // Response.response returns server output from onUploadCompleted
+        //    // our code returns the url to the image so we can display it
+        //    var imageUrl = response.response;
+
+        //    //富文本添加图片
+        //    tinymce.execCommand("mceInsertContent", true, "<img  src='" + imageUrl + "' alt='' />");
+
+        //})
+        //var DocId = $("#DocId").val();
+
+        //GetCertificate("/Admin/Docs/GetCertificate", DocId);
+    });
+</script>

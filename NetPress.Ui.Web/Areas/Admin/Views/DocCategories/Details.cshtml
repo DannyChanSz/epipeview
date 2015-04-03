@@ -1,0 +1,88 @@
+﻿@model NetPress.Models.DocCategory
+@using NetPress.Models;
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    string Uploaded = "/Uploaded/Original/";
+    string ImgPath = string.Empty;
+   
+    if( ViewBag.pic!=null)
+    {
+        Pic pic = ViewBag.pic;
+        ImgPath = Uploaded + pic.Url;
+    }
+  
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DocCategory</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Parent.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Parent.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsListPic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsListPic)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Pic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Pic)
+
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Url)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Url)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.KeyWords)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.KeyWords)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dd>
+            <img src="@ImgPath" id="image" style="width:150px;height:150px;" />
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DocCategoryId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

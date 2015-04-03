@@ -1,0 +1,533 @@
+﻿@using System.Globalization;
+@using System.Security.Claims;
+@using Microsoft.AspNet.Identity;
+@using Microsoft.AspNet.Identity.Owin;
+@using Microsoft.Owin.Security;
+@using NetPress.Models;
+
+@{
+    NetPress.BLL.UnitOfWork u = new NetPress.BLL.UnitOfWork();
+    var siteInfo = u.SiteInfos.GetInfo();    
+    string SITENAME;
+    SITENAME = siteInfo == null ? "" : siteInfo.Name;
+    string COPYRIGHT;
+    COPYRIGHT = siteInfo == null ? "" : siteInfo.Copyright;
+
+    string currentAction = ViewContext.RouteData.Values["action"].ToString();
+
+
+    string Uid = string.Empty;
+    bool isDefaultSysUser = false;
+       
+    //测试
+    //isDefaultSysUser = true;
+    
+    // 验证登录 
+    if (!Request.IsAuthenticated)
+    {
+        Response.Redirect("/Admin/Home/Login", true);
+        Response.End();
+        return;
+    }
+    else
+    {
+     //   if (User.Identity.Name != NetPress.BLL.DefaultSysAdmin.UserName)
+       // {           
+            string userid = User.Identity.GetUserId();
+
+            SysUser sysuser = u.SysUsers.GetById(Guid.Parse(userid));
+
+
+            if (sysuser == null)
+            {
+                Response.Redirect("/Admin/Home/Login", true);
+                Response.End();
+                return;
+            }
+
+            else
+            {
+                Uid = userid;
+            }
+        //}
+        //else
+        //{
+        //    isDefaultSysUser = true;
+        //}
+}
+            
+
+   // u.Dispose();
+   
+}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <title>@(SITENAME + " - 管理中心 - " + ViewBag.Title)</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="~/content/admin/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/admin/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/admin/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/admin/css/style-metro.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/admin/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/admin/css/style-responsive.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/admin/css/default.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="~/content/admin/css/uniform.default.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/admin/css/main.css" rel="stylesheet" />
+    <script src="~/Plugins/JQuery/jquery-1.9.1.js"></script>
+    <style>
+    .form-group {
+            margin-top: 10px;
+     }
+   </style>
+   
+</head>
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+    <!-- BEGIN HEADER -->
+    <div class="header navbar navbar-inverse navbar-fixed-top">
+        <!-- BEGIN TOP NAVIGATION BAR -->
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <!-- BEGIN LOGO -->
+                <a class="brand" href="@Url.Action("Index","Home")">
+                    &nbsp; @SITENAME <small><small>管理中心</small></small>
+                </a>
+                <!-- END LOGO -->
+                <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+
+                <a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+                    <img src="/content/admin/image/menu-toggler.png" alt="" />
+                </a>
+                <!-- END RESPONSIVE MENU TOGGLER -->
+                <!-- BEGIN TOP NAVIGATION MENU -->
+                <ul class="nav pull-right">
+                    @Html.Partial("_LoginPartial")
+                </ul>
+                <!-- END TOP NAVIGATION MENU -->
+            </div>
+        </div>
+        <!-- END TOP NAVIGATION BAR -->
+    </div>
+
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+
+    <div class="page-container row-fluid">
+        <!-- BEGIN SIDEBAR -->
+        <div class="page-sidebar nav-collapse collapse">
+            <!-- BEGIN SIDEBAR MENU -->
+            <ul class="page-sidebar-menu">
+                <li>
+                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                    <div class="sidebar-toggler hidden-phone"></div>
+                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                </li>
+                <li>
+                </li>
+                <li class="start @(currentAction=="Index"?"active":"")">
+
+                    <a href="@Url.Action("index")">
+                        <i class="icon-home"></i> 
+                        <span class="title">管理中心</span>
+                        @Html.Raw(currentAction == "Index" ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                </li>
+                @if(!isDefaultSysUser)
+                { 
+                <!--权限菜单展示-->
+
+                    if (!string.IsNullOrEmpty(Uid))
+                    {
+                        List<RightModule> rights = u.SysUserRight.GetRightByUserId(Guid.Parse(Uid), true);
+
+
+                        List<RightCategory> Cate = new List<RightCategory>();
+                        
+                        foreach(var item in  rights)
+                        {
+                            Cate.Add(item.RightCategory);
+                        }
+                             
+                        Cate=Cate.Distinct().ToList();
+
+                      //  List<RightCategory> Categorys = (List<RightCategory>)u.RightCategorys.RightCategoryByType(RoleType.管理员);
+
+                        foreach (var item in Cate)
+                        {
+                            <li class="@(currentAction=="SiteInfo"?"active":"")">
+                                <a href="javascript:;">
+                                    <i class="icon-cogs"></i>
+                                    <span class="title">@item.Name</span>
+                                    <span class="arrow @(currentAction=="SiteInfo"?"open":"")"></span>
+                                    @Html.Raw(currentAction == "SiteInfo" ? "<span class=\"selected\"></span>" : "")
+                                </a>
+                                <ul class="sub-menu">
+
+                                    @foreach (var right in rights)
+                                    {
+                                        if (right.RightCategoryId == item.RightCategoryId)
+                                        {
+                                            <li>
+                                              @*  @Html.ActionLink(right.Name, right.Url)*@
+                                                  <li><a href="@right.Url">@right.Name</a></li>
+                                            </li>
+                                        }
+                                    }
+
+                                </ul>
+                </li>
+                        }
+                    }
+
+                
+
+               
+                <!--菜单部分-->
+                }
+                else
+                {
+                @*<li class="@(currentAction=="SiteInfo"?"active":"")">
+                    <a href="javascript:;">
+                        <i class="icon-cogs"></i>
+                        <span class="title">网站设置</span>
+                        <span class="arrow @(currentAction=="SiteInfo"?"open":"")"></span>
+                        @Html.Raw(currentAction == "SiteInfo" ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            @Html.ActionLink("站点信息", "SiteInfo", "Admin")
+                        </li>
+                        <li>
+                            @Html.ActionLink("客服IM", "SiteImIndex", "Admin")
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Product")==0?"active":"")">
+                        <a href="javascript:;">
+                        <i class="icon-file-alt"></i>
+                        <span class="title">产品</span>
+                        <span class="arrow @(currentAction.IndexOf("Product")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Product") == 0 ? "<span class=\"selected\"></span>" : "")
+                        </a>
+                        <ul class="sub-menu">
+                        <li>@Html.ActionLink("产品初始化", "ProductConfigIndex", "Admin")</li>
+                        <li>@Html.ActionLink("创建产品", "ProductCreate", "Admin")</li>
+                        <li>@Html.ActionLink("产品列表", "ProductIndex", new { id = "All" })</li>
+                        <li>@Html.ActionLink("产品分类", "ProductCategoryIndex", "Admin")</li>
+                        </ul>
+                    </li>
+
+                <li class="@(currentAction.IndexOf("Doc")==0?"active":"")">
+                    <a href="javascript:;">
+                        <i class="icon-file-alt"></i>
+                        <span class="title">文章</span>
+                        <span class="arrow @(currentAction.IndexOf("Doc")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Doc") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("创建文章", "Create", "Docs")</li>
+                        <li>@Html.ActionLink("文章列表", "Index", "Docs")</li>
+                        <li>@Html.ActionLink("文章分类", "Index", "DocCategories")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Special") == 0 ? "active" : "")">
+                    <a href="javascript:;">
+                        <i class="icon-file-alt"></i>
+                        <span class="title">专题</span>
+                        <span class="arrow @(currentAction.IndexOf("Special") == 0 ? "open" : "")"></span>
+                        @Html.Raw(currentAction.IndexOf("Special") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                    
+                        <li>@Html.ActionLink("专题", "Index", "SpecialTopics")</li>
+                     
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Gallery")==0?"active":"")">
+                    <a href="javascript:;">
+                        <i class="icon-picture"></i>
+                        <span class="title">相册管理</span>
+                        <span class="arrow @(currentAction.IndexOf("Gallery")==0?"open":"") @(currentAction.IndexOf("PictureUnwanted")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Gallery") == 0 ? "<span class=\"selected\"></span>" : "")
+                        @Html.Raw(currentAction.IndexOf("PictureUnwanted") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("创建相册", "GalleryCreate", "Admin")</li>
+                        <li>@Html.ActionLink("相册列表", "GalleryIndex", "Admin")</li>
+                        <li>@Html.ActionLink("相册分类", "GalleryCategoryIndex", "Admin")</li>
+                        <li>@Html.ActionLink("相册清理", "PictureUnwanted", "Admin")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Carousel")==0?"active":"")">
+                    <a href="javascript:;">
+                        <i class="icon-picture"></i>
+                        <span class="title">轮播图</span>
+                        <span class="arrow @(currentAction.IndexOf("Carousel")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Carousel") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("新建图片", "CarouselCreate", "Admin")</li>
+                        <li>@Html.ActionLink("首页轮播", "CarouselIndex", new { id = "首页" })</li>
+                        <li>@Html.ActionLink("列表页轮播", "CarouselIndex", new { id = "列表页" })</li>
+                        <li>@Html.ActionLink("细节页轮播", "CarouselIndex", new { id = "细节页" })</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("User")==0?"active":""))">
+                    <a href="javascript:;">
+                        <i class="icon-user"></i>
+                        <span class="title">
+                            系统管理员 @if (Request.IsAuthenticated)
+                            {  <small> (@User.Identity.Name 已登录)</small> }
+                        </span>
+                        <span class="arrow @(currentAction.IndexOf("User")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("User") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("管理员列表", "../SysUsers/Index")</li>
+                        <li>@Html.ActionLink("管理员分类", "../SysRoles/Index")</li>
+                        <li>@Html.ActionLink("管理员角色", "../SysUserInRoles/Index")</li>
+                        <li>@Html.ActionLink("权限管理", "../SysUserRight/Index")</li>
+
+
+                    </ul>
+                </li>
+
+
+                <li class="@(currentAction.IndexOf("User")==0?"active":""))">
+                    <a href="javascript:;">
+                        <i class="icon-user"></i>
+                        <span class="title">
+                            会员管理 @if (Request.IsAuthenticated)
+                            {  <small> (@User.Identity.Name 已登录)</small> }
+                        </span>
+                        <span class="arrow @(currentAction.IndexOf("User")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("User") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("会员列表", "../Customers/Index")</li>
+                        <li>@Html.ActionLink("会员类别", "../CustomerRoles/Index")</li>
+                        <li>@Html.ActionLink("会员角色", "../CustomWithRoles/Index")</li>
+                        <li>@Html.ActionLink("权限管理", "../CustomerRights/Index")</li>
+                        <li>@Html.ActionLink("权限模块", "../RightModules/Index")</li>
+                        <li>@Html.ActionLink("权限分类", "Index", "/RightCategories")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Paragraph")==0?"active":"") ">
+                    <a href="javascript:;">
+                        <i class="icon-align-center"></i>
+                        <span class="title">段落</span>
+                        <span class="arrow @(currentAction.IndexOf("Paragraph")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Paragraph") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("创建段落", "ParagraphCreate", "Admin")</li>
+                        <li>@Html.ActionLink("段落列表", "ParagraphIndex", "Admin")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("GuestBook")==0?"active":"") ">
+                    <a href="javascript:;">
+                        <i class="icon-align-center"></i>
+                        <span class="title">留言管理</span>
+                        <span class="arrow @(currentAction.IndexOf("GuestBook")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("GuestBook") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("留言初始化", "GuestBookConfigIndex", "Admin")</li>
+                        <li>@Html.ActionLink("留言列表", "GuestBookIndex", "Admin")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Faq")==0?"active":"") ">
+                    <a href="javascript:;">
+                        <i class="icon-align-center"></i>
+                        <span class="title">FAQ</span>
+                        <span class="arrow @(currentAction.IndexOf("Faq") == 0 ? "open" : "")"></span>
+                        @Html.Raw(currentAction.IndexOf("Faq") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("创建问答", "FaqCreate", "Admin")</li>
+                        <li>@Html.ActionLink("问答列表", "FaqIndex", "Admin")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Comment")==0?"active":"") last">
+                    <a href="javascript:;">
+                        <i class="icon-align-center"></i>
+                        <span class="title">评论管理</span>
+                        <span class="arrow @(currentAction.IndexOf("Comment")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Comment") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("所有评论", "Index", "Comments")</li>
+                    </ul>
+                </li>
+
+                <li class="@(currentAction.IndexOf("Faq")==0?"active":"") ">
+                    <a href="javascript:;">
+                        <i class="icon-align-center"></i>
+                        <span class="title">产品管理</span>
+                        <span class="arrow @(currentAction.IndexOf("Faq") == 0 ? "open" : "")"></span>
+                        @Html.Raw(currentAction.IndexOf("Faq") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("拓展属性管理", "Index", "ExpandProperties")</li>
+                        <li>@Html.ActionLink("分类及默认属性管理", "Index", "ProductCategories")</li>
+                        <li>@Html.ActionLink("产品管理及属性", "Index", "Products")</li>
+                        <li>@Html.ActionLink("订单管理", "Index", "Orders")</li>
+                        <li>@Html.ActionLink("询价管理", "Index", "Inquiries")</li>
+                        <li>@Html.ActionLink("单页管理", "Index", "SinglePages")</li>
+                    </ul>
+                </li>
+
+
+                <li class="@(currentAction.IndexOf("Comment")==0?"active":"") last">
+                    <a href="javascript:;">
+                        <i class="icon-align-center"></i>
+                        <span class="title">返利管理</span>
+                        <span class="arrow @(currentAction.IndexOf("Comment")==0?"open":"")"></span>
+                        @Html.Raw(currentAction.IndexOf("Comment") == 0 ? "<span class=\"selected\"></span>" : "")
+                    </a>
+                    <ul class="sub-menu">
+                        <li>@Html.ActionLink("订单返利", "Index", "OrderRebate")</li>
+                        <li>@Html.ActionLink("用户返利", "Index", "CustomerRebates")</li>
+                    </ul>
+                </li>*@
+                    
+                    
+                @*<li class=" last">
+
+                        <a href="charts.html">
+
+                        <i class="icon-bar-chart"></i>
+
+                        <span class="title">系统统计</span>
+
+                        </a>
+
+                    </li>*@
+                }
+            </ul>
+
+            <!-- END SIDEBAR MENU -->
+
+        </div>
+
+        <!-- END SIDEBAR -->
+        <!-- BEGIN PAGE -->
+
+        <div class="page-content">
+
+            <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+
+            <div id="portlet-config" class="modal hide">
+
+                <div class="modal-header">
+
+                    <button data-dismiss="modal" class="close" type="button"></button>
+
+                    <h3>portlet Settings</h3>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <p>Here will be a configuration form</p>
+
+                </div>
+
+            </div>
+
+            <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+            <!-- BEGIN PAGE CONTAINER-->
+
+            <div class="container-fluid">
+
+                @RenderBody()
+
+            </div>
+
+            <!-- END PAGE CONTAINER-->
+
+        </div>
+
+        <!-- END PAGE -->
+
+    </div>
+
+    <!-- END CONTAINER -->
+    <!-- BEGIN FOOTER -->
+
+    <div class="footer">
+
+        <div class="footer-inner">
+
+            Copyright: @COPYRIGHT
+
+        </div>
+
+        <div class="footer-tools">
+
+            <span class="go-top">
+
+                <i class="icon-angle-up"></i>
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- END FOOTER -->
+    <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="~/Plugins/JQuery/jquery-1.9.1.js"></script>
+
+
+    <script src="~/Plugins/json/jquery.json-2.4.min.js"></script>
+
+
+    <!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+
+    <script src="/content/admin/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+    <script src="~/Plugins/b3/js/bootstrap.min.js"></script>
+
+    <!--[if lt IE 9]>
+
+    <script src="/content/admin/js/excanvas.min.js"></script>
+
+    <script src="/content/admin/js/respond.min.js"></script>
+
+    <![endif]-->
+    <!-- END CORE PLUGINS -->
+
+    <script src="~/content/admin/js/app.js"></script>
+
+
+
+    <!-- END JAVASCRIPTS -->
+
+
+    <script>
+
+        $(function () {
+
+            App.init();
+
+        });
+
+    </script>
+    @RenderSection("Scripts", required: false)
+    <!-- END BODY -->
+</body>
+</html>

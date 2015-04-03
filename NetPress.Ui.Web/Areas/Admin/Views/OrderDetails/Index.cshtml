@@ -1,0 +1,130 @@
+﻿@using NetPress.Models;
+@model IEnumerable<NetPress.Models.OrderDetails>
+@{
+    List<ProductPrice> priceList = ViewBag.ProductPrice;
+    List<ProductProperty> propertyList = ViewBag.PropertyList;
+}
+
+<h2>订单明细</h2>
+
+<p>
+    @*@Html.ActionLink("新建", "Create")*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Order.Name)
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.PriceId)*@
+            套餐/商品
+        </th>
+        <th>
+           属性
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PackType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseVolume)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Order.Name)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.PriceId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PackType)
+        </td>*@
+
+        @if (item.PackType == PackType.SingleItem)//单一产品
+        {
+            ProductPrice samePrice = null;
+            foreach (ProductPrice p in priceList)
+            {
+                if (p.ProductPriceId == item.PriceId)
+                {
+                    samePrice = p;
+                }
+            }
+
+            if (samePrice != null)
+            {
+                string propertyValue = "";
+                if(samePrice.IsDeleted)
+                {
+                    propertyValue = "(属性组已下架或价格变更)";
+                }
+               
+                foreach(ProductProperty property in propertyList)
+                {
+                    foreach(PriceItem i in samePrice.PriceItems.ToList())
+                    {
+                        if(i.ProductPropertyMapping.ProductPropertyId==property.ProductPropertyId)
+                        {
+                            propertyValue += i.ProductPropertyMapping.Provalue + " ";
+                        }
+                    }
+                }
+                
+                <td><a href="javascript:void()" add-url="/Home/Details" add-id-name="url" add-url-value="@samePrice.Product.Url" class="productLink">@samePrice.Product.Name</a></td>
+                <td>@propertyValue</td>
+            }
+            else
+            {
+                <td>该属性商品不存在</td>
+            }
+
+            <td>商品</td>
+        }
+        else if (item.PackType == PackType.PackItem)//套餐
+        {
+            <td></td>
+            <td>套餐</td>
+        }
+
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseVolume)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.ActionLink("改价", "Edit", new { id=item.OrderDetailsId }) |
+            @*@Html.ActionLink("Details", "Details", new { id=item.OrderDetailsId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.OrderDetailsId })*@
+        </td>
+    </tr>
+}
+
+</table>
+@Html.ActionLink("返回", "Index", "Orders", null, null)
+<script>
+    $(document).ready(function () {
+        $(".productLink").each(function () {
+            $(this).click(function () {
+                var url = $(this).attr("add-url");
+                var name = $(this).attr("add-id-name");
+                var id = $(this).attr("add-url-value");
+                var completeUrl = url + "/" + id;
+                window.open(completeUrl);
+            });
+        });
+    });
+</script>

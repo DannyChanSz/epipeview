@@ -1,0 +1,75 @@
+﻿ <div class="produts-pagination">
+    <ul>
+        @{
+            int startPage = 1;
+            int showPageCount = 10;
+            int endPage = startPage + showPageCount - 1;
+            int pageIndex = ViewBag.pageIndex;
+            int pageCount = ViewBag.pageCount;
+
+            if (pageCount > 0)
+            {
+                string url = "All";
+                string action = ViewContext.RouteData.Values["action"].ToString();
+                if (ViewContext.RouteData.Values["url"] != null)
+                {
+                    url = ViewContext.RouteData.Values["url"].ToString();
+                }
+
+                if (pageIndex != 1)
+                {
+                    @*<li ><a href="@Url.Action(action, new { url = url, page = 1 })">首页</a></li>
+                        <li ><a href="@Url.Action(action, new { url = url, page = pageIndex - 1 })">上一页</a></li>*@
+
+                    <li><a name="pageChange" href="javascript:void(0)" data-page="1">首页</a></li>
+                    <li><a name="pageChange" href="javascript:void(0)" data-page="@(pageIndex - 1)">上一页</a></li>
+
+                }
+
+
+                if (pageCount > showPageCount)
+                {
+                    if (pageIndex * 2 > showPageCount)
+                    {
+                        startPage = pageIndex - showPageCount / 2 + 1;
+                        endPage = startPage + showPageCount - 1;
+                    }
+
+                }
+
+                if (endPage > pageCount)
+                {
+                    endPage = pageCount;
+                }
+
+                for (int i = startPage; i < endPage + 1; i++)
+                {
+                    if (i == pageIndex)
+                    {
+                        if (pageCount != 1)//2015.3.9 新增
+                        {
+                            <li class="active"><span>@i</span></li>
+                        }
+
+                    }
+                    else
+                    {
+                        @*<li><a href="@Url.Action(action, new { url = url, page = i })">@i</a></li>*@
+                        <li><a name="pageChange" href="javascript:void(0)" data-page="@i">@i</a></li>
+                    }
+                }
+
+                if (pageIndex != pageCount)
+                {
+                    @*<li ><a href="@Url.Action(action, new { url = url, page = pageIndex + 1 })">下一页</a></li>
+                        <li ><a href="@Url.Action(action, new { url = url, page = pageCount })">尾页</a></li>*@
+
+                    <li><a name="pageChange" href="javascript:void(0)" data-page="@(pageIndex + 1)">下一页</a></li>
+                    <li><a name="pageChange" href="javascript:void(0)" data-page="@(pageCount)">尾页</a></li>
+                }
+            }
+        }
+    </ul>
+
+</div>
+

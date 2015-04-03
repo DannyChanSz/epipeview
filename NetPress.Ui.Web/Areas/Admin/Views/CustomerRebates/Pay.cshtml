@@ -1,0 +1,107 @@
+﻿@model NetPress.Models.CustomerRebate
+@{
+    
+}
+
+<h2>支付提成</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" >
+        <h4>CustomerRebate</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CustomerRebateId)
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Customer.Name)
+
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Customer.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.TotleRebate)
+            <div class="col-md-10">
+                @*@Html.DisplayFor(model => model.TotleRebate)*@
+                <label id="lbTotleRebate" data-value="@Model.TotleRebate">@Model.TotleRebate</label>
+               
+            </div>
+        </div>
+
+        <div class="form-group">
+          @Html.DisplayNameFor(model => model.TotleWithDrew)
+            <div class="col-md-10">
+                @*@Html.DisplayFor(model => model.TotleWithDrew)*@
+                <label id="lbTotleWithDrew" data-value="@Model.TotleWithDrew">@Model.TotleWithDrew</label>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+             <p>支付金额</p>
+            <div class="col-md-10">
+                <input type="text" id="PayNumber" name="PayNumber" value="0" /><p id="pErrorPayNumber"></p>
+                <input id="subPay" type="submit" value="确定" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+   <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+   <script src="~/Content/js/RegExpHelper.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $("#PayNumber").keyup(function () {
+            var number = $(this).val();
+            if (RegExpHelper.isMoney(number))
+            {
+                var money = parseFloat(number);
+                var totleRebate = $("#lbTotleRebate").attr("data-value");
+                var totleWithDrew = $("#lbTotleWithDrew").attr("data-value");
+
+                var maxMoney = parseFloat(totleRebate) - parseFloat(totleWithDrew);
+                if (maxMoney > money || maxMoney == money) {
+                    IfAblePay(true, "");
+                }
+                else {
+                    IfAblePay(false, "可支付金额为0到" + maxMoney);
+                }
+            }
+            else
+            {
+                IfAblePay(false, "请填写正确金额");
+            }
+        });
+
+
+    });
+
+    //解/禁提交按钮 提示
+    function IfAblePay(ifAble,msg)
+    {
+        if (ifAble)
+        {
+            $("#subPay").removeAttr("disabled");           
+        }
+        else
+        {
+            $("#subPay").attr("disabled", "disabled");
+        }
+        $("#pErrorPayNumber").html(msg);
+    }
+
+</script>
+
+}

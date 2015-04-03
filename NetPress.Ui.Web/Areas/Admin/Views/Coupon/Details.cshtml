@@ -1,0 +1,66 @@
+﻿@model NetPress.Models.Coupon
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Coupon</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Customer.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Denomination)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Denomination)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CouponType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CouponType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OffTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OffTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CouponId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

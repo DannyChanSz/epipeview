@@ -1,0 +1,30 @@
+﻿@using NetPress.Models;
+@using NetPress.BLL;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    ViewBag.Title = "GetSupplierOrder";
+
+    List<Product> ProductList =  ViewBag.Productlist;
+}
+
+<h2>GetSupplierOrder</h2>
+@Html.Partial("_Aside")
+@if(ProductList!=null)
+{
+    foreach(var item in ProductList)
+    {
+        <div style="background-color:gray">
+
+            <ul>
+                <li>产品名称:@item.Name</li>
+                <li>分类名称:@item.ProductCategory.Name</li>
+                <li>状态:@item.state</li>
+                <li>产品地址:@item.Url</li>
+                <li>上线时间:@item.CreatedOn</li>
+                <li>产品图片:@item.Pics</li>
+                <li>产品描述:@item.Description</li>
+            </ul>
+        </div>
+    }
+}

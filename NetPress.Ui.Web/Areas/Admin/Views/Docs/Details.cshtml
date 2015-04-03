@@ -1,0 +1,121 @@
+﻿@model NetPress.Models.Doc
+@using NetPress.Models;
+
+@{
+    ViewBag.Title = "Details";
+    List<Pic> pics = ViewBag.pics;
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Doc</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DocCategory.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocCategory.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SysUser.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SysUser.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SubTitle)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SubTitle)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Url)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Url)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Clicks)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Clicks)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Contents)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Contents)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DirectlyUrl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DirectlyUrl)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tags)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tags)
+        </dd>
+            @if (pics != null && pics.Count > 0)
+            {
+                var Uploaded = "/Uploaded/Original/";
+
+                foreach (var item in pics)
+                {
+                    <dt>
+                        <p>@item.SubTypeTag</p>
+                        @{string ImgPath = Uploaded + item.Url;}
+                        <img src="@ImgPath" style="width:150px;height:150px;">
+                    </dt>
+                }
+            }
+        <dt>
+            @Html.DisplayNameFor(model => model.Recommended)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Recommended)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DocId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+

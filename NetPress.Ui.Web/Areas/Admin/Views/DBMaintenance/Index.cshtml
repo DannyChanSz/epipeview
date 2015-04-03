@@ -1,0 +1,221 @@
+﻿@{
+    //Layout = null;
+}
+<h2>数据库备份还原</h2>
+<div style="padding:5em 50px">
+
+    <div>
+        Bak备份：
+        <input type="button" id="btnBackup" value="数据库备份" />
+        <p id="pBackup">
+
+        </p>
+    </div>
+
+
+    <div style="padding:5em 0">
+        还原文件上传：
+
+        <p id="console"></p>
+        <div id="filelist" style="clear:both"></div>
+        <div id="container">
+            <a id="pickfiles" href="javascript:;">[选择文件]</a>
+            <a id="uploadfiles" href="javascript:;">[上传文件]</a>
+        </div>
+        <p>请打包zip上传</p>
+
+
+
+        Bak还原路径：
+        <input type="text" id="txtPath" readonly="readonly" />
+        <input type="button" id="btnRestoreBackup" value="数据库还原" />
+        <p id="pRestoreBackup">
+
+        </p>
+    </div>
+
+
+    <div style="padding:5em 0">
+        清理备份与还原文件夹：
+        <input type="button" id="clearBackup" value="清空备份与还原" />
+    </div>
+
+</div>
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script>
+    function createUpload(container,url, pickfiles, uploadfiles, filelist, console) {
+
+        var uploader = new plupload.Uploader({
+
+            runtimes: 'html5,flash,silverlight,html4',
+
+            browse_button: pickfiles, // you can pass in id...
+
+            container: document.getElementById(container), // ... or DOM Element itself
+
+            url: url,
+
+            flash_swf_url: '/Plugins/plupload-2.1.2/js/Moxie.swf',
+
+            silverlight_xap_url: '/Plugins/plupload-2.1.2/js/Moxie.xap',
+
+            filters: {
+                //   max_file_size: '10mb',
+                max_file_size: '100mb',
+                mime_types: [
+                    { title: "Zip files", extensions: "zip" }
+                ]
+            },
+
+            init: {
+                PostInit: function () {
+                    document.getElementById(filelist).innerHTML = '';
+                    document.getElementById(uploadfiles).onclick = function () {
+                        uploader.start();
+                        return false;
+                    };
+                },
+
+                FilesAdded: function (up, files) {
+                    plupload.each(files, function (file) {
+                        document.getElementById(filelist).innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                    });
+                },
+                FileUploaded: function (up, file, info) {
+
+                },
+                UploadProgress: function (up, file) {
+                    document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+                },
+
+                Error: function (up, err) {
+                    document.getElementById(console).innerHTML += "\nError #" + err.code + ": " + err.message;
+                }
+            }
+        });
+        return uploader;
+    }
+
+</script>
+<script>
+$(document).ready(function () {
+    //备份
+    $("#btnBackup").click(function () {
+        $("#pBackup").text("");
+
+        PostBackup();
+    });
+
+    //还原
+    $("#btnRestoreBackup").click(function () {
+        $("#pRestoreBackup").text("");
+        var path = $("#txtPath").val();
+        if (path != "") {
+            PostRestoreBackup(path);
+        }
+        else
+        {
+            alert("还原路径错误");
+        }
+    });
+
+    //删除备份
+    $("#clearBackup").click(function () {
+
+        ClearBackup();
+    });
+
+    //加载上传控件
+    upLoad();
+
+})
+
+//加载上传控件
+function upLoad()
+{
+    var url = "/DBMaintenance/UploadZip";
+    var uploader = createUpload("container",url, "pickfiles", "uploadfiles", "filelist", "console");
+
+    uploader.bind("FileUploaded", function (up, file, info) {
+        var url = $.parseJSON(info.response).url;
+        $("#txtPath").val(url);
+    });
+    uploader.init();
+}
+
+
+
+//备份
+function PostBackup() {
+    $.ajax({
+        type: 'post',
+        url: "/DBMaintenance/Backup",
+        success: function (result) {
+            if (result.status == "success") {
+                var html = "<a href='" + result.url + "'>下载</a>"
+                $("#pBackup").html("备份成功 " + html);
+
+            }
+            else if (result.status == "error") {
+                alert(result.msg);
+            }
+
+        },
+        error: function () {
+            alert("error");
+        }
+    });
+}
+
+//删除备份
+function ClearBackup() {
+    $.ajax({
+        type: 'post',
+        url: "/DBMaintenance/ClearBackup",
+        success: function (result) {
+            if (result.status == "success") {
+                alert("清空备份成功");
+
+            }
+            else if (result.status == "error") {
+                alert(result.msg);
+            }
+
+        },
+        error: function () {
+            alert("error");
+        }
+    });
+}
+
+
+
+
+//还原
+function PostRestoreBackup(path) {
+    $.ajax({
+        type: 'post',
+        url: "/DBMaintenance/RestoreBackup",
+        data: { path: path },
+        success: function (result) {
+            if (result.status == "success") {
+                $("#pRestoreBackup").text("还原成功");
+
+            }
+            else if (result.status == "error") {
+                alert(result.msg);
+            }
+
+        },
+        error: function () {
+            alert("error");
+        }
+    });
+}
+
+
+
+
+
+
+</script>

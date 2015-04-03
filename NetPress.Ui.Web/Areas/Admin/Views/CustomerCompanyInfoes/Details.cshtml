@@ -1,0 +1,82 @@
+﻿@model NetPress.Models.CustomerCompanyInfo
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CustomerCompanyInfo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Customer.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CompanyName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyProfile)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CompanyProfile)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OtherDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OtherDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LinkmanName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LinkmanName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CellPhone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CellPhone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TelePhone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TelePhone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CustomerCompanyInfoId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

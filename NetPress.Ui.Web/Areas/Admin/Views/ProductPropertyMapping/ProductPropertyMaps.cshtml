@@ -1,0 +1,49 @@
+﻿@using NetPress.Models;
+@model IEnumerable<NetPress.Models.ProductPropertyMapping>
+
+@{
+    Product product = ViewBag.Product;
+    Guid productId = product.ProductId;
+}
+
+<h2>@(product.Name)的属性</h2>
+
+<p>
+    @*@Html.ActionLink("新增属性", "../ProductPropertyMapping/CreateMapsWithProperty", new { productId = productId })*@
+    @Html.ActionLink("新增属性", "CreateMapsWithProperty", "ProductPropertyMapping", new { productId = productId }, null) 
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Provalue)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductProperty.ExpandProperty.name)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Provalue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductProperty.ExpandProperty.name)
+            </td>
+            <td>
+                @Html.ActionLink("修改", "Edit", new { id = item.ProductPropertyMappingId ,productId = item.ProductId }) |
+                @Html.ActionLink("删除", "Delete", new { id = item.ProductPropertyMappingId, productId = item.ProductId })
+            </td>
+        </tr>
+    }
+
+</table>
+<div> @Html.ActionLink("返回","../Products")</div>

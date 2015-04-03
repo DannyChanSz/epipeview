@@ -1,0 +1,41 @@
+﻿
+/*冷色调*/
+$white: #fff;
+$black-3: darken(#fff,3%);
+$black-5: darken(#fff,5%);
+$black-8: darken(#fff, 8%);
+$black-10: darken(#fff, 10%);
+$black-20: darken(#fff, 20%);
+$black-30: darken(#fff, 30%);
+$black-40: darken(#fff, 40%);
+$black-50: darken(#fff, 50%);
+$black-60: darken(#fff, 60%);
+$black-70: darken(#fff, 70%);
+$black-80: darken(#fff, 80%);
+$black-90: darken(#fff, 90%);
+$black: #000;
+
+/*暖色调*/
+$blue:                  #353f48;
+$blueDark:              #212a31;
+$green:                 #4cc7b4;
+$red:                   #d83e40;
+$yellow:                #ffc40d;
+$orange:                #f89406;
+$pink:                  #c3325f;
+$purple:                #7a43b6;
+
+$brand-primary: #4cbc01;
+$brand-success: #7db500;
+$brand-warning: #f18d05;
+$brand-danger:  #e54028;
+$brand-info:    #87318c;
+$brand-sub:#017cb9;
+
+/*基本设置*/
+$bodyBackground: $white;  /*页面背景色*/
+$textColor:$black-40;    /*默认的文字颜色*/
+$linkColor:#b0afaf;        /*默认的链接颜色*/
+$linkColorHover:$brand-primary;    /*默认链接hover样式*/
+$linkColorReverse:$white;
+$linkColorHoverReverse:$brand-primary;

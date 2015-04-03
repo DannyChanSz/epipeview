@@ -1,0 +1,288 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@using NetPress.BLL;
+
+@{
+    //左侧文章
+    ViewBag.Title = "Index";
+
+    string id = ViewBag.id;//当前文章分类
+
+    int pageCount = ViewBag.pageCount;
+
+    int pageIndex = ViewBag.pageIndex;
+
+    List<IndexDocView> doclist = ViewBag.DocsData;
+
+    string Dirpath = "/Uploaded/Original/";
+
+    string UrlPath = "/Cms/Doc/Details/";
+
+
+    //右侧
+    UnitOfWork db = new UnitOfWork();
+
+    //根绝分类获取资讯
+    List<IndexDocView> DocViews = db.Docs.DocViewByCatId();
+
+    List<DocCategory> category = db.DocCategories.ToList().Where(m => m.DocCategoryId.ToString() != id).Take(4).ToList();
+
+    List<IndexDocView> Rtop1 = DocViews.Where(m => m.Doc.DocCategoryId == category[0].DocCategoryId).Take(4).ToList();
+    List<IndexDocView> Rtop2 = DocViews.Where(m => m.Doc.DocCategoryId == category[1].DocCategoryId).Take(4).ToList();
+    List<IndexDocView> Rtop3 = DocViews.Where(m => m.Doc.DocCategoryId == category[2].DocCategoryId).Take(4).ToList();
+    List<IndexDocView> Rtop4 = DocViews.Where(m => m.Doc.DocCategoryId == category[3].DocCategoryId).Take(4).ToList();
+
+
+}
+
+<div class="container">
+    <div class="row">
+
+        <!--左侧文章列表-->
+        <div class="col-lg-8 col-md-8">
+            @if (DocViews != null & DocViews.Count > 0)
+            {
+                if (doclist != null && doclist.Count() > 0)
+                {
+                    IndexDocView item = doclist[0];
+                    string ImgSrc1 = (item.Pic == null) ? "#" : (Dirpath + item.Pic.Url.ToString());
+                    <div class="docs-item first">
+                        <h1><a href="@(UrlPath+item.Doc.Url)">@item.Doc.Title</a></h1>
+                        <div class="docs-item-subtitle">
+                            @item.Doc.SubTitle
+                        </div>
+                        <div>
+                            <img src="@ImgSrc1" class="img-responsive" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>没有内容</p>
+                }
+            }
+            else
+            {
+                <p>没有内容</p>
+            }
+
+            @if (doclist != null && doclist.Count() > 1)
+            {
+                for (var i = 1; i < doclist.Count(); i++)
+                {
+                    IndexDocView item = doclist[i];
+                    string ImgSrc = (item.Pic == null) ? "#" : (Dirpath + item.Pic.Url.ToString());
+
+                    <div class="docs-item">
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                <img src="@ImgSrc" class="img-responsive" />
+                            </div>
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                                <div class="docs-caption">
+                                    <h1><a href="@(UrlPath + item.Doc.Url)">@item.Doc.Title</a></h1>
+                                    <div class="docs-item-content">
+                                        @Html.Raw(item.Doc.Contents.Substring(0, 150) + "...")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            <!--上一篇下一篇-->
+            <div class="pagination clearfix">
+                <div class="text-right">
+                    <a href="/Cms/Doc?page=@(pageIndex-1)"><img src="/Content/images/pre-2.jpg" style="width:50px;height:20px;" /></a>
+
+                    @for (int i = 0; i < pageCount; i++)
+                    {
+                        @Html.ActionLink(i.ToString(), "Index", new { page = i }, htmlAttributes: new { @class = "control-label", style = "margin:5px;" })
+                    }
+                    <a href="/Cms/Doc?page=@(pageIndex+1)"><img src="/Content/images/next-1.jpg" style="width:50px;height:20px;" /></a>
+                </div>
+            </div>
+        </div>
+
+        <!--右侧-->
+        <div class="col-lg-4 col-md-4">
+            <div class="aside">
+                <!--工作小助理-->
+                @{
+                    if (Rtop1 != null && Rtop1.Count > 0)
+                    {
+
+                        IndexDocView item1 = Rtop1[0];
+                        string ImgSrc1 = (item1.Pic == null) ? "#" : (Dirpath + item1.Pic.Url.ToString());
+
+                        <div class="aside-block">
+                            <div class="aside-block-title">@item1.Doc.DocCategory.Name<small class="pull-right"><a href="#">更多</a></small> </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><img src="@ImgSrc1" class="img-responsive" /></div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    @Html.Raw(item1.Doc.Contents.Substring(0, 100) + "...")
+                                </div>
+                            </div>
+
+                            <div class="row aside-list">
+                                <div class="col-lg-12">
+                                    <ul>
+
+                                        @foreach (var item in Rtop1)
+                                        {
+                                            if (item != item1)
+                                            {
+                                                string title = item.Doc.Title.Length > 15 ? item.Doc.Title.Substring(0, 15) : item.Doc.Title;
+                                                <li><a href="@(UrlPath + item.Doc.Url)">@title</a><small>@item.Doc.CreatedOn</small></li>
+
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>没有内容</p>
+                    }
+                }
+
+                <!--展会服务-->
+                @{
+                    if (Rtop2 != null && Rtop2.Count > 0)
+                    {
+                        IndexDocView item0 = Rtop2[0];
+
+                        string ImgSrc2 = (item0.Pic == null) ? "#" : (Dirpath + item0.Pic.Url.ToString());
+
+                        <div class="aside-block">
+                            <div class="aside-block-title">@item0.Doc.DocCategory.Name<small class="pull-right"><a href="#">更多</a></small> </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+
+                                    <h1><a href="@(UrlPath + item0.Doc.Url)">@item0.Doc.Title</a></h1>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><img src="@ImgSrc2" class="img-responsive" /></div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    @Html.Raw(item0.Doc.Contents.Substring(0, 100) + "...")
+
+                                </div>
+                            </div>
+
+                            <div class="row aside-list">
+                                <div class="col-lg-12">
+                                    <ul>
+
+                                        @foreach (var item in Rtop2)
+                                        {
+                                            if (item != item0)
+                                            {
+                                                string title = item.Doc.Title.Length > 15 ? item.Doc.Title.Substring(0, 15) : item.Doc.Title;
+
+                                                <li><a href="@(UrlPath+item.Doc.Url)">@title</a><small>@item.Doc.CreatedOn</small></li>
+
+                                            }
+
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    }
+                    else
+                    {
+                        <p>没有内容</p>
+                    }
+                }
+
+                <!--智慧管网-->
+                @{
+                    if (Rtop3 != null && Rtop3.Count > 0)
+                    {
+                        IndexDocView item0 = Rtop3[0];
+
+                        string ImgSrc3 = (item0.Pic == null) ? "#" : (Dirpath + item0.Pic.Url.ToString());
+
+
+                        <div class="aside-block">
+                            <div class="aside-block-title">@item0.Doc.DocCategory.Name<small class="pull-right"><a href="#">更多</a></small> </div>
+
+                            <div><img src="@ImgSrc3" class="img-responsive" /></div>
+                            <div class="text-center"><h1><a href="@(UrlPath + item0.Doc.Url)">@item0.Doc.Title</a></h1></div>
+
+                            @foreach (var item in Rtop3)
+                            {
+                                if (item != item0)
+                                {
+                                    string title = item.Doc.Title.Length > 15 ? item.Doc.Title.Substring(0, 15) : item.Doc.Title;
+
+                                    <li><a href="@(UrlPath+item.Doc.Url)">@title</a><small>@item.Doc.CreatedOn</small></li>
+
+                                }
+
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <p>没有内容</p>
+                    }
+                }
+
+                <!--行业研究-->
+                @{
+                    if (Rtop4 != null && Rtop4.Count > 0)
+                    {
+                        IndexDocView item0 = Rtop4[0];
+                        string ImgSrc4 = (item0.Pic == null) ? "#" : (Dirpath + item0.Pic.Url.ToString());
+                        <div class="aside-block">
+                            <div class="aside-block-title">@item0.Doc.DocCategory.Name<small class="pull-right"><a href="#">更多</a></small> </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h1><a href="@(UrlPath + item0.Doc.Url)">@item0.Doc.Title</a></h1>
+
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><img src="@ImgSrc4" class="img-responsive" /></div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    @Html.Raw(item0.Doc.Contents.Substring(0, 100) + "...")
+                                </div>
+                            </div>
+                            <div class="row aside-list">
+                                <div class="col-lg-12">
+                                    <ul>
+                                        @foreach (var item in Rtop4)
+                                        {
+                                            if (item != item0)
+                                            {
+                                                string title = item.Doc.Title.Length > 15 ? item.Doc.Title.Substring(0, 15) : item.Doc.Title;
+
+                                                <li><a href="@(UrlPath+item.Doc.Url)">@title</a><small>@item.Doc.CreatedOn</small></li>
+
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <p>没有内容</p>
+                    }
+
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

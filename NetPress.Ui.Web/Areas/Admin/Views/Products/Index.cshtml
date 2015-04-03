@@ -1,0 +1,434 @@
+﻿@using NetPress.Models
+@using NetPress.BLL
+@model IEnumerable<NetPress.Models.Product>
+
+@{
+    //ViewBag.Title = "Index";
+    string ProductName = ViewBag.ProductName;
+
+    SelectList CategroyList = ViewBag.CategroyList;
+
+    string tagSearch = ViewBag.TagSearch;
+
+    //新增预览图片
+    UnitOfWork u = new UnitOfWork();
+
+    string path = "/Uploaded/Original/";
+}
+
+<h2>商品</h2>
+
+<div>
+    <div></div>
+
+</div>
+
+
+<p>
+    @Html.ActionLink("新增", "Create")
+</p>
+<div>
+    <span>分类：</span>
+    <a name="aHelper" data-state="hidden" >+</a>
+    <input type="text" id="txtCategroyHelper" placeholder="填写你要选择的分类名" style="display:none;" />
+
+    @Html.DropDownList("分类", CategroyList, "所有", htmlAttributes: new { id = "categroySearch" })
+    <span>标签：</span><input type="text" id="tagSearch" value="@tagSearch" />
+    <input type="button" id="btnSearch" value="查询" />
+
+    <p id="pTest"></p>
+    @*<select><option selected="selected"></option></select>*@
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductCategory.Name)
+        </th>
+        <th>
+            商品图片
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.state)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Pics)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tags)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Recommended)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsLowPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsTop)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TagSearch)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TagSeo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SKU)
+        </th>
+
+        <th>
+            商品返利
+        </th>
+        <th>操作</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        string imgUrl = "";
+        List<Pic> pics =  u.Pics.GetIndexByPoductId(item.ProductId);
+        if (pics != null && pics.Count > 0)
+        {
+            string url = pics.First().Url;
+            imgUrl = path + url;
+        }
+       
+
+
+            <tr>
+                <td>
+
+                    @if (item.ProductCategory.ProductProperties != null && item.ProductCategory.ProductProperties.Count > 0)//已添加该分类的拓展
+                {
+                        @Html.DisplayFor(modelItem => item.ProductCategory.Name)
+                }
+                else
+                {
+                        <div style="color:red;">
+                            <p>@(Html.DisplayFor(modelItem => item.ProductCategory.Name))(该分类尚未添加扩展)</p>
+                        </div>
+
+                }
+                </td>
+                <td>
+                    <img src="@imgUrl" style="width:80px;height:60px" />
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.Name)*@
+                    @if (item.state)
+                {
+                        @*@Html.ActionLink(item.Name, "Details", "Product", new { area = "ProductArea", url = item.Url }, new { name = "ProductLink" });*@
+                        @Html.ActionLink(item.Name, "Details", "Home", new { area = "", url = item.Url }, new { name = "ProductLink" });
+                }
+                else
+                {
+                        <p>@item.Name</p>@Html.ActionLink("[预览]", "Details", "Home", new { area = "", url = item.Url, operateType = "Preview" }, new { name = "ProductLink" });
+                }
+                </td>
+
+
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.state)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pics)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tags)
+                </td>
+                <td>
+                    @if (item.Description == "")
+                {
+                        <span>未填</span>
+                }
+                else
+                {
+                        <span>已填</span>
+                }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedOn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Url)
+                </td>
+
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.Recommended)*@
+                    @if (item.Recommended)//推荐
+                {
+                        <input type="checkbox" name="cbRecommend" data-id="@item.ProductId" data-todo="false" checked="checked" />
+                }
+                else
+                {
+                        <input type="checkbox" name="cbRecommend" data-id="@item.ProductId" data-todo="true" />
+                }
+
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.IsLowPrice)*@
+                    @if (item.IsLowPrice)//性价比
+                {
+                        <input type="checkbox" name="cbIsLowPrice" data-id="@item.ProductId" data-todo="false" checked="checked" />
+                }
+                else
+                {
+                        <input type="checkbox" name="cbIsLowPrice" data-id="@item.ProductId" data-todo="true" />
+                }
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsTop)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TagSearch)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TagSeo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SKU)
+                </td>
+                <td>
+                    @if (item.ProductRebates != null && item.ProductRebates.Count > 0)
+                {
+                        <p>@item.ProductRebates.First().RebateValue</p>
+                }
+                else
+                {
+                        <p>0</p>
+                }
+                </td>
+
+
+                <td>
+                    @Html.ActionLink("修改", "Edit", new { id = item.ProductId }) <br/>
+                    @Html.ActionLink("删除", "Delete", new { id = item.ProductId }) |
+                    @Html.ActionLink("添加属性", "GetByProductId", "ProductPropertyMapping", new { id = item.ProductId }, null) |
+                    @Html.ActionLink("添加价格", "GetByProductId", "ProductPrice", new { id = item.ProductId }, null) |
+
+                    @Html.ActionLink("添加图片", "Product", "ImageUpload", new { Area = "UploadArea", productId = item.ProductId }, null) |
+
+
+
+                    @*修改上线下线状态*@
+                    @if (item.state)//已上线->下线
+                {
+                        <a href="javascript:void(0)" name="aChangeState" data-productid="@item.ProductId" data-changestate="false">产品下架 |</a>
+                }
+                else
+                {
+                        <a href="javascript:void(0)" name="aChangeState" data-productid="@item.ProductId" data-changestate="true">产品上线 |</a>
+                }
+
+                    @Html.ActionLink("设置返利", "Edit", "ProductRebate", new { productId = item.ProductId }, null) |
+
+                    @*<a href="javascript:void(0)" name="preview" data-url="@item.Url">预览 |</a>*@
+                </td>
+            </tr>
+    }
+
+</table>
+<script>
+    $(document).ready(function () {
+        //修改上下线状态
+        $("[name='aChangeState']").each(function () {
+            $(this).click(function () {
+
+                var productId = $(this).attr("data-productId");
+                var state = $(this).attr("data-changestate");
+                PostChangeState(productId, state);
+            })
+
+        });
+        ////预览
+        //$("[name='preview']").each(function () {
+        //    $(this).click(function () {
+        //        var url = $(this).attr("data-url");
+        //        var href = "/ProductArea/Product/Details/" + url + "/Preview";
+        //        window.open(href);
+        //    })
+        //});
+
+        $("[name='ProductLink']").each(function () {
+            $(this).click(function () {
+                var href = $(this).attr("href");
+                window.open(href);
+                return false;
+            })
+        });
+
+        //推荐
+        $("[name='cbRecommend']").click(function () {
+            var id = $(this).attr("data-id");
+            var todo = $(this).attr("data-todo");
+
+            PostChangeRecommend(id, todo);
+        });
+
+        //性价比
+        $("[name='cbIsLowPrice']").click(function () {
+            var id = $(this).attr("data-id");
+            var todo = $(this).attr("data-todo");
+
+            PostChangeIsLowPrice(id, todo);
+        });
+
+
+        //条件查询
+        $("#btnSearch").click(function () {
+
+            var categroySearch = $("#categroySearch").val();
+            var tagSearch = $("#tagSearch").val();
+
+            location.href = "/Admin/Products/Index?categroySearch=" + categroySearch + "&&tagSearch=" + tagSearch;
+
+        })
+
+        LoadCategoryHelper();//分类选项帮助框
+    });
+
+
+    function LoadCategoryHelper()
+    {
+        $("[name='aHelper']").click(function () {
+
+            var state = $(this).attr("data-state");
+            if(state=="hidden")//当前状态
+            {
+                $(this).attr("data-state", "show");
+                $("#txtCategroyHelper").css("display", "block");
+                $(this).html("-");
+            }
+            else
+            {
+                $(this).attr("data-state", "hidden");
+                $("#txtCategroyHelper").css("display", "none");
+                $(this).html("+");
+                $("#txtCategroyHelper").val("");
+            }
+
+        })
+
+        $("#txtCategroyHelper").keyup(function () {
+            var search = $(this).val();
+
+            //$("#categroySearch option [selected='selected']").each(function () {
+            $("#categroySearch option").each(function () {
+                $(this).removeAttr("selected");
+            })
+
+
+            $("#categroySearch option").each(function () {
+                var  text = $.trim($(this).html());
+
+                if (search != "") {
+                    if (text == search) {
+                        $("#pTest").html(text + " == " + search);
+                        $(this).attr("selected", "selected");
+                        return false;//返回 false 可用于及早停止循环。
+                    }
+                    else if (text.indexOf(search) > -1) {
+                        $("#pTest").html(text + " indexOf " + search);
+                        $(this).attr("selected", "selected");
+                        return false;//返回 false 可用于及早停止循环。
+                    }
+
+                }
+            })
+
+        })
+    }
+
+
+
+
+
+
+    //更改产品上下线状态
+    function PostChangeState(productId, state) {
+        $.ajax({
+            type: 'post',
+            url: "/Products/UpdateProductState",
+            data: { "productId": productId, "state": state },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    location.href = "/Admin/Products/Index";
+                }
+                else if (result.status == "error") {
+                    alert(result.msg);
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+
+    }
+
+    //推荐
+    function PostChangeRecommend(productId, state) {
+        $.ajax({
+            type: 'post',
+            url: "/Products/UpdateRecommendState",
+            data: { "productId": productId, "state": state },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    //location.href = "/Admin/Products/Index";
+                }
+                else if (result.status == "error") {
+                    alert(result.msg);
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+    //性价比
+    function PostChangeIsLowPrice(productId, state) {
+        $.ajax({
+            type: 'post',
+            url: "/Products/UpdateIsLowPriceState",
+            data: { "productId": productId, "state": state },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    //location.href = "/Admin/Products/Index";
+                }
+                else if (result.status == "error") {
+                    alert(result.msg);
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+</script>

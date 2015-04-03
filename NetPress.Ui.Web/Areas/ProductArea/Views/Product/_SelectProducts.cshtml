@@ -1,0 +1,58 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    Layout = null;
+    List<IndexProductView> productList = ViewBag.ProductViewList;
+    string path = "/Uploaded/Original/";
+}
+
+
+<div class="products-items">
+
+
+    <div class="row">
+
+        @if (productList != null && productList.Count > 0)
+        {
+            foreach (IndexProductView pv in productList)
+            {
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="products-item">
+                        <a href="/ProductArea/Product/Details/@pv.Product.Url">
+
+                            <img src="@(path + pv.ProductPic.First().Url)" alt=" alternate text" class="img-responsive"  />@*--测试大小---*@
+
+                            <div class="caption">
+
+                                <h1>@pv.Product.Name</h1>
+                
+                                @{
+                                    string minPrice = "";//显示最小价格
+                                    string price = pv.Product.Price;
+                                    string[] priceArr = price.Split('~');
+                                    if (priceArr.Count() > 0)
+                                    {
+                                        minPrice = priceArr[0];
+                                    }
+
+                                }
+                                <h2>￥@(minPrice)</h2>
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+            }
+
+        }
+        else
+        {
+            <div>暂无商品</div>
+        }
+
+
+    </div>
+
+</div>
+
+@Html.Partial("_pagination")

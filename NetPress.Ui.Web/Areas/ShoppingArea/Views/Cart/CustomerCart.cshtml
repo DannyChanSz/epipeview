@@ -1,0 +1,279 @@
+﻿@using NetPress.Models;
+@{
+    List<Cart> cartList = ViewBag.CartList;
+    List<ProductPrice> productPriceList = ViewBag.ProductPriceList;
+    List<ProductProperty> propertyList = ViewBag.PropertyList;
+}
+<h3>购物车</h3>
+
+<div>
+    @if (cartList != null && cartList.Count > 0)
+    {
+        foreach (Cart c in cartList)
+        {
+            <div name="dvCart">
+                
+                @if (c.PackType == PackType.SingleItem)//商品
+                {
+                    ProductPrice samePrice = null;
+                    <div >
+                        <ul>
+                            @foreach (ProductPrice pp in productPriceList)
+                            {
+                                if (c.PriceId == pp.ProductPriceId)
+                                {
+                                    samePrice = pp;
+                                    string propertyValue = "";
+                                    float sumPrice = pp.Price * c.PurchaseVolume;
+
+                                    foreach (ProductProperty property in propertyList)
+                                    {
+                                        foreach (PriceItem i in samePrice.PriceItems.ToList())
+                                        {
+                                            if (i.ProductPropertyMapping.ProductPropertyId == property.ProductPropertyId)
+                                            {
+                                                propertyValue += i.ProductPropertyMapping.Provalue + " ";
+                                            }
+                                        }
+                                    }
+
+                                    if (samePrice.Product.state && samePrice.IsDeleted==false)
+                                    { 
+                                         <input type="checkbox" name="cbChoose" data-cartid="@c.CartId">
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="cbChoose" data-cartid="@c.CartId" disabled="disabled"><label>失效</label>
+                                    }
+                                    <li>商品名称：@pp.Product.Name</li>
+                                    <li>属性：@propertyValue</li>
+                                    <li>单价：<label name="lbPrice" data-price="@pp.Price">@pp.Price</label></li>
+                                    <li>数量：<input type="text" name="txtNumber" value="@c.PurchaseVolume" /></li>
+                                    <li>金额：<label name="lbSumPrice" data-sumprice="@sumPrice">@sumPrice</label></li>
+                                    <li><input type="button" name="btnDelete" value="删除"/></li>
+                                }
+
+
+                            }
+
+
+                        </ul>
+                       
+                    </div>
+                }
+                else if (c.PackType == PackType.PackItem)//套餐
+                {
+                    
+
+                }
+            </div>
+        }
+        <div> 
+            <span>合计：<label id="lbTotal">0</label></span>
+            <input type="button" id="btnOrder" value="结算" />
+        </div>
+    }
+
+
+</div>
+<script src="/Scripts/jquery-1.10.2.min.js"></script>
+<script src="/Content/js/RegExpHelper.js"></script>
+<script>
+    $(document).ready(function () {
+
+        //checkbox选项
+        $("input[name='cbChoose']").each(function () {
+
+            this.checked = false;//刷新初始化不选中
+
+            $(this).change(function () {
+                //重新计算合计金额
+                ReloadTotal();
+            });
+        });
+        //数量变更
+        $("input[name='txtNumber']").each(function () {
+
+            $(this).keyup(function () {
+
+                //计算金额
+                ReloadCartSumPrice($(this).parents("[name='dvCart']"));
+
+                //计算合计
+                ReloadTotal();
+
+            })
+        });
+
+        //结算
+        $("#btnOrder").click(function () {
+            AddOrder();
+        })
+        
+
+        //删除购物车内容
+        $("[name='btnDelete']").each(function () {
+            $(this).click(function () {
+                var dvCartDoc = $(this).parents("[name='dvCart']");
+                //删除单条购物信息
+                DeleteCart(dvCartDoc);
+            })
+
+        });
+
+    });
+
+    /*-------------交互效果部分--------------*/
+
+    //重新计算单一购物信息的金额（doc:包裹所有信息的父节点）
+    function ReloadCartSumPrice(doc)
+    {
+        //alert($(doc).html());
+        var price = $(doc).find("[name='lbPrice']").attr("data-price");//单价
+
+        var numberDoc = $(doc).find("[name='txtNumber']")
+        var number = numberDoc.val();//数量
+
+        //数量异常输入
+        if (!RegExpHelper.isPositiveInt(number)) {//异常输入 非正整数
+            var defaultNumber = 1;//错误默认数量
+            numberDoc.val(defaultNumber);
+            number = defaultNumber;
+        }
+
+        var sumDoc = $(doc).find("[name='lbSumPrice']");//金额节点
+        var sum = parseFloat( price * number).toFixed(2);
+
+        sumDoc.attr("data-sumprice", sum);
+        sumDoc.html(sum);
+    }
+
+
+    //重新计算合计金额
+    function ReloadTotal()
+    {
+        var totalNo = 0;
+        $("[name='dvCart']").each(function () {
+            var dvCartDoc = $(this);
+            var isChecked = false;
+            dvCartDoc.find("[name='cbChoose']").each(function () {
+                if(this.checked)
+                {
+                    isChecked = true;
+                }
+            })
+            if (isChecked)
+            {
+                //计算金额
+                var sumDoc = dvCartDoc.find("[name='lbSumPrice']");
+                var sum = sumDoc.attr("data-sumprice");
+
+                totalNo = parseFloat(totalNo) + parseFloat(sum);
+               
+            }
+
+        });
+        $("#lbTotal").html(totalNo.toFixed(2));
+    }
+
+    /*-------------数据提交部分--------------*/
+
+    //json格式购物信息
+    function CartJsonModel()
+    {
+        this.Id;
+        this.Number;
+    }
+
+    //获取购物信息集合
+    function GetCartsData()
+    {
+        var cartArr = new Array();
+        var index = 0;
+
+        $("[name='dvCart']").each(function () {
+            var dvCartDoc = $(this);
+            var isChecked = false;
+            dvCartDoc.find("[name='cbChoose']").each(function () {
+                if(this.checked)
+                {
+                    var number = dvCartDoc.find("[name='txtNumber']").val();
+                    //整合实体
+                    var cartModel = new CartJsonModel();
+                    cartModel.id = $(this).attr("data-cartId");
+                    cartModel.Number = number;
+
+                    cartArr[index] = cartModel;
+                    index++;
+                }
+            })
+        });
+
+        return cartArr;
+    }
+
+    //生成结算订单
+    function AddOrder()
+    {
+        var cartArr = GetCartsData();
+
+        $.ajax({
+            type: 'post',
+            url: "/Order/AddPurchaseOrder",
+            data: { "cartArr": cartArr },
+            success: function (result) {
+                if (result.status == "success") {
+                    
+                    ////跳转
+                    //alert("添加成功 跳转确认支付页面(测试只进行本地跳转)");
+                    //location.href = "/ShoppingArea/Cart/CustomerCart";
+                    var orderId = result.orderId;
+                    location.href = "/ShoppingArea/Order/ConfirmOrder/" + orderId;
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+    //删除单条购物信息
+    function DeleteCart(paretDoc) {
+        var cartId = $(paretDoc).find("input[name='cbChoose']").attr("data-cartId");
+
+        $.ajax({
+            type: 'post',
+            url: "/ShoppingArea/Cart/DeleteCart",
+            data: { "cartId": cartId },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    ////跳转
+                    //alert("添加成功 跳转确认支付页面(测试只进行本地跳转)")
+                    //location.href = "/ShoppingArea/Cart/CustomerCart";
+
+                    DeleteChoose(paretDoc);//删除选项
+                    ReloadTotal();//计算合计
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+    //删除该选项
+    function DeleteChoose(paretDoc)
+    {
+        $(paretDoc).remove();
+    }
+
+</script>

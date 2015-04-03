@@ -1,0 +1,87 @@
+﻿@using NetPress.Models;
+@using NetPress.BLL;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Comment";
+    List<Comment> Comment = ViewBag.Comment;
+    UnitOfWork db = new UnitOfWork();
+
+}
+
+
+
+
+<!--主内容-->
+<div class="login">
+    <div class="container">
+        @Html.Partial("_Aside")
+        <div class="col-lg-9 col-md-9">
+            <p><i class="icon-moon-my-i icon-2x"></i></p>
+            <div>
+                <h4>产品评价</h4>
+                <hr />
+
+                @*<div class="container">
+                    <div class="row">
+                        @for (var i = 0; i < 5; i++)
+                        {
+                            <div class="comblock">
+                                <div class="col-lg-3 hidden-md"><h4>爱词霸英语为广大网友提</h4></div>
+                                <div class="col-lg-5 col-md-4"><p>爱词霸英语为广大网友提供在线翻译、在线词典、英语口语、英语学习资料、汉语词典,金山词霸下载等服务,致力于</p></div>
+                                <div class="col-lg-2 col-md-4">2014-01-01</div>
+                                <div class="col-lg-2 col-md-4"><span>查看详情</span></div>
+                                <div style="clear:both"></div>
+                            </div>
+
+                        }
+                    </div>
+                </div>*@
+
+
+
+
+                @if (Comment != null)
+                {
+                    foreach (var item in Comment)
+                    {
+                        <div class="container">
+                            <div class="row">
+                                @if (item.Category == CommentCategory.文章)
+                                {
+                                    Doc doc = db.Comments.DocByCommentId(item.DetailsId);
+                                    <div class="comblock">
+                                        <div class="col-lg-3 hidden-md"><h4>[文章]:@doc.Title</h4></div>
+                                        <div class="col-lg-5 col-md-4">@item.Content</div>
+                                        <div class="col-lg-2 col-md-4">@item.CreatedOn.ToString("yyyy-MM-dd hh:mm:ss")</div>
+                                        <div class="col-lg-2 col-md-4">@Html.ActionLink("查看详情", "Details", "Doc", new { area = "Cms", id = doc.Url }, null)</div>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                }
+
+                                else if (item.Category == CommentCategory.商品)
+                                {
+                                    Product Product = db.Comments.ProductByCommentId(item.DetailsId);
+                                    <div class="comblock">
+                                        <div class="col-lg-3 hidden-md"><h4>[产品]@(Product.Name)</h4></div>
+                                        <div class="col-lg-5 col-md-4"><p>@item.Content</p></div>
+                                        <div class="col-lg-2 col-md-4">@item.CreatedOn.ToString("yyyy-MM-dd hh:mm:ss")</div>
+                                        <div class="col-lg-2 col-md-4">@Html.ActionLink("查看详情", "Details", "Home", new { area = "", url = Product.Url }, null)</div>
+                                        <div style="clear:both"></div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    }
+                }
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

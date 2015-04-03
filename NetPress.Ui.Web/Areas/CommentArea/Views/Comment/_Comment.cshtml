@@ -1,0 +1,257 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    Layout = null;
+    //评论
+    List<CommentView> commentViews = ViewBag.CommentViews;
+    
+    int totle = ViewBag.TotleCount;
+    int pageIndex = ViewBag.pageIndex;
+    string commentCategory = ViewBag.CommentCategory;
+    Guid detailsId = ViewBag.DetailsId;
+
+    string path = "/Uploaded/Original/";
+}
+
+    <div class="comment-block">
+    @*-------当前页码----------*@
+    <input type="hidden" id="hdNowPageIndex" value="@(pageIndex)" />
+    @*-------类型（文章/商品）----------*@
+    <input type="hidden" id="hdCommentCategory" value="@(commentCategory)" />
+    @*-------当前编号（文章/商品）----------*@
+    <input type="hidden" id="hdDetailsId" value="@(detailsId)" />
+
+    <h1>网友评论 <small> 文明上网理性发言，请遵守新闻评论服务协议</small> <small class="pull-right">@(totle)条评论</small></h1>
+    <div class="comment-textarea">
+        <textarea id="txtComment" placeholder="不吐不快？说两句吧！"></textarea>
+        <button id="btnComment" class="btn btn-info pull-right">提交</button>
+        <div class="clearfix"></div>
+    </div>
+
+    @{
+
+        if (commentViews != null && commentViews.Count > 0)
+        {
+
+            <h1>全部评论 <small class="pull-right"><a href="#">时间</a> | <a href="#">热度</a></small> </h1>
+            {
+                foreach (CommentView cv in commentViews)
+                {
+                    Comment c = cv.Comment;
+                    string picUrl = cv.CustomerPic == null ? "/Content/images/doll.png" : path + cv.CustomerPic.Url;
+                    <div class="comment-item row">
+                        <div class="comment-avatar col-lg-2 col-md-2 col-sm-2 col-xs-3"><img src="@(picUrl)" class="img-responsive" /></div>
+                        <div class="comment-right col-lg-10 col-md-10 col-sm-10 col-xs-9">
+                            <div class="comment-name">@c.Customer.NickName</div>
+                            <div class="comment-time">@c.CreatedOn.ToString("yyyy-MM-dd hh:mm")</div>
+                            <div class="comment-cotent">@c.Content</div>
+                            <div class="comment-footer">
+                                @{
+                                    int replayNo = 0;
+                                    if (c.CommentReplies != null && c.CommentReplies.Count > 0)
+                                    {
+                                        replayNo = c.CommentReplies.Count;
+                                        List<CommentReply> tempReplyList = c.CommentReplies.OrderByDescending(m => m.CreatedOn).ToList();
+                                        foreach (CommentReply replay in tempReplyList)
+                                        {
+                                            <p>@(replay.Customer.NickName):@replay.Content&nbsp;&nbsp;&nbsp;@replay.CreatedOn.ToString("yyyy-MM-dd hh:mm")</p>
+                                        }
+                                    }
+                                }
+                                <a href="javascript:void(0)" name="aLike" data-commentid="@c.CommentId" ><i class="icon-thumbs-up"></i>(@c.Thumbsup)&nbsp;&nbsp;&nbsp;</a>
+                                <i class="icon-reply"></i>回复(@(replayNo))
+
+                                <div name="dvParentReplay">
+                                    <div name="dvshow">
+                                        <a href="javascript:void(0)" name="showReplay">回复</a>
+                                    </div>
+                                    <div name="dvHide" style="display:none;">
+                                        <a href="javascript:void(0)" name="hideReplay">收起回复</a>
+                                        <textarea name="txtReplay" data-commentid="@c.CommentId"></textarea>
+                                        <input type="button" name="btnReplay" value="发表" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+
+        }
+    }
+    <div id="pagination">
+        @Html.Partial("_pagination")
+    </div>
+
+
+</div>
+
+<script src="/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    /*--------------------评论--------------------------*/
+
+    $(document).ready(function () {
+
+        LoadCommentEvent();
+    });
+
+
+    //添加评论
+    function PostComment() {
+        var detailsId = $("#hdDetailsId").val();
+        var content = $("#txtComment").val();
+        var commentCategory = $("#hdCommentCategory").val();
+        
+        //评论
+        $.ajax({
+            type: 'post',
+            url: "/CommentArea/Comment/AddComment",
+            data: { "detailsId": detailsId, "content": content, "commentCategory": commentCategory },
+            success: function (result) {
+                if (result.status == "success") {
+                    //alert("添加成功");
+                    ReLoadComment(1);
+                }
+                else if (result.status == "error") {
+                    if (result.msg == "请登录") {
+                        location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+                    }
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+
+    }
+
+    //发表回复
+    function PostReplay(commentId, content) {
+        var pageIndex = $("#hdNowPageIndex").val();
+        //评论
+        $.ajax({
+            type: 'post',
+            url: "/CommentArea/Comment/AddCommentReplay",
+            data: { "commentId": commentId, "content": content },
+            success: function (result) {
+                if (result.status == "success") {
+                    //alert("添加成功");
+                    ReLoadComment(pageIndex);
+                }
+                else if (result.status == "error") {
+                    if (result.msg == "请登录") {
+                        //location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+                        alert(result.msg);
+                    }
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+    }
+    //点赞 
+    function PostLike(commentId)
+    {
+        var pageIndex = $("#hdNowPageIndex").val();
+        //点赞
+        $.ajax({
+            type: 'post',
+            url: "/CommentArea/Comment/AddLike",
+            data: { "commentId": commentId },
+            success: function (result) {
+                if (result.status == "success") {
+                    //alert("添加成功");
+                    ReLoadComment(pageIndex);
+                }
+                else if (result.status == "error") {
+                        alert(result.msg);                    
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+
+    }
+
+
+    //重新加载列表 包含其下所有事件
+    function ReLoadComment(pageIndex) {
+        var detailsId = $("#hdDetailsId").val();
+        var commentCategory = $("#hdCommentCategory").val();
+
+        $.ajax({
+            type: 'post',
+            url: "/CommentArea/Comment/Index",
+            data: { "detailsId": detailsId, "commentCategory": commentCategory, "page": pageIndex },
+            success: function (result) {
+                $("#dvCommentView").html(result);
+                //LoadCommentEvent();
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+    }
+
+    //绑定分页按钮事件
+    function ReloadPageEvent() {
+        $("#pagination").on('click', ".pageChange", function () {
+            var page = $(this).attr("data-page");
+            ReLoadComment(page);
+        });
+    }
+
+    //加载评论页所有事件
+    function LoadCommentEvent() {
+        //绑定分页事件
+        ReloadPageEvent();
+
+        //评论
+        $("#btnComment").click(function () {
+            PostComment();
+        });
+
+        //显示回复
+        $("[name='showReplay']").each(function () {
+            $(this).click(function () {
+                $(this).parents("[name='dvshow']").css("display", "none");
+                $(this).parents("[name='dvParentReplay']").find("[name='dvHide']").css("display", "block");
+            });
+        });
+
+        //显示回复
+        $("[name='hideReplay']").each(function () {
+            $(this).click(function () {
+                $(this).parents("[name='dvHide']").css("display", "none");
+                $(this).parents("[name='dvParentReplay']").find("[name='dvshow']").css("display", "block");
+            });
+        });
+
+        //回复
+        $("[name='btnReplay']").each(function () {
+            $(this).click(function () {
+                var textArea = $(this).parents("[name='dvHide']").find("[name='txtReplay']");
+                var content = textArea.val();
+                var commentId = textArea.attr("data-commentId");
+                PostReplay(commentId, content);
+            });
+
+        });
+
+        //点赞
+        $("[name='aLike']").each(function () {
+            $(this).click(function () {
+                var commentId = $(this).attr("data-commentid");
+                PostLike(commentId);
+            });
+        });
+
+    }
+
+
+
+
+</script>

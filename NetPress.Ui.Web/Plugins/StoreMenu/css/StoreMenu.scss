@@ -1,0 +1,163 @@
+﻿/*
+    电商首页菜单插件 v1.0
+    支持右侧多级展开
+    2015-3-9
+    Danny Chan
+*/
+
+
+$menu-width:100%;
+
+$text-color:#333;
+$link-color:#000;
+$high-light-color:#f15c2b;
+$text-size:12px;
+$title-size:14px;
+
+$main-background-color:#efefef;
+$main-border:0 #ccc solid;
+$main-padding:5px 0;
+
+$line-height:2.45em;
+
+$sub-background-color:#fff;
+$sub-border:1px #ccc solid;
+$sub-padding:10px;
+$sub-width:450px;
+$sub-right-width:100px;
+$brand-primary: #f15c2b;
+
+.danny-store-menu{
+    width:$menu-width;
+    background-color:$main-background-color;
+    border:$brand-primary solid 1px;   
+    color:$text-color;
+    font-size:$text-size;
+    .main-item{
+        border-bottom:1px solid darken($main-background-color,10%);
+        padding-top:0.75em;
+        padding-bottom:3px;
+    }
+    i{
+        font-size:1.6em;
+        position:relative;
+        bottom:-0.1em;
+        color:$high-light-color;
+    }
+    a{
+        text-decoration:none;
+        color:$link-color;       
+    }
+    a:hover{
+        color:$high-light-color;
+    }
+    .title a:hover{
+        color:lighten($high-light-color,20%);
+    }
+    ul{
+        list-style:none;
+        margin:0;
+        padding:0;
+        li{
+            list-style:none;            
+        margin:0;
+        padding:0;        
+        line-height:$line-height;
+       .item-sub{
+            .item-sub-left{
+                float:left;
+                display:block;
+                width:$sub-width - $sub-padding*2 - $sub-right-width - 5px;
+                margin:0;
+                padding:0;
+            }
+            .item-sub-right{
+                float:right;
+                width:$sub-right-width;
+                margin:0;
+                padding:0;
+            }
+            .items{
+                .item.title{
+                    clear:both;
+                    display:block;
+                }
+
+            }
+
+        }
+        .items{
+                        .title{
+                            font-weight:900;
+                            color:$high-light-color; 
+                            a{
+                                color:$high-light-color;
+                            }                                                      
+                        }
+                        li{
+                            display:inline-block;
+                        } 
+                        .item{
+                            padding-left:0.5em;
+                            padding-right:0.5em;
+                        }                       
+                    }
+            .main-title{
+                font-weight:900;
+                padding:0 20px;
+                font-size:$title-size;                 
+            }
+            .item-with-sub, .item-without-sub{
+                position:relative;                        
+                padding:0 20px;
+            }
+
+            .item-with-sub > .item-sub{
+                    width:$sub-width;
+                    border:$sub-border;
+                    padding:$sub-padding;
+                    display:none;
+                    position:absolute;
+                    right:-($sub-width);                    
+                    top:0;
+                    background-color:$sub-background-color;
+                    z-index:999;
+                         }
+
+            .item-with-sub:hover{
+                background-color:$sub-background-color;
+                
+            }
+            .item-with-sub:hover >.item-sub{
+                    display:block;
+                         }
+            .item-with-sub::after{
+                content:">";
+                position:absolute;
+                right:20px;
+                top:0;
+                color:lighten($text-color,50%);
+                font-weight:900;
+            }
+            
+        }
+
+    }
+}
+/*隐藏展开切换菜单*/
+@media (max-width:960px) {
+    .danny-store-menu ul li .item-with-sub{padding: 0;}
+    .danny-store-menu ul li .item-with-sub > .item-sub {
+          width:auto;          
+          border: 0;
+          padding: 0;         
+          position: relative;
+          right: 0;
+          display:none;
+          top: 0;
+          background-color: none;
+          z-index: 999;
+    }
+    .danny-store-menu ul li .item-with-sub > .item-sub .item-sub-right{display:none;}
+    .danny-store-menu ul li .item-with-sub > .item-sub .item-sub-left{width:100%; background-color:#fff;}
+    }

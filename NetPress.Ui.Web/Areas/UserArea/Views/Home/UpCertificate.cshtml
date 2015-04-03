@@ -1,0 +1,120 @@
+﻿@using NetPress.Models;
+@{
+    ViewBag.Title = "UpCertificate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var piclist = ViewBag.piclist;
+
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Plugins/plupload-2.1.2/js/plupload.full.min.js"></script>
+
+
+<div class="login">
+    <div class="container">
+        @Html.Partial("_Aside")
+        <p><i class="icon-moon-my-i icon-2x"></i></p>
+        <div class="col-lg-3 col-sm-3 col-md-3">
+
+            <h4>法人营业执照</h4>
+            <img src="#" id="pic1" style="width:150px;height:150px;">
+            <div id="container">
+                <a id="pickfiles" href="javascript:;">[选择图片]</a>
+                <a id="uploadfiles" href="javascript:;">[上传图片]</a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-3 col-md-3 ">
+            <h4>税务登记证</h4>
+            <img src="#" id="pic2" style="width:150px;height:150px;">
+            <div id="container2">
+                <a id="pickfiles2" href="javascript:;">[选择图片]</a>
+                <a id="uploadfiles2" href="javascript:;">[上传图片]</a>
+            </div>
+        </div>
+
+
+        <div class="col-lg-3 col-sm-3 col-md-3 ">
+            <h4>织机构代码证</h4>
+            <img src="#" id="pic3" style="width:150px;height:150px;">
+            <div id="container3">
+                <a id="pickfiles3" href="javascript:;">[选择图片]</a>
+                <a id="uploadfiles3" href="javascript:;">[上传图片]</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="filelist" style="clear:both"></div>
+<br />
+
+<pre id="console"></pre>
+
+<script src="~/Scripts/ImageUoload.js"></script>
+
+<script>
+
+    var Uploaded = "/Uploaded/Original/";
+    var ReturnFiles = new Array();
+
+
+    var uploader = createUpload('container', 'pickfiles', 'uploadfiles', 'filelist');
+    uploader.bind("FileUploaded", function (up, file, info) {
+        var url = $.parseJSON(info.response).url;
+
+        document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+        $("#pic1").attr('src', Uploaded + url);
+
+        var tempic = new mpic(url, "法人营业执照");
+        ReturnFiles.push(tempic);
+
+    });
+    uploader.init();
+
+    var uploader2 = createUpload('container2', 'pickfiles2', 'uploadfiles2', 'filelist');
+    uploader2.bind("FileUploaded", function (up, file, info) {
+        var url = $.parseJSON(info.response).url;
+
+        document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+        $("#pic2").attr('src', Uploaded + url);
+
+        var tempic = new mpic(url, "税务登记证");
+        ReturnFiles.push(tempic);
+    });
+    uploader2.init();
+
+    var uploader3 = createUpload('container3', 'pickfiles3', 'uploadfiles3', 'filelist');
+    uploader3.bind("FileUploaded", function (up, file, info) {
+        var url = $.parseJSON(info.response).url;
+
+        document.getElementById('filelist').innerHTML += '<div >' + file.name + "->" + url + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+        $("#pic3").attr('src', Uploaded + url);
+
+        var tempic = new mpic(url, "组织机构代码证");
+        ReturnFiles.push(tempic);
+    });
+    uploader3.init();
+
+</script>
+
+
+<input id="save" type="button" value="保存" />
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        GetCertificate("/UserArea/Home/GetCertificate");
+    });
+
+    $("#save").click(function () {
+
+        SaveCertificate("/UserArea/Home/UploadCertificate");
+    });
+
+
+
+</script>

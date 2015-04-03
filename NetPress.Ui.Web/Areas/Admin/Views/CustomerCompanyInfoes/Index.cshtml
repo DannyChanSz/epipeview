@@ -1,0 +1,91 @@
+﻿@model IEnumerable<NetPress.Models.CustomerCompanyInfo>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>企业信息管理</h2>
+
+<p>
+    @Html.ActionLink("新增", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyProfile)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OtherDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LinkmanName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CellPhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TelePhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Url)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompanyName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompanyProfile)
+        </td>
+        <td>
+            @if (string.IsNullOrEmpty(item.OtherDescription))
+            {
+                <span>未填</span>
+            }
+            else
+            {
+                <span>已填</span>
+            }
+
+            @*@Html.DisplayFor(modelItem => item.OtherDescription)*@
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LinkmanName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CellPhone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TelePhone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedOn)
+        </td>
+        <td>
+
+            @Html.ActionLink("修改", "Edit", new { id=item.CustomerCompanyInfoId }) |
+            @*@Html.ActionLink("Details", "Details", new { id=item.CustomerCompanyInfoId }) |*@
+            @Html.ActionLink("删除", "Delete", new { id=item.CustomerCompanyInfoId })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,238 @@
+﻿@using NetPress.ViewModels;
+@using NetPress.Models;
+@{
+    Guid productId = ViewBag.ProductId;
+    string productName = ViewBag.ProductName;
+    List<PriceGroupView> propertyGroup = ViewBag.PropertyGroup;
+    bool isExistPrice = ViewBag.IsExistPrice;//是否存在价格
+
+    string title = isExistPrice ? "[修改]" : "[新增]";
+
+
+}
+<script src="~/Content/admin/js/ProductPrice/ProductPrices.js"></script>
+
+
+<h2>@(productName + title)</h2>
+<input type="hidden" id="hiddenProductId" value="@(productId.ToString())" />
+<table class="table">
+    <tr>
+        <th>
+            属性组合
+        </th>
+        <th>
+            价格
+        </th>
+        <th></th>
+    </tr>
+    @if(propertyGroup!=null&&propertyGroup.Count>0)
+    { 
+        foreach(PriceGroupView group in propertyGroup)
+        {
+           <tr name="trGroup" data-GroupId="@group.ProGroupId">
+               <td>
+                   @group.GroupName
+               </td>
+               @{
+                    string IncludeDisplay = "";
+                    string ExcludeDisplay = "";
+                    string txtPricDisable = "";
+                    
+                    if (isExistPrice)//修改
+                    {
+                        if (group.IsExist)//该条价格已存在
+                        {
+                            IncludeDisplay = "none";
+                            ExcludeDisplay = "block";
+                        }
+                        else//该条价格不存在
+                        {
+                            IncludeDisplay = "block";
+                            ExcludeDisplay = "none";
+                            txtPricDisable = "disabled='disabled'";
+                        }
+                    }
+                    else//新增
+                    {
+                        IncludeDisplay = "none";
+                        ExcludeDisplay = "block";
+                    }
+               }
+
+
+
+               <td>
+                   <input type="text" add-groupid="@(group.ProGroupId)" class="GroupPrice" value="@(group.Price)" @txtPricDisable /><p></p>
+               </td>
+               <td>
+                   <input type="button" name="btnExclude" value="排除组合" style="display:@ExcludeDisplay" />
+                   <input type="button" name="btnInclude" value="包含组合" style="display:@IncludeDisplay; color:red"  />
+
+               </td>
+           </tr>
+        }
+    }
+
+</table>
+
+<p>
+    @*@Html.ActionLink("保存所有", "Save" )*@
+    <input id="priceSave" type="button" value="保存" />
+</p>
+
+<div> @Html.ActionLink("返回", "../Products")</div>
+
+
+<script src="/Content/js/RegExpHelper.js"></script>
+<script>
+    //productPrices.js
+    $(document).ready(function () {
+        $("#priceSave").click(function () { SavePrice(); });
+
+
+
+        $("[name='btnExclude']").each(function () {
+            $(this).click(function () {
+                var parent = $(this).parents("[name='trGroup']");
+                ExcludeGroup(parent);
+            })
+        });
+
+        $("[name='btnInclude']").each(function () {
+            $(this).click(function () {
+                var parent = $(this).parents("[name='trGroup']");
+                IncludeGroup(parent);
+            })
+        });
+
+    });
+
+    //--------------纯js部分
+
+
+
+    //排除该价格组合
+    function ExcludeGroup(parentDoc)
+    {
+        var excludeDoc = $(parentDoc).find("[name='btnExclude']");
+        var includeDoc = $(parentDoc).find("[name='btnInclude']");
+
+        var txtPriceDoc = $(parentDoc).find(".GroupPrice");
+        txtPriceDoc.attr("disabled", "disabled");
+
+        //显示隐藏
+        excludeDoc.css("display", "none");
+        includeDoc.css("display", "block");
+    }
+
+    //包含该价格组合
+    function IncludeGroup(parentDoc) {
+
+        var excludeDoc = $(parentDoc).find("[name='btnExclude']");
+        var includeDoc = $(parentDoc).find("[name='btnInclude']");
+
+        var txtPriceDoc = $(parentDoc).find(".GroupPrice");
+        txtPriceDoc.removeAttr("disabled");
+
+        //显示隐藏
+        excludeDoc.css("display", "block");
+        includeDoc.css("display", "none");
+
+
+    }
+
+
+
+    //检查是否数字 并且大于0
+    function isMoney(a) {
+        //var reg = /^[0-9]+([\.]{0,1}[0-9]{1,2})?$/  //金额（保留两个小数）
+        //return (reg.test(a));
+        var res = RegExpHelper.isMoney(a);
+        if(res)
+        {
+            var money = parseFloat(a);
+            if(money>0)
+            {
+
+            }
+            else
+            {
+                res = false;
+            }
+        }
+        return res;
+    }
+
+
+    //--------------数据提交部分
+
+    //组合模型
+    function GroupPirceModel()
+    {
+        this.GroupId;
+        this.Price;
+    }
+    //保存价格组合
+    function SavePrice()
+    {
+        var i = 0;
+        //var groupPriceArr = {};
+
+        var groupPriceArr = new Array();
+        var ifPost = true;
+        $(".GroupPrice").each(function () {
+
+            if ($(this).attr("disabled") != "disabled") {//已排除
+
+                var price = $(this).val();
+
+                $(this).next("p").html("");
+                if (!isMoney(price)) {
+                    $(this).next("p").html("请填写正确的价格(大于0的金额)");
+                    ifPost = false;
+                    return;
+                }
+
+                var groupPrice = new GroupPirceModel();
+                groupPrice.GroupId = $(this).attr("add-groupId");
+                groupPrice.Price = price;
+                groupPriceArr[i] = groupPrice;
+
+                i++;
+            }
+        });
+
+        if (ifPost) {
+            var productId = $("#hiddenProductId").val();
+            $.ajax({
+                type: 'post',
+                url: "/ProductPrice/SavePriceGroup",
+                data: { "productId": productId, "groupPrice": JSON.stringify(groupPriceArr) },
+                success: function (result) {
+                    if(result.status=="success")
+                    {
+                        alert('添加成功');
+                        location.href = "/Admin/ProductPrice/GetByProductId/" + productId;
+                    }
+                    else if (result.status =="errror")
+                    {
+                        alert(result.msg)
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                },
+                dataType: 'json'
+            });
+        }
+       
+
+
+ 
+    }
+
+
+
+
+    
+</script>

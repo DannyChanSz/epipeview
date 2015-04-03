@@ -1,0 +1,85 @@
+﻿@model IEnumerable<NetPress.Models.SpecialTopic>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>列表</h2>
+
+<p>
+    @Html.ActionLink("新建", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SpecialTopicState)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SearchTag)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SeoTag)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Keywords)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Url)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SpecialTopicState)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SearchTag)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SeoTag)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Keywords)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.SpecialTopicId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.SpecialTopicId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.SpecialTopicId })|
+            @Html.ActionLink("资讯", "AddDoc", new { SpecialTopicId = item.SpecialTopicId, type = "doc" })|
+            @Html.ActionLink("产品", "AddProduct", new { SpecialTopicId = item.SpecialTopicId, type = "product" })|
+            @Html.ActionLink("图片", "AddPic", new { SpecialTopicId = item.SpecialTopicId, type = "pic" })
+            @Html.ActionLink("预览", "Preview", new { SpecialTopicId = item.SpecialTopicId })
+        </td>
+    </tr>
+}
+
+</table>

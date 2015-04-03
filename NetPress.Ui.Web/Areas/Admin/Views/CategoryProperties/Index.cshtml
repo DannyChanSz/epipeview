@@ -1,0 +1,46 @@
+﻿@using NetPress.Models;
+@model IEnumerable<NetPress.Models.CategoryProperty>
+
+@{
+  ProductCategory category =  ViewBag.Category;
+}
+
+<h2>@category.Name</h2>
+
+<p>
+    @Html.ActionLink("新增", "Create", new { categoryId=category.ProductCategoryId })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ExpandProperty.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductCategory.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Provalue)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ExpandProperty.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductCategory.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Provalue)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Edit", new { categoryId=item.ProductCategoryId, id = item.CategoryPropertyId }) |
+            @Html.ActionLink("删除", "Delete", new { categoryId = item.ProductCategoryId, id = item.CategoryPropertyId })
+        </td>
+    </tr>
+}
+
+</table>
+@Html.ActionLink("返回", "Index", "ProductCategories", null, null)

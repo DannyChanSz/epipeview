@@ -1,0 +1,98 @@
+﻿@model NetPress.Models.ProductCategory
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>详情</h2>
+
+<div>
+    <h4>产品分类</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Parent.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Parent.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SortNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SortNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Pic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Pic)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Lft)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Lft)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rgt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rgt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Depth)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Depth)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsAvailable)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsAvailable)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.url)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.url)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TagSearch)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TagSearch)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("修改", "Edit", new { id = Model.ProductCategoryId }) |
+    @Html.ActionLink("返回", "Index")
+</p>

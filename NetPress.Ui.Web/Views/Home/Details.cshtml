@@ -1,0 +1,656 @@
+﻿@using NetPress.Tools
+@using NetPress.Models;
+@{
+    Product product = ViewBag.Product;
+    List<ProductPropertyMapping> UnInfluencePriceMaps = ViewBag.UnInfluencePriceMaps;
+
+    List<ProductPropertyMapping> InfluencePriceMaps = ViewBag.InfluencePriceMaps;
+    List<ProductPrice> productPrices = ViewBag.ProductPrices;
+    List<ExpandProperty> expandPropertys = ViewBag.ExpandProperty;
+
+    int TAKS_PIC_NUMBER = 4;
+    List<Pic> pics = ViewBag.Pics;//图片
+    string leaderPath = "/Uploaded/Original/";
+
+    CustomerCompanyInfo info = ViewBag.info;
+
+    string CompanyName = info == null ? "" : info.CompanyName;
+
+    string infoId = info == null ? "" : info.CustomerCompanyInfoId.ToString();
+
+    string operateType = ViewBag.OperateType;
+    //预览标志
+    string hdPreviewState = operateType == "Preview" ? "true" : "false";
+}
+<!--产品列表页css--->
+<link href="/Content/css/product.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="product">
+
+        <input type="hidden" id="hdPreviewState" value="@hdPreviewState" />
+        <input type="hidden" id="hdProductId" value="@product.ProductId" />
+        <div id="products-main">
+            @if (product != null)
+            {
+                string showPrice = "";
+                if (product.Price != null)
+                {
+                    showPrice=product.Price;
+                    string[] priceArr = product.Price.Split('~');
+                    if (priceArr.Count() > 1)
+                    {
+                        if (priceArr[0] == priceArr[1])
+                        {
+                            showPrice = priceArr[0];
+                        }
+                    }
+                }
+
+                <div id="product-section-1">
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="images">
+                                @if (pics != null && pics.Count > 0)
+                                {
+                                    List<Pic> picList = pics.Take(TAKS_PIC_NUMBER).ToList();//限制个数
+
+                                    <div class="col-lg-12 big">
+                                        <img src="@(leaderPath + picList[0].Url)" class="img-responsive" name="imgBigShow" />
+                                    </div>
+                                    <div class="col-lg-12">
+                                        @foreach (Pic p in picList)
+                                        {
+                                            @*<div class="col-lg-2 col-md-2  col-sm-12 col-xs-12">
+                                                    <img src="@(leaderPath + p.Url)" class="img-responsive" />
+                                                </div>*@
+                                            <div class="small">
+                                                <img src="@(leaderPath + p.Url)" class="img-responsive" name="imgSmallShow" />
+                                            </div>
+                                        }
+                                        <div class="clearfix visible-xs-block"></div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-lg-12 share-product">
+                                <div class="col-lg-3 col-md-3 col-sm-3  col-xs-3 ">
+                                    <i class="icon-share-i"></i><a id="aCollection" href="javascript:void(0)">收藏商品</a>
+                                </div>
+                                <div class="col-lg-9 col-sm-9 col-sm-9 col-xs-9">
+                                    @if (info != null)
+                                    {
+                                        <a href="/Cms/CustomerCompany/Details/@infoId">@CompanyName</a>
+                                    }
+                                    else
+                                    {
+                                        <span>@CompanyName</span>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6">
+                            <div class="product-features">
+                                <div class="name">@(product.Name)</div>
+
+                                <div class="features-row">
+                                    <div class="title price-title">价格：</div>
+                                    <div class="value price-value">
+                                        <span>￥</span><span id="dvPrice">@(showPrice)</span>
+                                    </div>
+                                </div>
+
+                                <div class="features-row">
+                                    @if (expandPropertys != null && expandPropertys.Count > 0)
+                                    {
+                                        <input type="hidden" id="hdExpandCount" value="@expandPropertys.Count" />
+                                        foreach (ExpandProperty e in expandPropertys)// 颜色大小..
+                                        {
+                                            <div name="dvPropertyGroupClass" class="features-row">
+                                                <div class="title">
+                                                    @(e.name)：
+                                                </div>
+                                                <div class="value">
+
+                                                    @if (InfluencePriceMaps != null && InfluencePriceMaps.Count > 0)
+                                                    {
+                                                        foreach (ProductPropertyMapping map in InfluencePriceMaps)//影响价格属性
+                                                        {
+                                                            if (map.ProductProperty.ExpandProperty == e)
+                                                            {
+                                                                <span>
+                                                                    <input type="radio" name="@e.ExpandPropertyId" value="@map.ProductPropertyMappingId" class="rdProperty" />@map.Provalue
+                                                                </span>
+                                                            }
+                                                        }
+                                                    }
+
+                                                    @*<span class="glyphicon glyphicon-ok" ></span>
+
+                                                        <span style="border:3px solid red">
+                                                                <span>样式测试<img style="background-image:url('http://misc.360buyimg.com/product/item/1.0.7/css/i/newicon20140910.png');background-position:-202px -224px;width: 12px;height: 12px;" /></span>
+                                                        </span>*@
+
+                                                </div>
+                                            </div>
+
+                                        }
+                                    }
+                                </div>
+
+
+
+                                <div class="features-row">
+                                    <div class="title">数量：</div>
+                                    <div class="value">
+                                        <input class="change-num reduce" type="button" value="-" />
+                                        <input id="txtProductNum" type="text" name="name" value="1" />
+                                        <input class="change-num raise" type="button" value="+" />
+                                    </div>
+
+                                </div>
+                                <div class="features-row">
+                                    <div class="title"> </div>
+                                    <button id="btnOrder" class="product-add-to-cart btn btn-primary">立即购买</button>
+                                    <button id="btnCart" class="product-add-to-cart btn btn-primary">加入购物车</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+
+                </div>
+
+                <div class="product-section-2">
+                    <div class="container">
+                        <div class="product-discraption">
+                            <div class="product-discraption-top-bar">
+                                <ul>
+                                    <li class="choose-tab"><a class="aTab" data-tabno="1" href="javascript:void(0)">产品详细</a></li>
+                                    @*<li><a class="aTab" data-tabno="2" href="javascript:void(0)">产品图片展示</a></li>*@
+                                    <li><a class="aTab" data-tabno="3" href="javascript:void(0)">相关产品</a></li>
+                                    <li><a class="aTab" data-tabno="4" href="javascript:void(0)">评价</a></li>
+                                </ul>
+                            </div>
+                            @*------产品详细------*@
+                            <div name="dvTabValue" data-tabno="1" class="product-discraption-content">
+
+                                @(Html.Raw(product.Description))
+
+                            </div>
+
+                            @*------产品图片展示------*@
+                            @*<div name="dvTabValue" data-tabno="2" class="product-discraption-content" style="display:none">
+
+                                </div>*@
+
+                            @*------相关产品------*@
+                            <div name="dvTabValue" data-tabno="3" class="product-discraption-content" style="display:none">
+                                @*@{Html.RenderAction("RelatedProducts", "Home", new { productId = product.Url });}*@
+                            </div>
+
+                            @*------评价------*@
+                            <div name="dvTabValue" data-tabno="4" class="product-discraption-content" style="display:none">
+                                <div id="dvCommentView">
+                                    @{Html.RenderAction("ProductComment", "Comment", new { Area = "CommentArea", productId = product.ProductId, page = 1 });}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+<script src="/Scripts/jquery-1.10.2.min.js"></script>
+<script src="/Content/js/RegExpHelper.js"></script>
+@*<script src="/Content/js/productArea/productDetail.js"></script>*@
+<script>
+
+
+
+    /*---productDetail.js----*/
+
+    $(document).ready(function () {
+        $(".rdProperty").each(function () {//radio标签无法刷新
+            this.checked = false;
+        });
+
+        LoadPrice();//加载价格
+
+        //下单
+        $("#btnOrder").click(function () {
+            PostOrder();
+        });
+
+        //添加购物车
+        $("#btnCart").click(function () {
+            PostCart();
+        });
+
+        //收藏
+        $("#aCollection").click(function () {
+            PostCollection();
+        });
+
+        //tab标签切换
+        $(".aTab").each(function () {
+            $(this).click(function () {
+                $(this).parent().addClass('choose-tab').siblings().removeClass('choose-tab');
+                var checkNo = $(this).attr("data-tabNo");
+                ChooseTab(checkNo);
+            })
+        })
+
+        //图片切换
+        $("[name='imgSmallShow']").click(function () {
+            var smallUrl = $(this).attr("src");
+            $("[name='imgBigShow']").attr("src", smallUrl);
+        })
+
+
+        //输入验证
+        $("#txtProductNum").keyup(function () {
+            var number = $(this).val();
+            if (!RegExpHelper.isPositiveInt(number)) {//异常输入 非正整数
+                number = 1;
+            }
+            else if (parseInt(number) < 1) {
+                number = 1;
+            }
+            $(this).val(number);
+        });
+
+        //初始禁用按钮
+        IsDisableButton(false);
+
+        //预览禁用脚本
+        var PreviewState = $("#hdPreviewState").val();
+        if (PreviewState == "true") {
+            RemoveAllEvenBecauseOfPreview();
+        }
+
+    });
+
+
+    function RemoveAllEvenBecauseOfPreview() {
+        ////$("container").unbind(".click");
+
+        $("button").unbind("click");
+        $("button").click(function () {
+
+            return false;
+        });
+
+        $("a").unbind("click");
+        $("a").click(function () {
+            return false;
+        })
+        $("a").removeAttr("href");
+        $("a").attr("href", "javascript:void(0)");
+
+    }
+
+
+    //加载价格
+    function LoadPrice() {
+        var productId = $("#hdProductId").val();
+
+        $.ajax({
+            type: 'post',
+            url: "/Home/GetPrice",
+            data: { "productId": productId },
+            success: function (result) {
+                if (result.status == "success") {
+                    if (result.isExistPrice == "true") {
+                        var priceList = result.price;    //json价格列表
+                        //alert(priceList[0].Price);
+                        //绑定决定价格属性选项
+                        BindPropertyPrice(priceList);
+                    }
+                }
+                else if (result.status == "error") {
+                    $("#pErrorValue").html(result.msg);
+                }
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $("#pErrorValue").html("ajaxError");
+            }
+        });
+    }
+
+    //启禁用按钮
+    function IsDisableButton(isTrue) {
+        if (isTrue) {
+            $("#btnOrder").removeAttr("disabled")
+            $("#btnCart").removeAttr("disabled");
+        }
+        else {
+            $("#btnOrder").attr("disabled", "disabled");
+            $("#btnCart").attr("disabled", "disabled");
+        }
+    }
+
+    //tab标签切换
+    function ChooseTab(number) {
+        //选项
+
+        //内容
+        $("[name='dvTabValue']").each(function () {
+            if ($(this).attr("data-tabno") == number) {
+                $(this).css("display", "block");
+            }
+            else {
+                $(this).css("display", "none");
+            }
+
+        });
+    }
+
+    //绑定价格选项
+    function BindPropertyPrice(pList) {
+        //绑定选项价格
+        $(".rdProperty").each(function () {
+            $(this).click(function () {
+                GetPropertyGroupPrice(pList);
+            })
+        });
+
+    }
+
+    //绑定所属价格
+    function GetPropertyGroupPrice(priceList) {
+        var propertyIdArr = ChooseProperty();
+        var length = propertyIdArr.length;
+        var expadCount = $("#hdExpandCount").val();
+
+        var isExistPrice = false;//是否匹配出价格
+        //存在价格
+        for (var i = 0; i < priceList.length; i++) {
+            var sameIndex = 0;
+            for (var n = 0; n < length; n++) {
+                var same = $.inArray(propertyIdArr[n], priceList[i].Properties);
+                if (same != -1) {
+                    sameIndex++;
+                }
+            }
+
+            if (sameIndex == expadCount) {
+                var strPrice = parseFloat(priceList[i].Price).toFixed("2");
+                $("#dvPrice").html(strPrice);//更新选项价格
+                isExistPrice = true;
+            }
+        }
+
+        if (!isExistPrice && length == expadCount) {
+            $("#dvPrice").html("该属性组合不存在");
+        }
+
+        IsDisableButton(isExistPrice);//启禁用按钮
+    }
+
+    //选择的属性
+    function ChooseProperty() {
+        var propertyIdArr = new Array();
+        var index = 0;
+        //所选属性
+        $(".rdProperty").each(function () {
+            var isChecked = this.checked;
+            if (isChecked) {
+                propertyIdArr[index] = $(this).val();
+                index++;
+            }
+        });
+        return propertyIdArr;
+    }
+
+
+    //提交订单
+    function PostOrder() {
+        var productId = $("#hdProductId").val();
+        var productNum = $("#txtProductNum").val();
+        var propertyIdArr = ChooseProperty();//获取所选择属性
+
+        //下单页面
+        $.ajax({
+            type: 'post',
+            url: "/ShoppingArea/Order/AddOrder",
+            data: { "productId": productId, "propertyArr": propertyIdArr, "productNum": productNum },
+            success: function (result) {
+                if (result.status == "success") {
+                    //alert("跳转个人中心订单页url");
+                    var orderId = result.orderId;
+                    location.href = "/ShoppingArea/Order/ConfirmOrder/" + orderId;
+                }
+                else if (result.status == "error") {
+                    if (result.msg == "请登录") {
+                        location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+                    }
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+    }
+
+    //加入购物车
+    function PostCart() {
+        var productId = $("#hdProductId").val();
+        var productNum = $("#txtProductNum").val();
+        var propertyIdArr = ChooseProperty();//获取所选择属性
+
+        //下单页面
+        $.ajax({
+            type: 'post',
+            url: "/ShoppingArea/Cart/AddCart",
+            data: { "productId": productId, "propertyArr": propertyIdArr, "productNum": productNum },
+            success: function (result) {
+                if (result.status == "success") {
+                    //alert("跳转个人中心购物车url");
+                    location.href = "/ShoppingArea/Cart/CustomerCart"
+                }
+                else if (result.status == "error") {
+                    if (result.msg == "请登录") {
+                        location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+                    }
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+
+    }
+
+    //加入收藏
+    function PostCollection() {
+        var productId = $("#hdProductId").val();
+        //收藏
+        $.ajax({
+            type: 'post',
+            url: "/ShoppingArea/Collection/AddCollection",
+            data: { "productId": productId },
+            success: function (result) {
+                if (result.status == "success") {
+                    alert("添加成功");
+                    //location.href = "/ShoppingArea/Cart/CustomerCart"
+                }
+                else if (result.status == "error") {
+                    if (result.msg == "请登录") {
+                        location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+                    }
+                    else {
+                        alert(result.msg);
+                    }
+                }
+            },
+            error: function () {
+                alert("post error");
+            }
+        });
+    }
+
+    /*--------------------评论--------------------------*/
+
+    ////添加评论
+    //function PostComment ()
+    //{
+    //    var productId = $("#hdProductId").val();
+    //    var content = $("#txtComment").val();
+    //    //评论
+    //    $.ajax({
+    //        type: 'post',
+    //        url: "/CommentArea/Comment/AddProductComment",
+    //        data: { "productId": productId, "content": content },
+    //        success: function (result) {
+    //            if (result.status == "success") {
+    //                //alert("添加成功");
+    //                ReLoadComment(1);
+    //            }
+    //            else if (result.status == "error") {
+    //                if (result.msg == "请登录") {
+    //                    location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+    //                }
+    //            }
+    //        },
+    //        error: function () {
+    //            alert("post error");
+    //        }
+    //    });
+
+    //}
+
+    ////发表回复
+    //function PostReplay(commentId, content)
+    //{
+    //    var pageIndex = $("#nowPageIndex").val();
+    //    //评论
+    //    $.ajax({
+    //        type: 'post',
+    //        url: "/CommentArea/Comment/AddCommentReplay",
+    //        data: { "commentId": commentId, "content": content },
+    //        success: function (result) {
+    //            if (result.status == "success") {
+    //                //alert("添加成功");
+    //                ReLoadComment(pageIndex);
+    //            }
+    //            else if (result.status == "error") {
+    //                if (result.msg == "请登录") {
+    //                    //location.href = "/Account/Login?returnUrl=" + window.location.pathname;
+    //                    alert(result.msg);
+    //                }
+    //            }
+    //        },
+    //        error: function () {
+    //            alert("post error");
+    //        }
+    //    });
+    //}
+
+
+    ////重新加载列表 包含其下所有事件
+    //function ReLoadComment(pageIndex)
+    //{
+    //    var productId = $("#hdProductId").val();
+    //    $.ajax({
+    //        type: 'post',
+    //        url: "/CommentArea/Comment/ProductComment",
+    //        data: { "productId": productId, "page": pageIndex },
+    //        success: function (result) {
+    //            $("#dvCommentView").html(result);
+    //            LoadCommentEvent();
+    //        },
+    //        error: function () {
+    //            alert("post error");
+    //        }
+    //    });
+    //}
+
+    ////绑定分页按钮事件
+    //function ReloadPageEvent()
+    //{
+    //    $("#pagination").on('click', ".pageChange", function () {
+    //        var page = $(this).attr("data-page");
+    //        ReLoadComment(page);
+    //    });
+    //}
+
+    ////加载评论页所有事件
+    //function LoadCommentEvent()
+    //{
+    //    //绑定分页事件
+    //    ReloadPageEvent();
+
+    //    //评论
+    //    $("#btnComment").click(function () {
+    //        PostComment();
+    //    });
+
+    //    //显示回复
+    //    $("[name='showReplay']").each(function () {
+    //        $(this).click(function () {
+    //            $(this).parents("[name='dvshow']").css("display", "none");
+    //            $(this).parents("[name='dvParentReplay']").find("[name='dvHide']").css("display", "block");
+    //        });
+    //    });
+
+    //    //显示回复
+    //    $("[name='hideReplay']").each(function () {
+    //        $(this).click(function () {
+    //            $(this).parents("[name='dvHide']").css("display", "none");
+    //            $(this).parents("[name='dvParentReplay']").find("[name='dvshow']").css("display", "block");
+    //        });
+    //    });
+
+    //    //回复
+    //    $("[name='btnReplay']").each(function () {
+    //        $(this).click(function () {
+    //            var textArea = $(this).parents("[name='dvHide']").find("[name='txtReplay']");
+    //            var content = textArea.val();
+    //            var commentId = textArea.attr("data-commentId");
+    //            PostReplay(commentId, content);
+    //        });
+
+    //    });
+
+    //}
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+    $("#product-section-1 > .row .images .small").mouseover(function () { console.log("ddd"); $(this).addClass('choose'); }).mouseout(function () { $(this).removeClass('choose'); });
+
+    /*商品数目增减*/
+    var num = $("#txtProductNum").val();
+    $(".raise").click(function () {
+        num++;
+        $("#txtProductNum").val(num);
+    });
+    $(".reduce").click(function () {
+        if (num > 1) {
+            num--;
+            $("#txtProductNum").val(num);
+        }
+    });
+    $("#txtProductNum").change(function () {
+        num = $(this).val();
+    });
+
+
+</script>

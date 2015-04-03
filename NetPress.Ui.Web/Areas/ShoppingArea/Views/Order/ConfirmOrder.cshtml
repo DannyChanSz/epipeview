@@ -1,0 +1,391 @@
+﻿@using NetPress.Models;
+@{
+    Customer customer = ViewBag.Customer;
+    Order order = ViewBag.Order;
+
+    List<ProductPrice> productPriceList = ViewBag.ProductPriceList;
+    List<Combo> comboList = ViewBag.ComboList;
+    //List<NetPress.Ips.IpsBank> banks = ViewBag.Banks;
+
+    string name = "";
+    string phone = "";
+    string address = "";
+}
+<div class="pay-out">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div>
+                    <div>
+                        <h5>收货地址</h5>
+                        <div id="dvOrderInfo">
+                            @if (order != null)
+                            {
+                                bool ifSetInfo = true;
+                                //string dvSetInfoDisplay = "block";
+
+                                if (order.CustomerNameInfo != null && order.PhoneInfo.Length != null && order.AddressInfo.Length != null)//订单存在地址信息
+                                {
+                                    name = order.CustomerNameInfo;
+                                    phone = order.PhoneInfo;
+                                    address = order.AddressInfo;
+                                    //dvSetInfoDisplay = "none";
+                                    ifSetInfo = false;
+
+                                }
+                                else if (customer.NickName != null && customer.CellPhone != null && customer.Address != null)//订单不存在地址信息 但用户存在地址信息
+                                {
+                                    name = customer.NickName;
+                                    phone = customer.CellPhone;
+                                    address = customer.Address;
+                                    //dvSetInfoDisplay = "none";
+                                    ifSetInfo = false;
+                                }
+
+                                <input type="hidden" id="hdOrderId" value="@order.OrderId" />
+
+                                <div id="dvSetInfo" style="display:@(ifSetInfo ? "block" : "none")">
+                                    收货人：<input type="text" id="txtName" />
+                                    手机：<input type="text" id="txtPhone" />
+                                    收货地址：<input type="text" id="txtAddress" />
+                                    <input type="button" id="btnSetInfo" value="确定" />
+                                    <span class="tips"></span>
+                                </div>
+
+                                <div id="dvInfo" style="display:@(ifSetInfo?"none":"block")">
+                                    <label>地址信息:</label>
+                                    <label id="lbName">@name</label>
+                                    <label id="lbPhone">@phone</label>
+                                    <label id="lbAddress">@address</label>
+                                    @*修改订单信息*@
+                                    <input type="button" id="btnChangeAddress" value="修改地址">
+                                    @*修改会员信息-*@
+                                    @*<input type="button" id="btnUpdateAddress" value="修改个人地址" />*@
+
+                                    <div id="dvCustomerInfo" style="display:none">
+                                        姓名：<input type="text" id="txtCustomerName" value="@customer.NickName" />
+                                        手机：<input type="text" id="txtCustomerPhone" value="@customer.CellPhone" />
+                                        地址：<input type="text" id="txtCustomerAddress" value="@customer.Address" />
+                                        <input type="button" id="btnSetCustomerInfo" value="修改" />
+                                    </div>
+                                </div>
+                            }
+
+
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <h5>确认订单信息</h5>
+                        <div>
+                            @if (order != null && order.OrderDetails != null && order.OrderDetails.Count > 0)//存在订单及明细
+                            {
+                                foreach (OrderDetails orderDetail in order.OrderDetails)
+                                {
+                                    if (orderDetail.PackType == PackType.SingleItem)
+                                    {
+                                        ProductPrice samePrice = null;
+                                        foreach (ProductPrice pp in productPriceList)
+                                        {
+                                            if (pp.ProductPriceId == orderDetail.PriceId)
+                                            {
+                                                samePrice = pp;
+
+                                            }
+                                        }
+
+                                        if (samePrice != null)
+                                        {
+                                            <div>
+                                                商品： <label>@samePrice.Product.Name</label>
+                                                单价：<label>@samePrice.Price</label>
+                                                数量：<label>@orderDetail.PurchaseVolume</label>
+                                                小计：<label>@(samePrice.Price * orderDetail.PurchaseVolume)</label>
+                                            </div>
+                                        }
+                                    }
+                                    else if (orderDetail.PackType == PackType.PackItem)
+                                    {
+                                        Combo sameCombo = null;
+                                        foreach (Combo combo in comboList)
+                                        {
+                                            if (combo.ComboId == orderDetail.PriceId)
+                                            {
+                                                sameCombo = combo;
+                                            }
+                                        }
+
+                                        if (sameCombo != null)
+                                        {
+                                            <div>
+                                                商品：<label>@sameCombo.Name</label>
+                                                单价：<label>@sameCombo.Price</label>
+                                                数量： <label>@orderDetail.PurchaseVolume</label>
+                                                小计：<label>@(sameCombo.Price * orderDetail.PurchaseVolume)</label>
+                                            </div>
+
+                                        }
+
+                                    }
+
+
+                                }
+                                <div>
+                                    <div>实付款：<label>@(order.Price)</label></div>
+                                    <div>
+                                        收货人：
+                                        <label id="lbConfirmName">@name</label>
+                                        <label id="lbConfirmPhone">@phone</label>
+                                    </div>
+                                    <div>
+                                        收货地址：
+                                        <label id="lbConfirmAddress">@address</label>
+                                    </div>
+                                </div>
+
+                            }
+
+
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <h5>选择支付方式</h5>
+                        <div id="dvBank">
+                            <!---银行列表---->
+                            <ul>
+                                @*@foreach (var item in banks)
+                                    {
+                                        <li><input type="radio" name="rdBanks" value="@item.BannkNo"  /><img src="@item.PicBase64" /> @item.Name | @item.CardName | @item.BannkNo</li>
+                                    }*@
+
+                                <li><input type="radio" name="rdBanks" value="00004" /><img src="/Content/images/Banks/工商银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00003" /><img src="/Content/images/Banks/建设银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00005" /><img src="/Content/images/Banks/交通银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00017" /><img src="/Content/images/Banks/农业银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00006" /><img src="/Content/images/Banks/平安银行.jpg" /></li>
+
+                                <li><input type="radio" name="rdBanks" value="00051" /><img src="/Content/images/Banks/邮政银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00032" /><img src="/Content/images/Banks/浦发银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00021" /><img src="/Content/images/Banks/招商银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00083" /><img src="/Content/images/Banks/中国银行.jpg" /></li>
+                                <li><input type="radio" name="rdBanks" value="00054" /><img src="/Content/images/Banks/中信银行.jpg" /></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <input type="button" id="btnPayOrder" value="提交订单" />
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="/Scripts/jquery-1.10.2.min.js"></script><!--测试待删-->
+<script>
+    $(document).ready(function () {
+
+        //-----当前地址信息
+
+        //地址修改确认按钮
+        $("#btnSetInfo").click(function () {
+            if (SetInfo())//填写收货信息
+            {
+                SetInfoClear();
+                SetConfirmInfo();
+            }
+        })
+        //修改地址按钮
+        $("#btnChangeAddress").click(function () {
+            $("#dvSetInfo").css("display", "block");
+
+        });
+
+        //-------支付
+
+        //支付订单
+        $("#btnPayOrder").click(function () {
+            //跳转
+            PostPay();
+        });
+
+
+        //------会员地址信息
+
+        //修改个人信息中收货资料
+        $("#btnUpdateAddress").click(function () {
+            $("#dvCustomerInfo").css("display", "block");
+        });
+        //确认修改会员信息
+        $("#btnSetCustomerInfo").click(function () {
+
+        });
+
+
+    });
+
+    /*--------前端纯脚本部分--------*/
+
+    //显示所选择内容
+    function SetInfo() {
+        var name = $("#txtName").val().trim();
+        var phone = $("#txtPhone").val().trim();
+        var address = $("#txtAddress").val().trim();
+        //验证 待改
+        if (name == "") {
+            alert("请填写收货人")
+            return false;
+        }
+        if (phone == "") {
+            alert("请填写电话")
+            return false;
+        }
+        if (address == "") {
+            alert("请填写收货地址")
+            return false;
+        }
+
+        $("#lbName").html(name);
+        $("#lbPhone").html(phone);
+        $("#lbAddress").html(address);
+
+        return true;
+    }
+
+    //清空已作废信息
+    function SetInfoClear() {
+        $("#dvSetInfo").css("display", "none");
+        $("#txtName").val("");
+        $("#txtPhone").val("");
+        $("#txtAddress").val("");
+        $("#dvInfo").css("display", "block");
+    }
+
+    //显示需确认信息
+    function SetConfirmInfo() {
+        var name = $("#lbName").html();
+        var phone = $("#lbPhone").html();
+        var address = $("#lbAddress").html();
+
+        $("#lbConfirmName").html(name);
+        $("#lbConfirmPhone").html(phone);
+        $("#lbConfirmAddress").html(address);
+    }
+
+    //function
+
+
+    /*-------交互部分-------*/
+    //支付模型
+    function PayModel() {
+        this.OrderId;
+        this.Name;
+        this.Phone;
+        this.Address;
+        this.BankNo;
+    }
+
+    //获取支付信息
+    function GetPayInfo() {
+        var pay = null;
+        var name = $("#lbConfirmName").html();
+        var phone = $("#lbConfirmPhone").html();
+        var address = $("#lbConfirmAddress").html();
+
+        if (name != "" && phone != "" && address != "") {
+            $("[name='rdBanks']").each(function () {
+                if (this.checked) {
+                    pay = new PayModel();
+
+                    pay.OrderId = $("#hdOrderId").val();
+                    pay.Name = name;
+                    pay.Phone = phone;
+                    pay.Address = address;
+                    pay.BankNo = $(this).val();
+
+                }
+            });
+        }
+        return pay;
+    }
+
+    //提交支付请求
+    function PostPay() {
+        var pay = GetPayInfo();
+
+        if (pay != null) {
+            var stringPay = JSON.stringify(pay);
+            //location.href = "/ShoppingArea/Order/OrderPayment/" + pay;
+            location.href = "/ShoppingArea/Order/OrderPayment?stringPayModel=" + stringPay;
+
+            //location.href = "/ShoppingArea/Order/OrderPayment/" + stringPay;
+            //alert(pay);
+        }
+        else {
+            alert("请填写完整信息并选择银行");
+        }
+    }
+
+</script>
+<!---紫娟童鞋的正则--->
+<script>
+    $(document).ready(function () {
+        $("#txtName").blur(function () {
+            identifyName()
+        })
+        $("#txtAddress").blur(function () {
+            identifyAddress()
+        })
+        $("#txtPhone").blur(function () {
+            identifyTel()
+        })
+
+    })
+
+
+    function identifyName() {
+        var name = $("input[id = 'txtName']").val();
+        var reg = /^[\u4e00-\u9fa5]*$/;
+        var pattern = /^[A-Za-z]+$/;
+        if (name == '' || (!(reg.test(name)) && !(pattern.test(name)))) {
+            $(".pay-out #dvOrderInfo .tips").html("您输入的名字不合法");
+            return false;
+        }
+        else {
+            $(".pay-out #dvOrderInfo .tips").html("");
+        }
+    }
+
+    function identifyAddress() {
+        var address = $("input[id = txtAddress]").val();
+        //var reg = /^[\u4e00-\u9fa5]+./;	  
+        if (address == '') {
+            $(".pay-out #dvOrderInfo .tips").html("您输入的地址为空");
+            return false;
+        }
+        else {
+            $(".pay-out #dvOrderInfo .tips").html("");
+        }
+    }
+
+    function identifyTel() {
+        var num = $("input[id = txtPhone]").val();
+        var patrn = /^\s*(15\d{9}|18\d{9}|13[0-9]\d{8})\s*$/;
+        if (!(patrn.exec(num))) {
+            $(".pay-out #dvOrderInfo .tips").html("您输入的手机号不合法");
+            return false;
+        }
+        else {
+            $(".pay-out #dvOrderInfo .tips").html("");
+        }
+    }
+
+
+</script>

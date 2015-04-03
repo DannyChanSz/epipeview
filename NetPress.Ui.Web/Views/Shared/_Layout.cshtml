@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>优管网-@ViewBag.Title</title>
+    <link href="/plugins/b3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/plugins/b3/css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="/plugins/fontawesome/css/font-awesome.css" rel="stylesheet" />
+    <!--[if IE 7]>
+    <link href="/plugins/fontawesome/css/font-awesome-ie7.min.css" rel="stylesheet" />
+    <![endif]-->
+    <link href="/plugins/buttons/css/buttons.css" rel="stylesheet" />
+    <link href="/plugins/owl/css/owl.carousel.css" rel="stylesheet" />
+    <link href="/plugins/owl/css/owl.theme.css" rel="stylesheet" />
+    <link href="/plugins/StoreMenu/css/StoreMenu.css" rel="stylesheet" />    
+    <link href="~/Content/css/block-form.min.css" rel="stylesheet" />
+    <link href="~/content/css/epipe.css" rel="stylesheet" />
+    <link href="~/Content/css/PersonalCenter.css" rel="stylesheet" />
+    <link href="/plugins/jquery.dannynav.1.0/css/dnav.css" rel="stylesheet" />
+    <link href="/content/css/userInfo.css" rel="stylesheet" />
+
+    <script src="/plugins/jquery/jquery-1.10.1.min.js"></script>
+</head>
+
+<body class="index">
+    <div id="browser-detect" class="alert alert-warning alert-dismissible fade in hidden" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <strong>温馨提示：</strong> 您的浏览器版本太陈旧，为安全及良好的浏览体验，请更新IE9.0以上版本或使用更安全快速的谷歌浏览器（<small>快速通道：<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">Chrome</a> | <a href="http://rj.baidu.com/soft/detail/23360.html" target="_blank">IE 11</a></small>）
+    </div>
+    <!--页头-->
+    <div id="header">
+        <div class="header-content ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                        <a href="#">
+                            <img src="/content/images/logo.png" />
+                        </a>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 hidden-xs">
+                        <div class="input-group">
+                            <input type="text" id="input-search" class="form-control">
+                            <span class="input-group-btn">
+                                <button id="btn-search" class="btn btn-primary" type="button">搜索</button>
+                            </span>
+                        </div><!-- /search-group -->
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 text-right" id="login-block" style="overflow:hidden;height:83px;" >
+                        @*<a href="#" onclick="window.open('/Account/Login/')">登录</a><i class="icon-moon-my-i icon-2x"></i><i class="icon-moon-cart-i icon-2x"></i>*@
+                        @Html.Partial("_LoginPartial")
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="danny-nav">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 hidden-xs">
+                        <div class="product-all">
+                            全部商品分类
+                        </div>
+                        <div class="danny-store-menu dropdown-menu-1">
+                            @Html.Partial("_StoreMenu")
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div id="danny-nav-toggle" draggable="true"></div>
+                        <div class="nav-content">
+                            <ul class="pull-left">
+                                <li class="active"><a href="/Home/Index">首页</a></li>
+                                <li class="nav-dropdown">
+                                    <a href="/Cms/Doc/Index">新闻资讯</a>
+                                    <ul>
+                                        <li><a href="/Cms/Doc/Index/15031816324034">新闻动态</a></li>
+                                        <li><a href="/Cms/Doc/Index/15031816332354">求购信息 </a></li>
+                                        <li><a href="/Cms/Doc/Index/15031816320827">行业访谈</a></li>
+                                        <li><a href="/Cms/Doc/Index/15031816340880">行业展会</a></li>
+                                        <li><a href="/Cms/Doc/Index/15031816325389">政策标准</a></li>
+                                        
+                                       
+                                    </ul>
+                                </li>
+                                <li><a href="/Cms/Doc/Index/jiejuefangan">解决方案</a></li>
+                                <li><a href="/helloworld/index/games">管道游戏</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--页头 end-->
+    <!--主内容-->
+    @RenderBody()
+    <!--主内容 end-->
+    <!--页脚-->
+    <div id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
+                    <ul>
+                        <li>
+                            <a href="/">
+                                <img src="/content/images/logo.png" />
+                            </a>
+                        </li>
+                        <li id="footer-400"><a href="tel:4000-948-666" rel="nofollow">4000-948-666</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                    <ul>
+                        <li>公司信息</li>
+                        <li><a href="/Cms/Doc/Details/gongsixinxi">公司简介</a></li>
+                        <li><a href="/Cms/Doc/Details/gongsixinxi-311">联系我们</a></li>
+                        <li><a href="/Cms/Doc/Details/gongsixinxi-467">企业文化</a></li>
+                        <li><a href="/Cms/Doc/Details/gongsixinxi-032 ">商务合作</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+                    <ul>
+                        <li>服务说明</li>
+                        <li><a href="/Cms/Doc/Details/fuwushuoming">购买指南</a></li>
+                        <li><a href="/Cms/Doc/Details/fuwushuoming-621">服务声明</a></li>
+                        <li><a href="/Cms/Doc/Details/fuwushuoming-713">常见问题</a></li>
+                        <li><a href="/Cms/Doc/Details/fuwushuoming-310">客户服务</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+                    <ul>
+                        <li id="qrcode" class="text-center"><img src="/content/images/Qrcode.png" style="width:80%;" class="img-responsive" /></li>
+                        <li class="text-center">(扫我带走本页)</li>
+                    </ul>
+                </div>
+            </div>
+            <br /><br />
+            <div class="text-center">© 2014优管网 epipe.cn 粤ICP备14066308号-1 电子公告服务规则</div>
+        </div>
+    </div>
+    <!--页脚 end-->
+</body>
+
+</html>
+<script src="/plugins/less/less-1.5.0.min.js"></script>
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="/plugins/html5shiv/html5shiv.min.js"></script>
+  <script src="/plugins/respond/respond.js"></script>
+<![endif]-->
+@*<script src="/plugins/jquery/jquery-1.10.1.min.js"></script>*@
+<script src="/plugins/b3/js/bootstrap.min.js"></script>
+<script src="/plugins/owl/js/owl.carousel.js"></script>
+<script src="/plugins/waypoints/js/waypoints.min.js"></script>
+<script src="/plugins/jquery.smoove/js/jquery.smoove.min.js"></script>
+<script src="/plugins/jquery.timers/js/jquery.timers.js"></script>
+<script src="/plugins/grumble/js/jquery.grumble.min.js"></script>
+<script src="/plugins/json2/json2.js"></script>
+<script src="~/Plugins/jquery.dannynav.1.0/js/dannynav.1.0.js"></script>
+
+<script src="/content/js/huahan.js"></script>
+@RenderSection("scripts", required: false)
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#btn-search").click(function () {
+            var keywords = $("#input-search").val();
+
+            window.location = "/SearchEngine/Home/Search?KeyWords="+keywords;
+        });
+    });
+
+</script>
+<!--样式js-->
+<script type="text/javascript">
+
+    if ($('.danny-store-menu').length == 1) {
+        $('.danny-nav > div > div >div:first').mouseover(function () { $('.danny-store-menu').show(); }).mouseout(function () { $('.danny-store-menu').hide(); });
+    }
+
+    $(".login .container  ul  li").mouseover(function () { console.log("sss"); $(this).addClass('choose'); }).mouseout(function () { $(this).removeClass('choose'); });
+</script>

@@ -1,0 +1,134 @@
+﻿/*冷色调*/
+/*暖色调*/
+/*基本设置*/
+/*页面背景色*/
+/*默认的文字颜色*/
+/*默认的链接颜色*/
+/*默认链接hover样式*/
+$bodyColor:#efefef;
+$logoGreen:#73bc41;
+$lightLine:#d8d8d8;
+$linkingColor:#017cb8;
+$black:#000;
+$white: #fff;
+.login .panel .table .failure {background:lighten($black,90%); }
+.login .panel .table .failure button{background:lighten($black,60%);}
+.login .panel .table .failure > tr .failure::after{
+    content:"失效";
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+    border-radius:5px;
+    background:lighten($black,60%);   
+    color:#fff;
+   
+    //height:30px;
+    //width:50px;     
+    padding:2px 5px;}
+.login .panel .table .failure .order-padding{background:$bodyColor}
+
+input,button,select,textarea{outline:none;}
+.login {
+ color:#4a4a4a;}
+.login .container .user-info{padding-right:20px;}
+.login .container .login-title{font-size:18px; font-weight:600; line-height:35px; border-bottom:1px solid $lightLine;}
+.login .panel{
+    background-color:$bodyColor;  
+    padding-top:2em; 
+}
+.login .panel .table tr{font-weight:200;}
+
+.login .panel .table tr .Failure span::after{
+    content:"失效";
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+    border-radius:5px;
+    background:lighten($black,60%);
+    position:absolute;
+    right:10px;
+    color:#fff;
+    //height:30px;
+    //width:50px;
+    bottom:10px;
+    z-index:10;   
+    padding:0 5px;}
+.login .panel .unpaid{ color:red;}
+.login .panel .table .order-foot{ background:$lightLine;}
+.login .panel .table .order-foot .sum-m{font-size:25px; color:red;}
+.login .panel .table .order-foot div{float:right;padding:2em;}
+
+.login .panel .table .order-foot .pay-all button{padding:8px 25px; font-size:25px; float:right;}
+.login .panel .table td{line-height:25px;border:1px solid $lightLine; white-space:nowrap; overflow:hidden;}
+.login .panel .table td .event-info{float:left; max-width:100px; white-space:normal;}
+.login .panel .table .order-padding td{height:5px; border:none;}
+.login .panel .table .order-head{white-space:nowrap; background-color: $lightLine; margin-top:20px;}
+.login .panel .table td button{padding:3px 5px; background:$logoGreen; color:#fff; border:none;}
+.login .panel .table .order-img{max-width:110px; float:left;}
+.login .panel .panel-heading{background-color:$bodyColor;background-image:none; padding:5px; border-bottom:1px #999 solid;}
+.login .panel .panel-heading .panel-title{font-size:14px; line-height:25px;}
+.login .container{margin-top:2em;}
+.login .panel .table .change-num{
+            width:20px; 
+            border:1px solid #ccc;
+            background-image:-webkit-linear-gradient(to top, #efefef, #fbfbfb);
+            background-image:linear-gradient(to top,#efefef,#fbfbfb);
+            }
+.login .panel .table .product-num{width:30px; text-align:center;}
+.login .panel-default{border:none; }
+.login .container ul li{
+    //height:45px; 
+   // line-height:60px; 
+   height:40px;
+   padding-left:13px;
+   line-height:40px;
+
+    cursor:pointer;
+    position:relative;
+
+}
+.login .panel .table  font a{padding:0; background-color: rgba(0,0,0,0.0); color:$linkingColor;}
+@media \0screen\,screen\9 {/* 只支持IE6、7、8 */
+  .login .panel .table  font a{
+    padding:0;
+    background-color:#000000;
+    filter:Alpha(opacity=0);
+     color:$linkingColor;
+  } 
+}
+
+
+.login .container ul .choose{
+    //border-bottom:1px solid darken($lightLine,10%); 
+    background:$lightLine;
+
+}
+.login .container ul .choose::after{
+                content:">";
+                position:absolute;
+                right:17px;
+                top:0;
+                color:darken($lightLine,20%);
+                font-weight:900;
+            }
+.store-products .row{padding-top:2em}
+.address-info .panel .notice{line-height:60px; white-space:nowrap; overflow:hidden;}
+.address-info .panel .notice span{color:$logoGreen; padding:0 2px;}
+.address-info .panel .notice a{padding:10px 18px; color:$white; background-color:lighten($black,50%)}
+.address-info .panel .table td{ border:none; padding:0; line-height:22px;}
+.address-info .panel .address-line{border-bottom:1px solid lighten($black,85%); margin-bottom:10px;}
+.address-info .panel .notice font a,.address-info .panel .table td a{padding:0; background:$bodyColor; color:$linkingColor;}
+.address-info .panel .table .category{min-width:95px; max-width:105px;}
+.address-info .panel .table .default-address{color:$logoGreen; font-weight:600; line-height:25px;}
+.address-info .panel .table .modify{min-width:33px;}
+
+.pay-out{margin:2em 0; line-height:25px; color:lighten($black,10%)}
+.pay-out h5{line-height:40px; height:40px; text-indent:1em; background:$lightLine; }
+.pay-out #dvOrderInfo .tips{color:red;}
+.pay-out h5 + div{padding:1em;}
+.pay-out h5 + div ul li{padding:0.5em 0;}
+.pay-out h5 + div ul li input{margin-right:10px;}
+.pay-out #dvOrderInfo{line-height:30px;}
+.pay-out #dvOrderInfo input[type='text']{padding:0 5px; }
+.pay-out input[type='button']{padding:0 15px; color:#fff; background-color:$logoGreen;border:none;}
+.pay-out #dvOrderInfo div{padding:5px 0;}
+#btnPayOrder{font-size:18px; line-height:35px; margin:2em 0 2em 1em;}
+/*# sourceMappingURL=product.css.map */

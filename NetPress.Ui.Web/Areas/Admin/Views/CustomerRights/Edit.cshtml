@@ -1,0 +1,105 @@
+﻿@model NetPress.Models.CustomerRight
+@using NetPress.ViewModels;
+@using NetPress.Models;
+@{
+    ViewBag.Title = "Edit";
+
+    //权限资源viewmodel
+    UserRightView CustomerRight = ViewBag.UserRightViews;
+    
+    List<CustomerRight> CustomerRights = CustomerRight.CustomerRight;
+
+    List<RightModule> RightModules = ViewBag.RightModules;
+
+    List<string> GuidList = new List<string>();
+       
+    foreach(var item in CustomerRights)
+    {
+        GuidList.Add(item.RightModule.RightModuleId.ToString());
+    }
+
+    string str = string.Join(",",GuidList.ToArray());
+}
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Create", "CustomerRights"))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>CustomerRight</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.CustomerRoleId, "CustomerRoleId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CustomerRoleId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CustomerRoleId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RightModuleId, "RightModuleId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+
+                @if (RightModules != null && RightModules.Count > 0)
+                {
+                    foreach (var Right in RightModules)
+                    {
+                        bool isChecked = false;
+
+                        foreach (var RightModul in CustomerRights)
+                        {
+                            if (Right.RightModuleId == RightModul.RightModuleId)
+                            {
+                                isChecked = true;
+                            }
+                        }
+                        if (isChecked)
+                        {
+                            <input type="checkbox" value="@Right.RightModuleId" class="RightSel" checked="checked"> @Right.Name
+                        }
+                        else
+                        {
+                            <input type="checkbox" value="@Right.RightModuleId" class="RightSel"> @Right.Name
+                        }
+                    }
+                }
+            </div>
+        </div>
+        <!--隐藏域-->
+        <input type="hidden" id="checkedstr" name="checkedstr" value="@str" />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        //选中checkbox
+        $(".RightSel").click(function(){
+            var CheckedStr = GetCheckedList();
+            $("#checkedstr").val(CheckedStr);
+        });
+    });
+
+    //获取选中的权限
+    function GetCheckedList()
+    {
+        var str = new Array();
+        $('input:checkbox[class=RightSel]:checked').each(function (i) {
+            str.push($(this).val());
+        });
+        return str;
+    }
+</script>

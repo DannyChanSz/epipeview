@@ -1,0 +1,83 @@
+﻿@using NetPress.Models;
+@using NetPress.BLL;
+@using NetPress.Tools;
+
+@{
+    ViewBag.Title = "Search";
+
+    List<Doc> Docs = ViewBag.mdocs;
+
+    List<Product> mProducts = ViewBag.mProducts;
+
+    int resultCount = Docs.Count + mProducts.Count;
+
+    UnitOfWork db = new UnitOfWork();
+
+    string DocPath = "/Cms/Doc/Details/";
+
+    string ProPath = "/ProductArea/Product/Details/";
+
+    string Uploaded = "/Uploaded/Original/";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+  
+}
+
+<div style="margin-left:100px;">
+
+    <div style="color:black">共查询到<span style="color:red">@resultCount</span>个结果</div>
+
+    @if (mProducts != null && mProducts.Count > 0)
+    {
+        foreach (var item in mProducts)
+        {
+            string ImgPath = string.Empty;
+
+            List<Pic> pics = db.Pics.GetByPoductId(item.ProductId);
+
+            if (pics != null && pics.Count > 0)
+            {
+                ImgPath = Uploaded + pics[0].Url;
+            }
+
+            string SubDescription = StringExt.StripHTML(item.Description);
+
+            string desci = SubDescription.Length > 50 ? SubDescription.Substring(0, 50) : SubDescription;
+            
+           <a href="@(ProPath + item.Url)" target="_blank" style="color:black;font-family:微软雅黑;font-size:17px;">@item.Name<span style="font-size:14px;color:green">[产品]</span></a>
+         
+           <div style="width:600px;">
+               
+                 <img src="@ImgPath" id="image" style="width:150px;height:150px;float:left;" />
+                
+                 <div style="float:left;display:block;width:400px;margin-left:20px;">@(desci)</div>
+
+                <div style="clear:both;"></div>
+               <p style="color:green;float:right;margin-right:20px;">@item.CreatedOn</p>
+                
+            </div>
+
+
+
+
+        }
+    }
+ 
+    @if (Docs != null && Docs.Count > 0)
+    {
+        foreach (var item in Docs)
+        {
+            <div style="margin:25px 10px;width:600px;">
+                
+                <h4 style="color:red;"><a href="@(DocPath + item.Url)" target="_blank" style="text-decoration:underline;color:red">@item.Title<span style="font-size:14px;color:green">[资讯]</span></a></h4>
+                
+                <p>@Html.Raw(item.Contents.ToString().Substring(0, 100))</p>
+
+                <p style="color:green;float:right;margin-right:20px;">@item.CreatedOn</p>
+            </div>
+        }
+    }
+  
+
+</div>

@@ -1,0 +1,58 @@
+﻿@model NetPress.Models.Cart
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Cart</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Customer.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PriceId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PriceId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PackType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseVolume)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseVolume)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CartId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

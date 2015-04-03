@@ -1,0 +1,69 @@
+﻿@using Microsoft.AspNet.Identity
+@using NetPress.Models
+@using NetPress.BLL;
+
+<script src="/plugins/jquery/jquery-1.10.1.min.js"></script>
+
+@if (Request.IsAuthenticated)
+{
+
+    using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken();
+
+                                string UserName = User.Identity.GetUserName();
+
+                                if (!(string.IsNullOrEmpty(UserName)))
+                                {
+                                    UnitOfWork db = new UnitOfWork();
+
+                                    Customer CurUser = db.Customers.GetCustomerByName(UserName);
+
+                                    if (CurUser != null)
+                                    {
+                                        @Html.ActionLink(CurUser.Name.ToString() + "!", "Message", "Home", new { area = "UserArea" }, htmlAttributes: new { id = "个人中心" })
+
+                                        @*if (!string.IsNullOrEmpty(CurUser.NickName))
+                                        {
+                                            @Html.ActionLink(CurUser.NickName.ToString() + "!", "Message", "Home", new { area = "UserArea" }, htmlAttributes: new { id = "个人中心" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink(CurUser.Name.ToString() + "!", "Message", "Home", new { area = "UserArea" }, htmlAttributes: new { id = "个人中心" })
+                                        }*@
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("你好，" + UserName + "!", "Message", "Home", new { area = "UserArea" }, htmlAttributes: new { id = "个人中心" })
+                                    }
+                                }
+
+                                <a href="javascript:document.getElementById('logoutForm').submit()">注销</a>
+                                <i class="icon-moon-my-i icon-2x"></i>
+                                <a><i id="iCartLink" class="icon-moon-cart-i icon-2x"></i></a>
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#iCartLink").click(function () {
+                                            location.href = "/ShoppingArea/Cart/CustomerCart"
+                                        });
+                                    });
+                                </script>
+    }
+}
+else
+{
+    @Html.ActionLink("登录", "Login", "Account", new { area = "" }, htmlAttributes: new { id = "loginLink" })
+    <i class="icon-moon-my-i icon-2x"></i>
+    <i class="icon-moon-cart-i icon-2x"></i>
+}
+@*<a href="#" onclick="window.open('/Account/Login/')">登录</a><i class="icon-moon-my-i icon-2x"></i><i class="icon-moon-cart-i icon-2x"></i>*@
+
+
+<script>
+    $(document).ready(function () {
+
+        $("#iCartLink").click(function () {
+            location.href = "/ShoppingArea/Cart/CustomerCart"
+        });
+    });
+</script>

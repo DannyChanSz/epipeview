@@ -1,0 +1,41 @@
+﻿@using NetPress.Models;
+@using NetPress.BLL;
+@{
+    ViewBag.Title = "OrderDetails";
+    List<OrderDetails> Details = ViewBag.OrderDetail;
+    UnitOfWork db = new UnitOfWork();
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>OrderDetails</h2>
+
+@if(Details!=null)
+{
+    foreach(var item in Details)
+    {
+        var PriceId=item.PriceId;
+        
+        <div style="background-color:grey">
+             商品类型:@item.PackType<br>
+             购买数量:@item.PurchaseVolume
+
+        </div>
+        
+       if(item.PackType==PackType.SingleItem)
+       {
+           ProductPrice price = db.Orders.GetProductPrice(item.PriceId);
+           <div>@price.Product.Name</div>
+       }
+
+       else if (item.PackType == PackType.PackItem)
+       {
+           Combo Combo = db.Orders.GetCombo(item.PriceId);
+           <div>@Combo.Name</div>
+           <div>@Combo.Price</div>
+       }
+        <div style="background-color:grey">
+            <p></p>
+        </div>
+    }
+}

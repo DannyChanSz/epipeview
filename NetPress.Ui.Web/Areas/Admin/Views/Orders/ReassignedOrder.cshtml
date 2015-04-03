@@ -1,0 +1,374 @@
+﻿@using NetPress.Models;
+@{
+    Inquiry inquiry = ViewBag.Inquiry;
+    Customer customer = inquiry.Customer;
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>分配订单</title>
+</head>
+<body>
+    <div>
+        <input type="hidden" id="hdInquiryId" value="@inquiry.InquiryId" />
+        <div>
+            <h3>用户</h3>
+
+            <p>用户：@customer.Name</p>
+
+        </div>
+
+        <div>
+            <h3>收货信息</h3>
+            <ul>
+                <li>姓名：<input type="text" id="txtCustomerNameInfo" value="@customer.Name" /><p id="pErrorCustomerName"></p></li>
+                <li>电话：<input type="text" id="txtPhoneInfo" value="@customer.CellPhone" /><p id="pErrorPhone"></p></li>
+                <li>收货地址：<input type="text" id="txtAddressInfo" value="@customer.Address" /><p id="pErrorAddress"></p></li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>订单子项</h3><p id="pErrorDetail"></p>
+            @*--------已添加的订单子项列表----------*@
+             <div id="dvOrderDetails">
+
+
+
+
+             </div>
+
+            @*---------将要添加的订单子项列表----------*@
+            <h3>当前商品</h3>
+            <ul>
+                
+                <li>商品SKU搜索:
+                    <a href="javascript:void(0)" id="aProduct" ></a> 
+   
+                    <input type="text" id="txtSkuSearch" >
+                    <p id="test"></p>
+                    <div id="dvProductList">
+
+                       
+                    </div>
+                    <div id="dvProduct">
+
+                    </div>
+                    @*@Html.Partial("_Product");*@
+                </li>
+
+            </ul>
+        </div>
+        <input type="button" id="btnSaveAll" value="生成订单" />
+    </div>
+
+    @Html.ActionLink("返回", "Index", "Inquiries")
+    
+</body>
+</html>
+@section Scripts {
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<script src="~/Content/js/jqueryCookie.js"></script>
+<script src="~/Content/js/jqueryFormat.js"></script>
+<script>
+    $(document).ready(function () {
+        //查询
+        $("#txtSkuSearch").keyup(function () {
+        
+            var sku = $(this).val();
+
+            //alert(sku);
+            GetProductList(sku);
+        });
+
+        //生成订单
+        $("#btnSaveAll").click(function () {
+
+            var inquiryId = $("#hdInquiryId").val();
+            //收货信息
+            var takeInfoModel = new TakeInfo();
+            takeInfoModel.CustomerNameInfo = $("#txtCustomerNameInfo").val();
+            takeInfoModel.PhoneInfo = $("#txtPhoneInfo").val();
+            takeInfoModel.AddressInfo = $("#txtAddressInfo").val();
+
+            //订单信息
+            var detailArr = new Array();
+
+            $("[name='aOrderDetail']").each(function () {
+                var detailModel = new OrderDetail();
+                detailModel.PriceId = $(this).attr("data-priceId");
+                detailModel.PurchaseVolume = $(this).attr("data-purchaseVolume");
+                detailModel.Price = $(this).attr("data-price");
+                detailArr.push(detailModel);
+            });
+
+            if (CheckOrder()) {
+                SaveOrder(inquiryId, takeInfoModel, detailArr);
+            }
+
+        });
+
+        //删除订单子项
+        $("#dvOrderDetails").on('click', "[name='aDeleteDetail']", function () {
+            $(this).parents("[name='detailItem']").remove();
+
+        });
+
+    });
+
+    //检测收货信息
+    function CheckTakeInfo()
+    {
+        var name= $("#txtCustomerNameInfo").val();
+        var phone= $("#txtPhoneInfo").val();
+        var address = $("#txtAddressInfo").val();
+
+        $("#pErrorCustomerName").html("");
+        $("#pErrorPhone").html("");
+        $("#pErrorAddress").html("");
+
+        if ($.trim(name) == "") {
+            $("#pErrorCustomerName").html("请填写收货人");
+            return false;
+        }
+        if ($.trim(phone) == "") {
+            $("#pErrorPhone").html("请填写电话");
+            return false;
+        }
+        if ($.trim(address) == "") {
+            $("#pErrorAddress").html("请填写收货地址");
+            return false;
+        }
+
+        return true;
+    }
+
+    //检测订单子项
+    function CheckDetail()
+    {
+        $("#pErrorDetail").html("");
+        var index = 0;
+        $("[name='aOrderDetail']").each(function () {
+            index++;
+        });
+
+        if(index>0)
+        {
+            return true;
+        }
+        else
+        {
+            $("#pErrorDetail").html("请给订单添加商品");
+            return false;
+        }
+    }
+    //检测订单是否可提交
+    function CheckOrder()
+    {
+        if(CheckTakeInfo()&&CheckDetail())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    //写入可选产品
+    function SetProducts(productList)
+    {
+        var html = "<ul>";
+        if (productList.length > 0) {
+            for (var i = 0; i < productList.length; i++) {
+                html += "<li><a id='" + productList[i].Key + "' name='aProductChoose'  >" + productList[i].Value + "</a></li>";
+            }
+        }
+        html += "</ul>";
+        $("#dvProductList").html(html);//更新产品列表
+        LoadProductChooseEven();//绑定产品事件
+    }
+
+    //添加商品选项事件
+    function LoadProductChooseEven()
+    {
+        $("#dvProductList").on('click', "[name='aProductChoose']", function () {
+            var productId = $(this).attr("id");
+            GetProduct(productId);
+        });
+    }
+
+    //查询产品列表
+    function GetProductList(sku)
+    {
+        $.ajax({
+            type: 'post',
+            url: "/Admin/Orders/GetProductList",
+            data: { "SKU": sku },
+            success: function (result) {
+                if (result.status == "success")
+                {
+                    var productList = result.productList;
+                    SetProducts(productList);
+                }
+                else
+                {
+                    SetProducts(new Array());
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    //获取产品视图
+    function GetProduct(productId)
+    {
+        $.ajax({
+            type: 'post',
+            url: "/Admin/Orders/GetProduct",
+            data: { "productId": productId },
+            success: function (view) {
+                //视图
+                $("#dvProduct").html(view);
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    //生成订单
+    //takeInfo=收货信息 detailList=订单列表
+    function SaveOrder(inquiryId, takeInfo, detailList)
+    {
+        $.ajax({
+            type: 'post',
+            url: "/Admin/Orders/SaveOrder",
+            data: { "inquiryId": inquiryId, "takeInfo": takeInfo, "detailList": detailList },
+            success: function (result) {
+                if (result.status == "success") {
+                    location.href = "/Admin/Inquiries/Index";
+                }
+            },
+            error: function () {
+
+            }
+        });
+    } 
+
+    //收货信息模型
+    function TakeInfo()
+    {
+        this.CustomerNameInfo;
+        this.PhoneInfo;
+        this.AddressInfo;
+    }
+
+    //订单模型（由_Product转移 ）
+    function OrderDetail() {
+        this.PriceId;
+        this.PurchaseVolume;
+        this.Price;
+
+        //其他信息类
+        this.ProductName;
+        this.PropertyName;
+    }
+
+    /*----------------产品部分视图添加触发--------------------*/
+
+    //存cookie以免丢失
+    function SetDetailOver(detailModel)
+    {
+        ////querystring 无法使用 转用cookie
+        ////$.cookie("DetailList", null)
+
+        //var oldDetailList = $.cookie("DetailList");
+
+
+        //if (oldDetailList == null)
+        //{
+        //    var newDetailArr = new Array();
+        //    newDetailArr.push(detailModel);
+        //    $.cookie("DetailList", JSON.stringify(newDetailArr), { expires: 1 });
+        //}
+        //else
+        //{
+        //    //应cookie存在转义字符"/"无法直接转换数组
+        //    alert(oldDetailList);
+        //    var abc = eval(oldDetailList);
+        //    alert(abc.length+" "+abc);
+        //    var newDetailArr = eval(abc);
+        //    //var newDetailArr = JSON.parse(oldDetailList);
+        //    //var newDetailArr = eval("("+oldDetailList+")");
+        //    alert(newDetailArr.length + " " + newDetailArr);
+        //    newDetailArr.push(detailModel);
+
+        //    $.cookie("DetailList", JSON.stringify(newDetailArr), { expires: 1 });
+        //}
+
+        //列入订单子项
+        SetDetail(detailModel);
+    }
+
+    //列入订单子项
+    function SetDetail(detailModel)
+    {
+        var newDetailFormat = "<div name='detailItem'><div style='width:700px'><span name='aOrderDetail'  data-priceId='{0}' data-purchaseVolume='{1}' data-price='{2}'>{3}({4}) 数量：{1} 价格：{2}</span></div><a name='aDeleteDetail'>删除</a></div>"
+        var newDetailHtml = $.format(newDetailFormat, detailModel.PriceId, detailModel.PurchaseVolume, detailModel.Price, detailModel.ProductName, detailModel.PropertyName);
+  
+        $("#dvOrderDetails").append(newDetailHtml);
+        ClearAfterSetDrtail();
+    }
+
+
+    //完成后清除选择
+    function ClearAfterSetDrtail()
+    {
+        $("#txtSkuSearch").val("");
+        $("#dvProductList").html("");
+        $("#dvProduct").html("");
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+    ////废除 querystring转utf-8字节数超过浏览器URL最大字节
+    ///*----------------分步储存querystring--------------------*/
+
+    ////获取QueryString
+    //function getQueryString() {
+    //    var result = location.search.match(new RegExp("[\?\&][^\?\&]+=[^\?\&]+", "g"));
+    //    for (var i = 0; i < result.length; i++) {
+    //        result[i] = result[i].substring(1);
+    //    }
+    //    return result;
+    //}
+    ////根据QueryString参数名称获取值
+    //function getQueryStringByName(name) {
+    //    var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+    //    if (result == null || result.length < 1) {
+    //        return "";
+    //    }
+    //    return result[1];
+    //}
+
+
+</script>
+
+}

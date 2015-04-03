@@ -1,0 +1,87 @@
+﻿@model IEnumerable<NetPress.Models.Order>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>订单管理</h2>
+
+<p>
+    @*@Html.ActionLink("分配订单", "ReassignedOrder")*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+
+        <td>
+            @Html.DisplayNameFor(model => model.CustomerNameInfo)
+        </td>
+        <td>
+            @Html.DisplayNameFor(model => model.PhoneInfo)
+        </td>
+        <td>
+            @Html.DisplayNameFor(model => model.AddressInfo)
+        </td>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderState)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.CustomerNameInfo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PhoneInfo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddressInfo)
+        </td>
+
+        
+        <td>
+            @Html.DisplayFor(modelItem => item.OrderState)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.ActionLink("改价", "Edit", new { id=item.OrderId }) |
+            @*@Html.ActionLink("订单明细", "../OrderDetails", new { orderId=item.OrderId })*@
+            @Html.ActionLink("订单明细", "Index", "OrderDetails", new { orderId = item.OrderId },null)|
+            @Html.ActionLink("完成订单", "Finish", new { id = item.OrderId }) |
+            @*@Html.ActionLink("Delete", "Delete", new { id=item.OrderId })*@
+        </td>
+    </tr>
+}
+
+</table>

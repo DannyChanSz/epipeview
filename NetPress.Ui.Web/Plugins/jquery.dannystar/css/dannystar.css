@@ -1,0 +1,19 @@
+﻿.dannystar ul,.dannystar ul li {
+    margin:0;
+    padding:0;
+}
+.dannystar li{
+    display:inline-block;
+    background:url('../img/star-gray.png') no-repeat center;
+    width:15px;
+    height:15px;
+    cursor:pointer;
+}
+
+    .dannystar li.active {
+        background:url('../img/star.png') no-repeat center;
+    }
+
+    .dannystar li.selected {
+        background:url('../img/star.png') no-repeat center;
+    }

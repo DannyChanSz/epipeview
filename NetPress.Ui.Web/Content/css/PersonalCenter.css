@@ -1,0 +1,20 @@
+﻿.ps_left_menu {display:block;margin:10px 0;}
+
+.ps_left_menu a {font-family:微软雅黑;font-size:14px;color:#555}
+
+.ps_left_menu a:hover {color:green;}
+
+.dl-horizontal {
+    padding:0px;
+    margin:0px;
+}
+
+.dl-horizontal dt {font-size:14px;color:#333;padding:5px 0;width:60px;}
+
+.dl-horizontal dd{font-family:微软雅黑;font-size:13px;color:#333;padding:5px 0;text-align:left;}
+
+p.btnEdit {font-size:14px;color:#333;padding-left:100px;color:#555;}
+
+
+.comblock {margin:20px 0;}
+.comblock p {font-family:微软雅黑;font-size:14px;padding-left:20px;float:left;}

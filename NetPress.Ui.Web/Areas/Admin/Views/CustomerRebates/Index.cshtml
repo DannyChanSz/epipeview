@@ -1,0 +1,46 @@
+﻿@model IEnumerable<NetPress.Models.CustomerRebate>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>用户返利管理</h2>
+
+@*<p>
+    @Html.ActionLink("新建", "Create")
+</p>*@
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotleRebate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotleWithDrew)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotleRebate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotleWithDrew)
+        </td>
+        <td>
+            @Html.ActionLink("支付提成", "Pay", new { id=item.CustomerRebateId }) |
+            @*@Html.ActionLink("test", "Edit", new { id = item.CustomerRebateId }) |
+    @Html.ActionLink("Details", "Details", new { id=item.CustomerRebateId }) |
+    @Html.ActionLink("Delete", "Delete", new { id=item.CustomerRebateId })*@
+        </td>
+    </tr>
+}
+
+</table>

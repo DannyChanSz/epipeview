@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNet.Identity
+@using NetPress.BLL;
+@using NetPress.Models;
+@{
+    UnitOfWork db = new UnitOfWork();
+    
+    List<RightModule> Rights = null;
+    
+     if (Request.IsAuthenticated)
+     {
+           string CustomId = User.Identity.GetUserId();
+
+          //Rights = db.CustomerRights.GetRightByUserId(Guid.Parse(CustomId.ToString()));
+         
+          //获取当前访问路径 例如 "/UserArea/Home/GetOrders"
+         
+          string Urlpath= HttpContext.Current.Request.Url.PathAndQuery;
+
+         //访问的路径是否处于自己的权限范围
+          bool IsEllegal = db.CustomerRights.IllegalRequest(Guid.Parse(CustomId), Urlpath);
+         
+          if(IsEllegal)
+          {
+              Response.Write("<script language='javascript'>window.location='/UserArea/Home/Message'</script>");
+          }
+         
+           Rights = db.CustomerRights.GetRightByUserId(Guid.Parse(CustomId.ToString()),true);
+     }
+     else
+     {
+         @Html.ActionLink("Login", "Account", new { Area = "" });
+     }
+}
+@*<div class="col-lg-3 col-md-3 left-menu">
+
+    <h2>我的优管</h2>
+    <hr style="border-bottom:2px solid green;">
+
+    <ul class="list-unstyled">
+        @if (Rights != null)
+        {
+            foreach (var item in Rights)
+            {
+
+                <li><a href="@item.Url">@item.Name</a></li>
+            }
+        }
+
+    </ul>
+</div>*@
+<div class=" col-md-3 col-sm-3  col-md-3 col-sm-3 user-info ">
+    <div class="login-title">我的优管</div>
+    <ul>
+        @*<li><a href="">个人中心</a></li>
+        <li><a href="userMessge.htm">个人信息</a></li>
+        <li><a href="address.htm">收货地址</a></li>
+        <li><a href="login.htm">我的订单</a></li>
+        <li><a href="review.htm">产品评价</a></li>
+        <li><a href="store.htm">我的收藏</a></li>*@
+
+        @if (Rights != null)
+        {
+            foreach (var item in Rights)
+            {
+
+                <li><a href="@item.Url">@item.Name</a></li>
+            }
+        }
+    </ul>
+</div>

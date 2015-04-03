@@ -1,0 +1,65 @@
+﻿@model IEnumerable<NetPress.Models.ProductCategory>
+@{
+    Layout = null;
+    int deepth = ViewBag.Deepth;
+    
+    string tempString = "";
+    for (int i = 0; i < deepth;i++ )
+    {
+        tempString += "&nbsp";
+    }
+    
+}
+
+
+@foreach (var item in Model)
+{
+    <tr id="@item.ProductCategoryId" name="childrens" data-parentid="@item.Parent.ProductCategoryId">
+        <td>
+            @if (item.Children != null && item.Children.Count > 0)
+            {
+               
+                <a name="show" href="javascript:void(0)" data-id="@item.ProductCategoryId" data-deepth="@deepth">@Html.Raw(tempString)+</a>
+            }
+            else
+            {
+                <a name="end" href="javascript:void(0)" data-id="@item.ProductCategoryId" data-deepth="@deepth">@Html.Raw(tempString)x</a>
+            }
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Parent.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SortNo)
+        </td>
+       
+        <td>
+            @Html.DisplayFor(modelItem => item.IsAvailable)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.url)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TagSearch)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Edit", new { id = item.ProductCategoryId }) |
+            @Html.ActionLink("详细", "Details", new { id = item.ProductCategoryId }) |
+            @Html.ActionLink("删除", "Delete", new { id = item.ProductCategoryId }) |
+            @Html.ActionLink("添加分类的拓展", "CategoryProductProperties", "ProductProperties", new { id = item.ProductCategoryId }, null) |
+
+            @if (item.ProductProperties != null && item.ProductProperties.Count > 0)
+            {
+                @Html.ActionLink("添加分类默认属性", "Index", "CategoryProperties", new { categoryId = item.ProductCategoryId }, null)
+            }
+            else
+            {
+                <a>添加分类默认属性(请先添加拓展)</a>
+            }
+        </td>
+    </tr>
+}

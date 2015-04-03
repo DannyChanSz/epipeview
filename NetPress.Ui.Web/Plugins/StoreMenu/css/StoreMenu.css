@@ -1,0 +1,115 @@
+﻿/*
+    电商首页菜单插件 v1.0
+    支持右侧多级展开
+    2015-3-9
+    Danny Chan
+*/
+.danny-store-menu {
+  width: 100%;
+  background-color: #efefef;
+  border: #f15c2b solid 1px;
+  color: #333;
+  font-size: 12px; }
+  .danny-store-menu .main-item {
+    border-bottom: 1px solid #d5d5d5;
+    padding-top: 0.75em;
+    padding-bottom: 3px; }
+  .danny-store-menu i {
+    font-size: 1.6em;
+    position: relative;
+    bottom: -0.1em;
+    color: #f15c2b; }
+  .danny-store-menu a {
+    text-decoration: none;
+    color: #000; }
+  .danny-store-menu a:hover {
+    color: #f15c2b; }
+  .danny-store-menu .title a:hover {
+    color: #f7a68b; }
+  .danny-store-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    .danny-store-menu ul li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      line-height: 2.45em; }
+      .danny-store-menu ul li .item-sub .item-sub-left {
+        float: left;
+        display: block;
+        width: 325px;
+        margin: 0;
+        padding: 0; }
+      .danny-store-menu ul li .item-sub .item-sub-right {
+        float: right;
+        width: 100px;
+        margin: 0;
+        padding: 0; }
+      .danny-store-menu ul li .item-sub .items .item.title {
+        clear: both;
+        display: block; }
+      .danny-store-menu ul li .items .title {
+        font-weight: 900;
+        color: #f15c2b; }
+        .danny-store-menu ul li .items .title a {
+          color: #f15c2b; }
+      .danny-store-menu ul li .items li {
+        display: inline-block; }
+      .danny-store-menu ul li .items .item {
+        padding-left: 0.5em;
+        padding-right: 0.5em; }
+      .danny-store-menu ul li .main-title {
+        font-weight: 900;
+        padding: 0 20px;
+        font-size: 14px; }
+      .danny-store-menu ul li .item-with-sub, .danny-store-menu ul li .item-without-sub {
+        position: relative;
+        padding: 0 20px; }
+      .danny-store-menu ul li .item-with-sub > .item-sub {
+        width: 450px;
+        border: 1px #ccc solid;
+        padding: 10px;
+        display: none;
+        position: absolute;
+        right: -450px;
+        top: 0;
+        background-color: #fff;
+        z-index: 999; }
+      .danny-store-menu ul li .item-with-sub:hover {
+        background-color: #fff; }
+      .danny-store-menu ul li .item-with-sub:hover > .item-sub {
+        display: block; }
+      .danny-store-menu ul li .item-with-sub::after {
+        content: ">";
+        position: absolute;
+        right: 20px;
+        top: 0;
+        color: #b3b3b3;
+        font-weight: 900; }
+
+/*隐藏展开切换菜单*/
+@media (max-width: 960px) {
+  .danny-store-menu ul li .item-with-sub {
+    padding: 0; }
+
+  .danny-store-menu ul li .item-with-sub > .item-sub {
+    width: auto;
+    border: 0;
+    padding: 0;
+    position: relative;
+    right: 0;
+    display: none;
+    top: 0;
+    background-color: none;
+    z-index: 999; }
+
+  .danny-store-menu ul li .item-with-sub > .item-sub .item-sub-right {
+    display: none; }
+
+  .danny-store-menu ul li .item-with-sub > .item-sub .item-sub-left {
+    width: 100%;
+    background-color: #fff; }
+ }
+
+/*# sourceMappingURL=StoreMenu.css.map */

@@ -1,0 +1,60 @@
+﻿@using NetPress.Models
+@using NetPress.ViewModels
+@{
+    Layout = null;
+
+    string path = "/Uploaded/Original/";
+
+    string StyleName = ViewBag.StyleName;
+
+    IndexProductView productView = ViewBag.ProductView;
+    
+}
+
+@if (productView != null)
+{
+    string picName = "";
+    if (productView.ProductPic != null && productView.ProductPic.Count > 0)
+    {
+        picName = productView.ProductPic.First().Url;
+    }
+    string minPrice = "";//显示最小价格
+    string price = productView.Product.Price;
+    string[] priceArr = price.Split('~');
+    if (priceArr.Count() > 0)
+    {
+        minPrice = priceArr[0];
+    }
+
+
+    if (StyleName == "style_1")
+    {
+        <div class="block block-type-1">
+            <div class="cover">
+                <img src="@(path + picName)" class="img-responsive" />
+            </div>
+            <div class="block-caption">
+                <div class="text-title">@Html.ActionLink(productView.Product.Name, "Details", new { url = productView.Product.Url })</div>
+                <div class="text-price">￥@(minPrice)</div>
+            </div>
+        </div>
+    }
+    else if (StyleName == "style_2")
+    {
+
+        <div class="event-block">
+            <a href="/Home/Details/@productView.Product.Url">
+                <div class="cover-small">
+                    <div class="cover">
+                        <img src="@(path + picName)" class="img-responsive" alt="Responsive image">
+                    </div>
+                </div>
+                <div class="event-info">
+                    <span>@(productView.Product.Name)<br />@*<span>材铜接头4分内</span>*@<br /><font>￥@(minPrice)<br /></font></span>
+                </div>
+                <div class="clearfix"></div>
+            </a>
+        </div>
+
+    }
+}

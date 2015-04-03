@@ -1,0 +1,269 @@
+﻿@using NetPress.Models;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Product product = ViewBag.Product;
+    List<Pic> picList = ViewBag.PicList;
+    string path = "/Uploaded/Original/";
+}
+
+<link href="/Plugins/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css" rel="stylesheet" type="text/css" />
+
+<h1>@product.Name</h1>
+<input type="hidden" id="hdProductId" value="@product.ProductId" />
+
+<!---产品图片列表-->
+<h3>产品图片列表</h3>
+<div>
+    @if (picList != null && picList.Count > 0)
+    {
+        <table>
+            <tr>
+                @foreach (Pic pic in picList)
+                {
+                    @*<td>@pic.PicType.ToString()</td>*@
+                    <td>
+                        @pic.SubTypeTag<br/>
+
+                        <img src="@(path+pic.Url)" name="imgProductPic" data-picid="@pic.PicId" data-tag="@pic.Tag"
+                              data-description="@pic.Description" data-pictype="@pic.SubTypeTag" style="height:80px;" /><br />
+
+                        <a href="javascript:void(0)" name="aDeletePic" data-picid="@pic.PicId">删除</a>
+                    </td>
+                    <td></td>
+         
+                }
+            </tr>
+        </table>
+    }
+</div>
+<!---产品图片列表 end--->
+
+<div id="dvCheckPic" style="display:none">
+    <h3>当前图片</h3>
+    <ul>
+        <li><img id="imgShowPic" style="height:150px" /></li>
+        <li>
+            <p>图片类型:</p>
+            <select id="sltPicType">
+                <option value="产品首页">产品首页</option>
+                <option value="产品列表">产品列表</option>
+                <option value="产品详细">产品详细</option>
+            </select>
+        </li>
+        <li><p>tag标签:</p><input type="text" id="txtTag" /></li>
+        <li><p>图片描述:</p><input type="text" id="txtDescription" /></li>
+        <li><input type="button" id="btnChangePicInfo" value="确定" /></li>
+    </ul>
+
+
+</div>
+
+<h3>图片上传</h3>
+<!---图片上传--->
+<div>
+    <div class="containercontent">
+
+        <div id="ImageContainer">
+        </div>
+
+        <div id="Uploader">
+        </div>
+
+        <div id="ImagePreview" style="display:none">
+            <img id="ImageView" />
+        </div>
+
+    </div>
+</div>
+
+
+<div>
+
+    @Html.ActionLink("返回", "Index", "Products", new { Area = "Admin" }, null)
+</div>
+<!---图片上传end--->
+@section Scripts {
+        <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>-->
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script src="/Plugins/plupload/plupload.full.js"></script>
+
+<script src="/Plugins/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+<!-- just for this demo: draggable, closable, modalDialog -->
+<script src="/Scripts/ww.jquery.min.js"></script>
+<!-- page specific JavaScript that puts up plUpload component -->
+<script src="/Content/js/uploadArea/uploadProductImage.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+       
+        var picArr = new Array();//每次上传图片集
+        var index = 0;
+
+        //图片上传
+        var uploader = $("#Uploader").pluploadQueue();
+        uploader.bind("FileUploaded", function (upload, file, response) {
+            upload.removeFile(file);
+            var imageUrl = response.response;
+
+            //添加产品图片关系 
+            //AddProductPicture(imageUrl);
+
+            var picModel = new PicModel();
+            picModel.Url = imageUrl;
+            picModel.SubTypeTag = "产品详细";
+
+            picArr[index] = picModel;//保存图片集
+            index++;
+        });
+        //上传完成
+        uploader.bind("UploadComplete", function (upload, file) {
+
+            AddProductPicture(picArr);
+            //清空图片集合
+            picArr = new Array();
+            index = 0;
+        });
+        //删除图片
+        $("[name='aDeletePic']").each(function () {
+            $(this).click(function () {
+                var picId = $(this).attr("data-picid");
+                DeleteProductPicture(picId);
+            });
+        });
+
+        //显示图片信息
+        $("[name='imgProductPic']").each(function () {
+            $(this).click(function () {
+                $("#dvCheckPic").css("display", "block");
+                SetPicInfo(this);             
+            });
+        });
+
+        //修改图片信息
+        $("#btnChangePicInfo").click(function () {
+            var picId = $("#dvCheckPic").attr("data-picid");
+            var picInfo = new PicInfoModel();
+            picInfo.PicId = picId;
+            picInfo.Tag = $("#txtTag").val();
+            picInfo.Description = $("#txtDescription").val();
+            picInfo.SubTypeTag = $("#sltPicType").val();
+
+            UpdatePicInfo(picInfo)//更新信息
+        });
+
+    });
+
+    //显示当前图片信息
+    function SetPicInfo(doc)
+    {
+        var src = $(doc).attr("src");
+        var picId= $(doc).attr("data-picid");
+        var tag=$(doc).attr("data-tag"); 
+        var description= $(doc).attr("data-description"); 
+        var pictype =$(doc).attr("data-pictype"); 
+
+        $("#imgShowPic").attr("src", src);
+        $("#txtTag").val(tag);
+        $("#txtDescription").val(description);
+        $("#sltPicType").val(pictype);
+        $("#dvCheckPic").attr("data-picid", picId);
+
+    }
+
+
+
+    /*------------数据交互部分----------*/
+    function PicInfoModel()
+    {
+        this.PicId;
+        this.Tag;
+        this.Description;
+        this.SubTypeTag;
+    }
+
+    function PicModel()
+    {
+        this.Url;
+        this.SubTypeTag;
+    }
+
+    //添加产品图片关系
+    function AddProductPicture(picArr)
+    {
+        var productId = $("#hdProductId").val();
+        $.ajax({
+            type: 'post',
+            url: "/UploadArea/ImageUpload/AddProductPicture",
+            data: { "productId": productId, "picArr": picArr },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    location.href="/UploadArea/ImageUpload/Product?productId="+productId;
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+
+    }
+
+    //删除图片及商品图片对应关系
+    function DeleteProductPicture(picId)
+    {
+        var productId = $("#hdProductId").val();
+        $.ajax({
+            type: 'post',
+            url: "/UploadArea/ImageUpload/DeleteProductPicture",
+            data: { "picId": picId },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    location.href = "/UploadArea/ImageUpload/Product?productId=" + productId;
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+    //修改图片其他信息
+    function UpdatePicInfo(picInfo)
+    {
+        var productId = $("#hdProductId").val();
+        $.ajax({
+            type: 'post',
+            url: "/UploadArea/ImageUpload/UpdatePicInfo",
+            data: { "picInfo": picInfo },
+            success: function (result) {
+                if (result.status == "success") {
+
+                    location.href = "/UploadArea/ImageUpload/Product?productId=" + productId;
+                }
+                else {
+                    alert(result.msg)
+                }
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+
+
+
+</script>
+}

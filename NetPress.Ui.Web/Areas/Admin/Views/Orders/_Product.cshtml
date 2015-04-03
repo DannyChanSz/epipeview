@@ -1,0 +1,269 @@
+﻿@using NetPress.Models;
+@{
+    Layout = null;
+    //产品
+    Product product = ViewBag.Product;
+    //产品影响价格属性
+    List<ProductPropertyMapping> InfluencePriceMaps = ViewBag.InfluencePriceMaps;
+    //产品价格
+    List<ProductPrice> productPrices = ViewBag.ProductPrices;
+    //产品影响价格拓展
+    List<ExpandProperty> expandPropertys = ViewBag.ExpandProperty;
+    
+}
+<div style="border:2px solid black;">
+    @if (product != null)
+    {
+        <h3>@product.Name</h3>
+        <input type="hidden" id="hdProductId" value="@product.ProductId" />
+        <input type="hidden" id="hdProductName" value="@product.Name" />
+        <ul>
+            <li>
+                @if (expandPropertys != null && expandPropertys.Count > 0)
+                {
+                <input type="hidden" id="hdExpandCount" value="@expandPropertys.Count" />
+                    foreach (ExpandProperty e in expandPropertys)// 颜色大小..
+                    {
+                        <div>
+                            <span>
+                                @(e.name):
+                            </span>
+
+                            <span>
+
+                                @if (InfluencePriceMaps != null && InfluencePriceMaps.Count > 0)
+                                {
+                                    foreach (ProductPropertyMapping map in InfluencePriceMaps)//影响价格属性
+                                    {
+                                        if (map.ProductProperty.ExpandProperty == e)
+                                        {
+                                            <input type="radio" name="@e.ExpandPropertyId" value="@map.ProductPropertyMappingId" class="rdProperty" data-provalue="@map.Provalue" />@map.Provalue
+                                        }
+                                    }
+                                }
+
+                            </span>
+                        </div>
+                    }
+                }
+
+            </li>
+            <li>原始单价：<span id="spPrice" data-priceId="" ></span></li>
+            <li>购买量:<input type="text" id="txtPurchaseVolume" /><p id="pErrorVolume"></p></li>
+            <li>总价:<input type="text" id="txtPrice" /><p id="pErrorPrice"></p></li>
+            <li><input type="button" id="btnAddDetail" value="添加" disabled="disabled" /> </li>
+        </ul>
+    }
+    else
+    {
+        <span>找不到该产品</span>
+    }
+</div>
+<script src="/Content/js/RegExpHelper.js"></script>
+<script>
+    $(document).ready(function () {
+
+        LoadEvent();
+
+    });
+
+    //事件
+    function LoadEvent()
+    {
+        //属性
+        $(".rdProperty").each(function () {
+            $(this).click(function () {
+                ChooseProperty();
+            })
+        });
+
+        //数量
+        $("#txtPurchaseVolume").keyup(function () {
+            IfAbleButton();
+        });
+
+        //总价
+        $("#txtPrice").keyup(function () {
+            IfAbleButton();
+        });
+
+        //添加订单子项
+        $("#btnAddDetail").click(function () {
+            SetOrderDetail();
+        });
+
+    }
+
+
+    //属性检测
+    function ChooseProperty()
+    {
+        var expandCount = $("#hdExpandCount").val();
+
+        var propertyIdArr = new Array();
+        var index = 0;
+        $(".rdProperty").each(function () {
+            var isChecked = this.checked;
+            if (isChecked) {
+                propertyIdArr[index] = $(this).val();
+                index++;
+            }
+        });
+
+        if (index == expandCount) {
+            GetPrice(propertyIdArr);
+        }
+    }
+
+    //属性检测
+    function CheckProperty()
+    {
+        var isExist = $("#spPrice").attr("data-isExist");
+        if(isExist=="true")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //购买量检测 
+    function CheckPurchaseVolume()
+    {
+        var number = $("#txtPurchaseVolume").val();
+        if (!RegExpHelper.isPositiveInt(number))
+        {
+            $("#pErrorVolume").html("请输入正确的数量");
+            return false;
+        }
+        else
+        {
+            $("#pErrorVolume").html("");
+            return true;
+        }
+    }
+
+    //价格检测
+    function CheckPrice()
+    {
+        var money = $("#txtPrice").val();
+        if (!RegExpHelper.isMoney(money)) {
+            $("#pErrorPrice").html("请输入正确的价格");
+            return false;
+        }
+        else {
+            $("#pErrorPrice").html("");
+            return true;
+        }
+        
+    }
+
+    //所有检测
+    function CheckInput()
+    {
+        var isProperty = CheckProperty();
+        var isVolume = CheckPurchaseVolume();
+        var isPrice = CheckPrice();
+        if (isProperty && isVolume && isPrice) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    //检测并解禁用按钮
+    function IfAbleButton()
+    {
+        var stat = CheckInput();
+        if (stat)
+        {
+            //启用
+            $("#btnAddDetail").removeAttr("disabled");
+        }
+        else
+        {
+            //禁用
+            $("#btnAddDetail").attr("disabled", "disabled");
+        }
+    }
+
+    //生成订单子项
+    function SetOrderDetail()
+    {
+        var detail = new OrderDetail();
+       
+        detail.PriceId = $("#spPrice").attr("data-priceId");
+        detail.PurchaseVolume = $("#txtPurchaseVolume").val();
+        detail.Price = $("#txtPrice").val();
+
+        //信息类
+        detail.ProductName = $("#hdProductName").val();
+
+        var propertyName = "";
+        $(".rdProperty").each(function () {
+            var isChecked = this.checked;
+            if (isChecked) {
+                propertyName += $(this).attr("data-provalue") + " ";
+            }
+        });
+        
+        detail.PropertyName = propertyName;
+
+        SetDetailOver(detail);
+
+        //alert(JSON.stringify(detail));
+    }
+
+    ////订单模型
+    //function OrderDetail()
+    //{
+    //    this.PriceId;
+    //    this.PurchaseVolume;
+    //    this.Price;
+
+    //    //其他信息类
+    //    this.ProductName;
+    //    this.PropertyName;
+    //}
+
+    /*-----------交互-----------*/
+
+    //获取当前价格
+    function GetPrice(propertyArr) {
+
+        var productId = $("#hdProductId").val();
+
+        $("#spPrice").attr("data-isExist", "false");//默认失败
+
+        $.ajax({
+            type: 'post',
+            url: "/Admin/Orders/GetPrice",
+            data: { "productId": productId ,"propertyArr":propertyArr},
+            success: function (result) {
+                if (result.status == "success") {
+
+                        var price = result.price;
+                        $("#spPrice").html(price.Price);
+                        $("#spPrice").attr("data-priceId", price.PriceId);
+                        $("#spPrice").attr("data-isExist", price.IsExist);
+
+                }
+                else if (result.status == "error") {
+                    $("#spPrice").html(result.msg);
+                    $("#spPrice").attr("data-priceId", "");
+                }
+                IfAbleButton();
+
+            },
+            error: function () {
+                IfAbleButton();
+            }
+        });
+    }
+
+
+
+</script>

@@ -1,0 +1,43 @@
+﻿@using NetPress.Models;
+@using NetPress.ViewModels;
+@{
+    List<IndexProductView> productList = ViewBag.ProductViewList;
+    //string categoryName = ViewBag.CategoryName;
+    //int pageIndex = ViewBag.Page;
+    //int totlePage = ViewBag.TotlePage;
+     string path = "/Uploaded/Original/";
+
+     string CategoryUrl = ViewBag.CategoryUrl;
+     //int Page = ViewBag.Page;
+
+     string searchBrand = ViewBag.SearchBrand;//品牌查询
+}
+<!--产品列表页css--->
+<link href="/Content/css/products.css" rel="stylesheet" />
+
+    <div class="products">
+        <div id="products-main">
+            <div id="products-top-carousel" class="container">
+                <div id="products-owl-1" class="owl-carousel owl-theme">
+                    <div class="item"><img src="/content/images/products-1.jpg" class="img-responsive" /></div>
+                    <div class="item"><img src="/content/images/products-1.jpg" class="img-responsive" /></div>
+                </div>
+            </div>
+            <div class="container">
+                <div id="productFilter">
+                    <input type="hidden" id="hdSearchBrand" value="@searchBrand" />
+
+                    <div id="dvSelectBox">
+                        @{Html.RenderAction("SelectBox", "Home", new { url = CategoryUrl });}
+                    </div>
+
+
+                    <div id="dvSelectProducts">
+                        @{Html.RenderAction("SelectProducts", "Home", new { url = CategoryUrl });}
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
