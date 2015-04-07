@@ -503,6 +503,32 @@
 <script>
 
     $(document).ready(function () {
+        //首页 菜单显示start
+        var windowsW;
+        windowsW = $(window).width();
+        if (windowsW < 1186) {
+            $('.danny-nav > div > div >div:first').mouseover(function () {
+                $(".dropdown-menu-1").show();
+            }).mouseout(function () {
+                $(".dropdown-menu-1").hide();
+            });
+        }
+        else {
+            $('.danny-nav > div > div >div:first').unbind("mouseover");
+        }
+        $(window).resize(function () {
+            if ($(window).width() < 1186) {
+                $('.danny-nav > div > div >div:first').mouseover(function () {
+                    $(".dropdown-menu-1").show();
+                }).mouseout(function () {
+                    $(".dropdown-menu-1").hide();
+                });
+            }
+            else {
+                $('.danny-nav > div > div >div:first').unbind("mouseover");
+            }
+        });
+        //首页菜单显示end
 
         var uploader = createUpload("container", "pickfiles", "filelist", "console");
 
